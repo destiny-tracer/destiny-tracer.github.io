@@ -1,42 +1,85 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Kotak Brokerage Calculator</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <div class="container">
-    <h1>Kotak Securities Brokerage Calculator</h1>
+    <h1>Kotak Brokerage Calculator</h1>
 
     <div class="card">
       <label for="segment">Select Segment</label>
-      <select id="segment">
+      <select id="segment" aria-label="Segment">
         <option value="equityIntraday">Equity - Intraday</option>
         <option value="equityDelivery">Equity - Delivery</option>
         <option value="optionIntraday">Options - Intraday</option>
         <option value="optionDelivery">Options - Delivery</option>
       </select>
 
-      <label for="buyTurnover">Buy Turnover (₹)</label>
-      <input type="number" id="buyTurnover" placeholder="e.g., 50000">
+      <div class="row">
+        <div class="col">
+          <label for="qty">Quantity</label>
+          <input id="qty" type="number" min="1" value="1" />
+        </div>
+        <div class="col">
+          <label for="buyPrice">Buy Price (₹)</label>
+          <input id="buyPrice" type="number" min="0" step="0.01" value="100" />
+        </div>
+        <div class="col">
+          <label for="sellPrice">Sell Price (₹)</label>
+          <input id="sellPrice" type="number" min="0" step="0.01" value="150" />
+        </div>
+      </div>
 
-      <label for="sellTurnover">Sell Turnover (₹)</label>
-      <input type="number" id="sellTurnover" placeholder="e.g., 50000">
-
-      <button id="calculateBtn">Calculate</button>
+      <div class="actions">
+        <button id="calcBtn">Calculate</button>
+        <button id="resetBtn" class="alt">Reset</button>
+      </div>
     </div>
 
-    <div class="result-card" id="result">
-      <h2>Calculation Summary</h2>
-      <table>
-        <tbody id="resultTable"></tbody>
-      </table>
+    <div id="resultCard" class="result-card hidden" aria-live="polite">
+      <div class="summary-row">
+        <div>
+          <div class="label">Gross Profit</div>
+          <div id="grossProfit" class="big-amount">—</div>
+        </div>
+        <div>
+          <div class="label">NET P&L</div>
+          <div id="netPnl" class="big-amount net">—</div>
+        </div>
+      </div>
+
+      <div class="charges">
+        <div class="charge-line">
+          <div class="charge-title">BROKERAGE*</div>
+          <div id="brokerage" class="charge-value">—</div>
+        </div>
+
+        <div class="charge-line">
+          <div class="charge-title">Other charges/taxes (charged on turnover)</div>
+          <div id="otherCharges" class="charge-value">—</div>
+        </div>
+
+        <button id="toggleBreakup" class="small-link">Show breakup</button>
+
+        <div id="breakup" class="breakup hidden">
+          <div class="breakup-line"><div>STT</div><div id="stt">—</div></div>
+          <div class="breakup-line"><div>SEBI Turnover charges</div><div id="sebi">—</div></div>
+          <div class="breakup-line"><div>Transaction charges</div><div id="txn">—</div></div>
+          <div class="breakup-line"><div>GST (18%)</div><div id="gst">—</div></div>
+          <div class="breakup-line"><div>Stamp Duty</div><div id="stamp">—</div></div>
+        </div>
+      </div>
+
+      <div class="note">*Brokerage is per order (buy = 1 order, sell = 1 order).</div>
     </div>
+
+    <footer>© 2025 Kotak Calculator (Unofficial) | Built by Destiny Tracer</footer>
   </div>
 
-  <footer>© 2025 Kotak Calculator (Unofficial) | Built by Destiny Tracer</footer>
   <script src="script.js"></script>
 </body>
 </html>
