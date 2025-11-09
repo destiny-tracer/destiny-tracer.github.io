@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kotak Brokerage Calculator</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Kotak Securities Brokerage Calculator</h1>
+
+    <div class="card">
+      <label for="segment">Select Segment</label>
+      <select id="segment">
+        <option value="equityIntraday">Equity - Intraday</option>
+        <option value="equityDelivery">Equity - Delivery</option>
+        <option value="optionIntraday">Options - Intraday</option>
+        <option value="optionDelivery">Options - Delivery</option>
+      </select>
+
+      <label for="buyTurnover">Buy Turnover (₹)</label>
+      <input type="number" id="buyTurnover" placeholder="e.g., 50000">
+
+      <label for="sellTurnover">Sell Turnover (₹)</label>
+      <input type="number" id="sellTurnover" placeholder="e.g., 50000">
+
+      <button id="calculateBtn">Calculate</button>
+    </div>
+
+    <div class="result-card" id="result">
+      <h2>Calculation Summary</h2>
+      <table>
+        <tbody id="resultTable"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <footer>© 2025 Kotak Calculator (Unofficial) | Built by Destiny Tracer</footer>
+  <script src="script.js"></script>
+</body>
+</html>
