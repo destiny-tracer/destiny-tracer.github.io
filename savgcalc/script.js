@@ -2,7 +2,7 @@
 (function(){
   const $ = id => document.getElementById(id);
 
-  function fmt(n){
+  function fmtNumber(n){
     if (typeof n !== 'number' || !isFinite(n)) return '—';
     const sign = n < 0 ? '-' : '';
     n = Math.abs(n);
@@ -26,49 +26,57 @@
       return;
     }
 
-    // Determine total shares and total buy cost
-    const shares1 = qty;
-    const shares2 = (isNaN(addPrice) || addQty <= 0) ? 0 : addQty;
-    const totalShares = shares1 + shares2;
+    // Compute per-purchase invested amounts (exclude fees)
+    const cost1 = buyPrice * qty;
+    const cost2 = (!isNaN(addPrice) && addQty > 0) ? addPrice * addQty : 0;
 
-    const cost1 = buyPrice * shares1;
-    const cost2 = (!isNaN(addPrice) && shares2 > 0) ? addPrice * shares2 : 0;
+    const totalUnits = qty + addQty;
+    const totalAmount = cost1 + cost2; // overall invested amount (shares only)
 
-    // total buy includes buyBroker and taxes as provided (simple model)
-    const totalBuy = cost1 + cost2 + buyBroker + taxes;
-    const avgBuy = totalBuy / totalShares;
+    // Average price based on shares only (matches the reference screenshot)
+    const averagePrice = totalAmount / (totalUnits || 1);
 
-    $('avgPrice').textContent = fmt(avgBuy);
-    $('totalBuy').textContent = fmt(totalBuy);
+    // totalBuy includes provided buyBroker and taxes (simple model)
+    const totalBuyWithFees = totalAmount + buyBroker + taxes;
+    const avgBuyWithFees = totalBuyWithFees / (totalUnits || 1);
+
+    // Update visible elements
+    $('invested1').textContent = fmtNumber(cost1);
+    $('invested2').textContent = (cost2 > 0) ? fmtNumber(cost2) : '—';
+    $('totalUnits').textContent = totalUnits || '—';
+    $('avgPrice').textContent = fmtNumber(averagePrice);
+    $('overallAmount').textContent = fmtNumber(totalAmount);
+
+    $('avgBuyWithFees').textContent = fmtNumber(avgBuyWithFees);
+    $('totalBuy').textContent = fmtNumber(totalBuyWithFees);
 
     if (!isNaN(sellPrice) && sellPrice > 0){
-      const grossSell = sellPrice * totalShares;
+      const grossSell = sellPrice * totalUnits;
       const totalSell = grossSell - sellBroker - taxes;
-      const netPL = totalSell - totalBuy;
-      const returnPct = (netPL / totalBuy) * 100;
+      const netPL = totalSell - totalBuyWithFees;
+      const returnPct = (netPL / totalBuyWithFees) * 100;
 
-      $('netPL').textContent = (netPL >= 0 ? '+' : '') + fmt(netPL);
+      $('netPL').textContent = (netPL >= 0 ? '+' : '') + fmtNumber(netPL);
       $('returnPct').textContent = (returnPct >= 0 ? '+' : '') + (isFinite(returnPct) ? returnPct.toFixed(2) + '%' : '—');
-      $('totalSell').textContent = fmt(totalSell);
+      $('totalSell').textContent = fmtNumber(totalSell);
     } else {
       $('netPL').textContent = '—';
       $('returnPct').textContent = '—';
       $('totalSell').textContent = '—';
     }
-
-    // reveal details block
-    const details = $('detailBlock');
-    if(details && details.hasAttribute('open') === false){
-      // keep as user toggled; do not auto-open to avoid focus surprises
-    }
   }
 
   function reset(){
     $('calcForm').reset();
+    $('invested1').textContent = '—';
+    $('invested2').textContent = '—';
+    $('totalUnits').textContent = '—';
     $('avgPrice').textContent = '—';
+    $('overallAmount').textContent = '—';
+    $('avgBuyWithFees').textContent = '—';
+    $('totalBuy').textContent = '—';
     $('netPL').textContent = '—';
     $('returnPct').textContent = '—';
-    $('totalBuy').textContent = '—';
     $('totalSell').textContent = '—';
   }
 
