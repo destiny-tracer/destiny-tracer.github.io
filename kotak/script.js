@@ -1,67 +1,132 @@
-document.getElementById("calculateBtn").addEventListener("click", () => {
-  const segment = document.getElementById("segment").value;
-  const buyTurnover = parseFloat(document.getElementById("buyTurnover").value);
-  const sellTurnover = parseFloat(document.getElementById("sellTurnover").value);
-
-  if (isNaN(buyTurnover) || isNaN(sellTurnover) || buyTurnover <= 0 || sellTurnover <= 0) {
-    alert("Please enter valid buy and sell turnover amounts.");
-    return;
+// Kotak rates (as provided by you)
+const RATES = {
+  equityIntraday: {
+    perOrderBrokerage: 10,
+    sttRate: 0.00025,       // 0.025% on sell
+    sebiRate: 0.000001,     // 0.0001%
+    txnRate: 0.0000297,     // 0.00297%
+    stampRateOnBuy: 0.00003 // 0.003% on buy
+  },
+  equityDelivery: {
+    perOrderBrokerage: 0,
+    sttRate: 0.001,         // 0.1% on sell
+    sebiRate: 0.000001,
+    txnRate: 0.0000297,
+    stampRateOnBuy: 0.00015 // 0.015%
+  },
+  optionIntraday: {
+    perOrderBrokerage: 10,
+    sttRate: 0.001,         // 0.1%
+    sebiRate: 0.000001,
+    txnRate: 0.0003503,     // 0.03503%
+    stampRateOnBuy: 0.00003
+  },
+  optionDelivery: {
+    perOrderBrokerage: 10,
+    sttRate: 0.001,
+    sebiRate: 0.000001,
+    txnRate: 0.0003503,
+    stampRateOnBuy: 0.00003
   }
+};
 
+const el = id => document.getElementById(id);
+const fmt = v => "₹" + v.toFixed(2);
+
+function calculate() {
+  const segment = el("segment").value;
+  const qty = Number(el("qty").value) || 0;
+  const buyPrice = Number(el("buyPrice").value) || 0;
+  const sellPrice = Number(el("sellPrice").value) || 0;
+
+  if (qty <= 0) { alert("Enter a valid quantity."); return; }
+  if (buyPrice < 0 || sellPrice < 0) { alert("Enter valid prices."); return; }
+
+  // turnovers
+  const buyTurnover = buyPrice * qty;
+  const sellTurnover = sellPrice * qty;
   const totalTurnover = buyTurnover + sellTurnover;
 
-  let brokerage = 0, gst = 0, stt = 0, sebi = 0, txn = 0, stamp = 0;
+  // gross profit (sell - buy) * qty
+  const gross = (sellPrice - buyPrice) * qty;
 
-  switch (segment) {
-    case "equityIntraday":
-      brokerage = 10;
-      stt = sellTurnover * 0.00025; // STT on Sell side
-      sebi = totalTurnover * 0.000001;
-      txn = totalTurnover * 0.0000297;
-      stamp = buyTurnover * 0.00003; // Stamp on Buy side
-      gst = brokerage * 0.18;
-      break;
+  const rates = RATES[segment];
 
-    case "equityDelivery":
-      brokerage = 0;
-      stt = sellTurnover * 0.001; // STT on Sell side
-      sebi = totalTurnover * 0.000001;
-      txn = totalTurnover * 0.0000297;
-      stamp = buyTurnover * 0.00015; // Stamp on Buy side
-      gst = 0;
-      break;
+  // brokerage: per order (count buy and sell as separate orders if >0)
+  let orders = 0;
+  if (qty > 0 && buyPrice > 0) orders += 1;
+  if (qty > 0 && sellPrice > 0) orders += 1;
+  const brokerage = rates.perOrderBrokerage * orders;
 
-    case "optionIntraday":
-      brokerage = 10;
-      stt = sellTurnover * 0.001; // STT on Sell side
-      sebi = totalTurnover * 0.000001;
-      txn = totalTurnover * 0.0003503;
-      stamp = buyTurnover * 0.00003;
-      gst = brokerage * 0.18;
-      break;
+  // GST on brokerage (18%)
+  const gst = brokerage * 0.18;
 
-    case "optionDelivery":
-      brokerage = 10;
-      stt = sellTurnover * 0.001; // STT on Sell side
-      sebi = totalTurnover * 0.000001;
-      txn = totalTurnover * 0.0003503;
-      stamp = buyTurnover * 0.00003;
-      gst = brokerage * 0.18;
-      break;
+  // STT on sell side only
+  const stt = sellTurnover * rates.sttRate;
+
+  // SEBI & Transaction on total turnover
+  const sebi = totalTurnover * rates.sebiRate;
+  const txn = totalTurnover * rates.txnRate;
+
+  // Stamp duty on buy side only
+  const stamp = buyTurnover * rates.stampRateOnBuy;
+
+  // other charges grouped (user wants single line + breakup)
+  const otherCharges = stt + sebi + txn + gst + stamp;
+
+  const totalCharges = brokerage + otherCharges;
+
+  const netPnl = gross - totalCharges;
+
+  // update UI
+  el("grossProfit").textContent = fmt(gross);
+  el("brokerage").textContent = fmt(brokerage);
+  el("otherCharges").textContent = fmt(otherCharges);
+
+  el("stt").textContent = fmt(stt);
+  el("sebi").textContent = fmt(sebi);
+  el("txn").textContent = fmt(txn);
+  el("gst").textContent = fmt(gst);
+  el("stamp").textContent = fmt(stamp);
+
+  el("netPnl").textContent = fmt(netPnl);
+
+  // show card
+  el("resultCard").classList.remove("hidden");
+
+  // ensure breakup initial state hidden and toggle text set
+  el("breakup").classList.add("hidden");
+  el("toggleBreakup").textContent = "Show breakup";
+}
+
+function resetForm() {
+  el("qty").value = 1;
+  el("buyPrice").value = 100;
+  el("sellPrice").value = 150;
+  el("resultCard").classList.add("hidden");
+}
+
+// toggle breakup visibility
+function toggleBreakup() {
+  const b = el("breakup");
+  const t = el("toggleBreakup");
+  if (b.classList.contains("hidden")) {
+    b.classList.remove("hidden");
+    t.textContent = "Hide breakup";
+  } else {
+    b.classList.add("hidden");
+    t.textContent = "Show breakup";
   }
+}
 
-  const total = brokerage + gst + stt + sebi + txn + stamp;
+// event listeners
+el("calcBtn").addEventListener("click", calculate);
+el("resetBtn").addEventListener("click", resetForm);
+el("toggleBreakup").addEventListener("click", toggleBreakup);
 
-  const resultTable = document.getElementById("resultTable");
-  resultTable.innerHTML = `
-    <tr><td><b>Brokerage</b></td><td>₹${brokerage.toFixed(2)}</td></tr>
-    <tr><td>GST (18%)</td><td>₹${gst.toFixed(2)}</td></tr>
-    <tr><td>STT</td><td>₹${stt.toFixed(2)}</td></tr>
-    <tr><td>SEBI Charges</td><td>₹${sebi.toFixed(2)}</td></tr>
-    <tr><td>Transaction Charges</td><td>₹${txn.toFixed(2)}</td></tr>
-    <tr><td>Stamp Duty</td><td>₹${stamp.toFixed(2)}</td></tr>
-    <tr><td><b>Total Charges</b></td><td><b>₹${total.toFixed(2)}</b></td></tr>
-  `;
-
-  document.getElementById("result").style.display = "block";
+// allow pressing Enter in inputs to calculate
+["qty","buyPrice","sellPrice"].forEach(id => {
+  el(id).addEventListener("keydown", (e) => {
+    if (e.key === "Enter") calculate();
+  });
 });
