@@ -30,7 +30,7 @@
         </div>
       </div>
       <nav class="nav">
-        <a href="https://praveenmp.github.io/stockaveragecalculator/" target="_blank" rel="noopener">Reference</a>
+        <!-- reference removed by request -->
       </nav>
     </header>
 
@@ -87,11 +87,41 @@
       <aside class="result" id="results" aria-live="polite">
         <h2 class="panel-title">Summary</h2>
 
+        <!-- NEW: Quick breakdown (matches the screenshot style) -->
+        <div class="breakdown" style="margin-bottom:12px; padding:12px; border-radius:8px; background:linear-gradient(180deg,#fff,#fbfdff); border:1px solid rgba(3,7,18,0.03);">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:8px">
+            <div style="color:var(--muted);font-size:0.9rem">Amount invested — 1st purchase</div>
+            <div id="invested1" style="font-weight:700;color:var(--accent-strong)">—</div>
+          </div>
+
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:8px">
+            <div style="color:var(--muted);font-size:0.9rem">Amount invested — 2nd purchase</div>
+            <div id="invested2" style="font-weight:700;color:var(--accent-strong)">—</div>
+          </div>
+
+          <hr style="border:none;border-top:1px solid rgba(3,7,18,0.04);margin:10px 0" />
+
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:6px">
+            <div style="color:var(--muted);font-size:0.95rem">Total units</div>
+            <div id="totalUnits" style="font-weight:700">—</div>
+          </div>
+
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:6px">
+            <div style="color:var(--muted);font-size:0.95rem">Average price</div>
+            <div id="avgPrice" style="font-weight:700">—</div>
+          </div>
+
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:12px">
+            <div style="color:var(--muted);font-size:0.95rem">Total amount invested</div>
+            <div id="overallAmount" style="font-weight:700">—</div>
+          </div>
+        </div>
+
         <div class="cards">
           <div class="card">
-            <div class="card-title">Average Buy</div>
-            <div class="card-value" id="avgPrice">—</div>
-            <div class="card-note">Per share (incl. buy fees)</div>
+            <div class="card-title">Average Buy (incl. buy fees & taxes)</div>
+            <div class="card-value" id="avgBuyWithFees">—</div>
+            <div class="card-note">Per share (incl. buy fees & taxes)</div>
           </div>
 
           <div class="card">
@@ -108,9 +138,9 @@
         </div>
 
         <details id="detailBlock" class="details">
-          <summary>Details</summary>
+          <summary>More details</summary>
           <dl>
-            <dt>Total buy cost</dt><dd id="totalBuy">��</dd>
+            <dt>Total buy cost (incl. buy fees & taxes)</dt><dd id="totalBuy">—</dd>
             <dt>Total sell value</dt><dd id="totalSell">—</dd>
           </dl>
           <div class="sell-input">
