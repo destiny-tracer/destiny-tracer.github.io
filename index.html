@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>destiny-tracer — Small apps</title>
+
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <!-- Shared site styles (place style.css at repo root) -->
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="home">
+    <header class="home-header">
+      <div class="brand">
+        <svg class="logo" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <defs>
+            <linearGradient id="lg" x1="0" x2="1">
+              <stop offset="0" stop-color="#0ea5a4"/>
+              <stop offset="1" stop-color="#3b82f6"/>
+            </linearGradient>
+          </defs>
+          <rect x="2" y="4" width="20" height="16" rx="4" fill="url(#lg)"></rect>
+          <path d="M7 14l3-5 4 6 3-4" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+        </svg>
+        <div>
+          <h1>destiny‑tracer</h1>
+          <p class="tag">Small, useful web tools — quick calculators and utilities</p>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <a class="btn primary" href="savgcalc/">Open SavgCalc</a>
+        <a class="btn ghost" href="https://github.com/destiny-tracer/destiny-tracer.github.io/new/main?filename=bcc%2F">Add new app</a>
+      </div>
+    </header>
+
+    <section class="intro">
+      <p>Welcome — here you’ll find quick calculators and small tools. Click a card to open an app or use the "Add new app" button to create a folder for a new tool (use the GitHub web editor).</p>
+    </section>
+
+    <section class="apps-grid" aria-label="Apps">
+      <!-- App card (copy/duplicate this block for each new app) -->
+      <article class="app-card">
+        <div class="app-icon">💹</div>
+        <h3 class="app-title"><a href="savgcalc/">SavgCalc</a></h3>
+        <p class="app-desc">Stock average & return calculator — modern UI, includes fees and per‑purchase breakdown.</p>
+        <div class="app-meta">
+          <span class="badge">Calculator</span>
+          <a class="link" href="savgcalc/">Open</a>
+        </div>
+      </article>
+
+      <article class="app-card">
+        <div class="app-icon">🧾</div>
+        <h3 class="app-title"><a href="bcc/">Brokerage Charge Calculator (BCC)</a></h3>
+        <p class="app-desc">Estimate broker commissions, taxes and net cost on buy/sell. (placeholder)</p>
+        <div class="app-meta">
+          <span class="badge">Calculator</span>
+          <a class="link" href="bcc/">Open</a>
+        </div>
+      </article>
+
+      <article class="app-card">
+        <div class="app-icon">🏦</div>
+        <h3 class="app-title"><a href="loanc/">Loan EMI Calculator</a></h3>
+        <p class="app-desc">Calculate EMIs, amortization schedule and interest breakdown. (placeholder)</p>
+        <div class="app-meta">
+          <span class="badge">Calculator</span>
+          <a class="link" href="loanc/">Open</a>
+        </div>
+      </article>
+
+      <article class="app-card">
+        <div class="app-icon">💳</div>
+        <h3 class="app-title"><a href="debtc/">Debt Calculator</a></h3>
+        <p class="app-desc">Analyze debt repayment scenarios, impact of extra payments. (placeholder)</p>
+        <div class="app-meta">
+          <span class="badge">Calculator</span>
+          <a class="link" href="debtc/">Open</a>
+        </div>
+      </article>
+    </section>
+
+    <footer class="home-footer">
+      <small>Built by destiny‑tracer — all tools run in your browser, private and lightweight.</small>
+    </footer>
+  </main>
+</body>
+</html>
