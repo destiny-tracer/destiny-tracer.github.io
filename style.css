@@ -1,0 +1,79 @@
+:root{
+  --bg: #f6fbff;
+  --surface: #ffffff;
+  --muted: #6b7280;
+  --accent-1: #0ea5a4;
+  --accent-2: #3b82f6;
+  --text: #04203a;
+  --radius: 12px;
+  --max: 1100px;
+  --shadow: 0 8px 24px rgba(15,23,42,0.06);
+  --card-padding: 16px;
+}
+
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  font-family: 'Inter', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  background: linear-gradient(180deg,#f8fbff 0%, var(--bg) 100%);
+  color:var(--text);
+  -webkit-font-smoothing:antialiased;
+  padding:28px 20px;
+}
+
+.home{
+  max-width:var(--max);
+  margin:0 auto;
+}
+
+.home-header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+  margin-bottom:22px;
+}
+.brand{display:flex;align-items:center;gap:12px}
+.logo{width:52px;height:52px;border-radius:10px;box-shadow:0 10px 20px rgba(10,20,40,0.05)}
+.brand h1{margin:0;font-size:1.3rem}
+.tag{margin:0;color:var(--muted);font-size:0.95rem}
+
+.header-actions{display:flex;gap:10px;align-items:center}
+.btn{display:inline-block;padding:8px 12px;border-radius:10px;text-decoration:none;font-weight:600}
+.btn.primary{background:linear-gradient(90deg,var(--accent-1),var(--accent-2));color:white}
+.btn.ghost{background:transparent;border:1px solid rgba(3,7,18,0.06);color:var(--accent-2)}
+
+.intro{margin-bottom:18px;color:var(--muted);font-size:0.98rem}
+
+/* apps grid */
+.apps-grid{
+  display:grid;
+  grid-template-columns: repeat(auto-fill,minmax(240px,1fr));
+  gap:16px;
+}
+.app-card{
+  background:var(--surface);
+  border-radius:var(--radius);
+  padding:var(--card-padding);
+  box-shadow:var(--shadow);
+  border:1px solid rgba(3,7,18,0.03);
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+.app-icon{font-size:22px}
+.app-title{margin:0;font-size:1.05rem}
+.app-title a{color:var(--text);text-decoration:none}
+.app-desc{margin:0;color:var(--muted);font-size:0.94rem}
+.app-meta{display:flex;justify-content:space-between;align-items:center;margin-top:auto}
+.badge{background:linear-gradient(90deg,var(--accent-1),var(--accent-2));color:white;padding:6px 8px;border-radius:8px;font-weight:700;font-size:0.8rem}
+.link{color:var(--accent-2);text-decoration:none;font-weight:600}
+
+.home-footer{margin-top:20px;color:var(--muted);font-size:0.88rem;text-align:center}
+
+/* responsive tweaks */
+@media (max-width:720px){
+  .home-header{flex-direction:column;align-items:flex-start;gap:10px}
+  .header-actions{width:100%;justify-content:flex-start}
+}
