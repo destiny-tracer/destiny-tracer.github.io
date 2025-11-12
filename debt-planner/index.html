@@ -1,170 +1,359 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Debt Health & EMI Recovery Planner</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Debt Health Analyzer — Destiny Tracer</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/modern-normalize/1.1.0/modern-normalize.min.css">
   <style>
-    body { background: #f6f9fc; font-family: 'Segoe UI', sans-serif; }
-    .card { border-radius: 16px; box-shadow: 0 3px 10px rgba(0,0,0,0.1); }
-    .btn { border-radius: 10px; }
-    h4 { color: #0a3d62; }
-    #summary p { margin: 0; font-size: 15px; }
-    table input { width: 100%; border: none; background: #f8f9fa; padding: 4px; border-radius: 6px; }
+    :root{--accent:#0f71ff;--muted:#666;--bg:#f7f9fc;--card:#fff}
+    body{font-family:Inter,system-ui,Segoe UI,Roboto,Arial;margin:18px;background:var(--bg);color:#111}
+    .container{max-width:980px;margin:0 auto}
+    header{display:flex;align-items:center;gap:12px;margin-bottom:18px}
+    h1{font-size:20px;margin:0}
+    .card{background:var(--card);border-radius:10px;padding:14px;box-shadow:0 6px 18px rgba(20,30,60,0.06);margin-bottom:12px}
+    label{font-size:13px;color:var(--muted)}
+    input[type=number], input[type=text], select{width:100%;padding:8px;border-radius:6px;border:1px solid #e3e7ef}
+    .grid{display:grid;grid-template-columns:1fr 340px;gap:12px}
+    .loans-list{max-height:420px;overflow:auto}
+    table{width:100%;border-collapse:collapse}
+    th,td{padding:8px;text-align:left;border-bottom:1px solid #f0f3f8;font-size:13px}
+    .small{font-size:12px;color:var(--muted)}
+    .btn{background:var(--accent);color:#fff;padding:8px 12px;border-radius:8px;border:none;cursor:pointer}
+    .btn.ghost{background:transparent;color:var(--accent);border:1px solid #dbe6ff}
+    .muted{color:var(--muted);font-size:13px}
+    .summary-row{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+    .chip{background:#f1f6ff;padding:8px 10px;border-radius:8px;font-weight:600}
+    .controls{display:flex;gap:8px;align-items:center}
+    .chart-wrap{height:200px}
+    pre{background:#0b1220;color:#cfe7ff;padding:10px;border-radius:8px;overflow:auto}
+    @media(max-width:880px){.grid{grid-template-columns:1fr;}.chart-wrap{height:160px}}
   </style>
 </head>
-<body class="p-3">
+<body>
   <div class="container">
-    <h3 class="text-center mb-4">💸 Debt Health Analyzer & EMI Recovery Planner</h3>
+    <header>
+      <h1>Debt Health Analyzer &amp; Snowball Planner</h1>
+      <div class="small muted">Build a plan to reduce EMI burden — Snowball or Avalanche</div>
+    </header>
 
-    <div class="card p-3 mb-4">
-      <div class="row">
-        <div class="col-md-4">
-          <label>Monthly Income (₹)</label>
-          <input id="income" type="number" class="form-control" placeholder="150000">
+    <div class="grid">
+      <div>
+        <div class="card">
+          <h3>Income & Resources</h3>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+            <div>
+              <label>Total monthly income (₹)</label>
+              <input id="monthlyIncome" type="number" value="150000" />
+            </div>
+            <div>
+              <label>Cash reserve available for prepayment (₹)</label>
+              <input id="cashReserve" type="number" value="900000" />
+            </div>
+          </div>
+          <div style="margin-top:8px;display:flex;gap:8px">
+            <button id="addLoanBtn" class="btn">+ Add loan</button>
+            <button id="resetBtn" class="btn ghost">Reset demo loans</button>
+            <button id="exportCsv" class="btn ghost">Export CSV</button>
+          </div>
         </div>
-        <div class="col-md-4">
-          <label>Cash Reserve (₹)</label>
-          <input id="reserve" type="number" class="form-control" placeholder="900000">
+
+        <div class="card">
+          <h3>Loans</h3>
+          <div class="loans-list">
+            <table id="loansTable">
+              <thead><tr><th>Loan</th><th>Balance (₹)</th><th>Rate % p.a.</th><th>EMI ₹</th><th>Tenure mo</th><th></th></tr></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+          <div style="margin-top:8px" class="small muted">Add all debts (credit cards, personal loans, auto, home). Use realistic remaining balances and EMIs.</div>
         </div>
-        <div class="col-md-4 d-flex align-items-end">
-          <button class="btn btn-primary w-100" onclick="analyzeDebt()">Analyze</button>
+
+        <div class="card">
+          <h3>Strategies</h3>
+          <div style="display:flex;gap:8px;align-items:center">
+            <label><input type="radio" name="strategy" value="snowball" checked/> Snowball (smallest balance first)</label>
+            <label><input type="radio" name="strategy" value="avalanche"/> Avalanche (highest rate first)</label>
+          </div>
+          <div style="margin-top:8px;display:flex;gap:8px;align-items:center">
+            <label>One-time prepayment to apply (₹)</label>
+            <input id="prepayAmount" type="number" value="150000" style="width:160px" />
+            <button id="simulateBtn" class="btn">Simulate</button>
+          </div>
+          <div style="margin-top:8px" class="small muted">Simulation will apply the prepayment to selected priority loan and roll freed-up EMI amounts into next targets.</div>
         </div>
+
+        <div class="card">
+          <h3>Insights & Suggestions</h3>
+          <div id="insights">No simulation run yet. Enter loans and click Simulate.</div>
+        </div>
+      </div>
+
+      <div>
+        <div class="card">
+          <h3>Summary</h3>
+          <div class="summary-row">
+            <div class="chip">Total outstanding: <span id="totalOutstanding">₹0</span></div>
+            <div class="chip">Total EMI: <span id="totalEmi">₹0</span></div>
+            <div class="chip">DTI: <span id="dti">0%</span></div>
+          </div>
+          <div style="margin-top:10px" class="small muted">Debt-to-Income (DTI) = Total monthly EMI / Monthly income</div>
+        </div>
+
+        <div class="card">
+          <h3>Charts</h3>
+          <div class="chart-wrap"><canvas id="balanceChart"></canvas></div>
+          <div style="height:12px"></div>
+          <div class="chart-wrap"><canvas id="emiChart"></canvas></div>
+        </div>
+
+        <div class="card">
+          <h3>Plan Timeline (first 24 months)</h3>
+          <pre id="timeline">—</pre>
+        </div>
+
       </div>
     </div>
 
-    <div class="card p-3 mb-4">
-      <h4>Loans</h4>
-      <table class="table table-bordered text-center align-middle">
-        <thead class="table-light">
-          <tr>
-            <th>Loan Name</th>
-            <th>Balance (₹)</th>
-            <th>Interest (%)</th>
-            <th>EMI (₹)</th>
-            <th>Tenure (mo)</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody id="loanTable">
-          <tr>
-            <td><input value="Axis PL"></td>
-            <td><input value="900000" type="number"></td>
-            <td><input value="14" type="number"></td>
-            <td><input value="65002" type="number"></td>
-            <td><input value="24" type="number"></td>
-            <td><button class="btn btn-sm btn-danger" onclick="removeRow(this)">🗑️</button></td>
-          </tr>
-        </tbody>
-      </table>
-      <button class="btn btn-success" onclick="addRow()">➕ Add Loan</button>
-    </div>
-
-    <div id="summary" class="card p-3 mb-4"></div>
-    <canvas id="chart" height="120"></canvas>
+    <footer style="margin-top:12px;font-size:12px;color:var(--muted)">Built for personal planning &amp; education. Not financial advice — verify with lender. Exportable CSV of amortization available.</footer>
   </div>
 
+  <!-- Libraries -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
   <script>
-    function addRow() {
-      const row = `
-        <tr>
-          <td><input placeholder="Loan Name"></td>
-          <td><input type="number" placeholder="0"></td>
-          <td><input type="number" placeholder="0"></td>
-          <td><input type="number" placeholder="0"></td>
-          <td><input type="number" placeholder="0"></td>
-          <td><button class='btn btn-sm btn-danger' onclick='removeRow(this)'>🗑️</button></td>
-        </tr>`;
-      document.getElementById('loanTable').insertAdjacentHTML('beforeend', row);
-    }
+    // Demo loans (you can reset)
+    let loans = [
+      {id:1,name:'Axis PL', balance:900000, rate:14, emi:65002, tenure:24},
+      {id:2,name:'Chola Loan', balance:450000, rate:13, emi:32000, tenure:18},
+      {id:3,name:'Fullerton', balance:250000, rate:15, emi:28000, tenure:12}
+    ];
 
-    function removeRow(btn) {
-      btn.parentElement.parentElement.remove();
-    }
+    const el = selector => document.querySelector(selector);
+    const elAll = selector => Array.from(document.querySelectorAll(selector));
 
-    function analyzeDebt() {
-      const income = parseFloat(document.getElementById('income').value) || 0;
-      const reserve = parseFloat(document.getElementById('reserve').value) || 0;
+    function money(v){return '₹'+Number(v).toLocaleString('en-IN')}
 
-      const rows = document.querySelectorAll('#loanTable tr');
-      const loans = [];
-
-      rows.forEach(r => {
-        const cells = r.querySelectorAll('input');
-        loans.push({
-          name: cells[0].value,
-          balance: parseFloat(cells[1].value) || 0,
-          rate: parseFloat(cells[2].value) || 0,
-          emi: parseFloat(cells[3].value) || 0,
-          tenure: parseFloat(cells[4].value) || 0
-        });
+    function renderLoans(){
+      const tbody = el('#loansTable tbody'); tbody.innerHTML='';
+      loans.forEach(loan=>{
+        const tr=document.createElement('tr');
+        tr.innerHTML=`
+          <td><input data-id="${loan.id}" class="loan-name" value="${loan.name}"/></td>
+          <td><input data-id="${loan.id}" class="loan-balance" type="number" value="${loan.balance}"/></td>
+          <td><input data-id="${loan.id}" class="loan-rate" type="number" value="${loan.rate}" step="0.01"/></td>
+          <td><input data-id="${loan.id}" class="loan-emi" type="number" value="${loan.emi}"/></td>
+          <td><input data-id="${loan.id}" class="loan-tenure" type="number" value="${loan.tenure}"/></td>
+          <td><button data-id="${loan.id}" class="btn ghost remove">Remove</button></td>
+        `;
+        tbody.appendChild(tr);
       });
+    }
 
-      const totalEmi = loans.reduce((sum, l) => sum + l.emi, 0);
-      const totalBalance = loans.reduce((sum, l) => sum + l.balance, 0);
-      const coverageRatio = income / totalEmi;
-
-      let coverageStatus = '';
-      let recoveryAdvice = '';
-
-      if (coverageRatio < 0.75) {
-        coverageStatus = 'Severe Stress';
-        recoveryAdvice = 'You are in a debt spiral. All freed EMI must go to prepayments until EMI < income.';
-      } else if (coverageRatio < 1.0) {
-        coverageStatus = 'Negative Cashflow Zone';
-        recoveryAdvice = 'You’re close to stability — continue using freed EMI for debt prepayment.';
-      } else if (coverageRatio < 1.25) {
-        coverageStatus = 'Recovery Phase';
-        recoveryAdvice = 'You can start reserving a small portion for emergency fund.';
-      } else if (coverageRatio < 2.0) {
-        coverageStatus = 'Stable';
-        recoveryAdvice = 'Healthy balance — maintain this ratio by avoiding new loans.';
-      } else {
-        coverageStatus = 'Healthy';
-        recoveryAdvice = 'Excellent financial health.';
-      }
-
-      // Suggest priority loan (snowball: smallest balance first)
-      const snowballTarget = [...loans].sort((a, b) => a.balance - b.balance)[0];
-      const suggestion = `🎯 Close "${snowballTarget.name}" first to free ₹${snowballTarget.emi.toLocaleString()} EMI.`;
-
-      // Display summary
-      document.getElementById('summary').innerHTML = `
-        <p><b>Total Outstanding:</b> ₹${totalBalance.toLocaleString()}</p>
-        <p><b>Total EMI:</b> ₹${totalEmi.toLocaleString()}</p>
-        <p><b>Monthly Income:</b> ₹${income.toLocaleString()}</p>
-        <p><b>EMI Coverage Ratio:</b> ${coverageRatio.toFixed(2)} (${coverageStatus})</p>
-        <p><b>Advice:</b> ${recoveryAdvice}</p>
-        <p><b>Next Step:</b> ${suggestion}</p>
-      `;
-
-      // Chart: EMI Coverage Ratio
-      const ctx = document.getElementById('chart').getContext('2d');
-      if (window.coverChart) window.coverChart.destroy();
-      window.coverChart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-          labels: ['Coverage Ratio'],
-          datasets: [{
-            label: 'EMI Coverage',
-            data: [coverageRatio],
-            backgroundColor: coverageRatio < 1 ? 'rgba(255,99,132,0.8)' : 'rgba(75,192,192,0.8)'
-          }]
-        },
-        options: {
-          plugins: { legend: { display: false } },
-          scales: {
-            y: {
-              min: 0,
-              max: 2,
-              ticks: { stepSize: 0.25 }
-            }
-          }
+    function readLoansFromTable(){
+      const rows = elAll('#loansTable tbody tr');
+      loans = rows.map((r, idx)=>{
+        const id = Number(r.querySelector('.loan-name').dataset.id);
+        return {
+          id: id,
+          name: r.querySelector('.loan-name').value || ('Loan '+(idx+1)),
+          balance: Number(r.querySelector('.loan-balance').value) || 0,
+          rate: Number(r.querySelector('.loan-rate').value) || 0,
+          emi: Number(r.querySelector('.loan-emi').value) || 0,
+          tenure: Number(r.querySelector('.loan-tenure').value) || 0
         }
       });
+      updateSummary();
     }
+
+    function updateSummary(){
+      const totalOutstanding = loans.reduce((s,l)=>s+l.balance,0);
+      const totalEmi = loans.reduce((s,l)=>s+l.emi,0);
+      const income = Number(el('#monthlyIncome').value) || 1;
+      const dti = totalEmi / income;
+      el('#totalOutstanding').innerText = money(totalOutstanding);
+      el('#totalEmi').innerText = money(totalEmi);
+      el('#dti').innerText = (dti*100).toFixed(1)+'%';
+
+      // quick grade
+      const insights = el('#insights');
+      let grade='';
+      if(dti<0.3) grade='Healthy — good margin';
+      else if(dti<0.5) grade='Caution — consider trimming or consolidation';
+      else grade='High stress — urgent action suggested';
+      insights.innerHTML = `<b>Quick grade:</b> ${grade} <br/><b>Loans:</b> ${loans.length} items`;
+
+      drawCharts();
+    }
+
+    // Chart placeholders
+    let balanceChart, emiChart;
+    function drawCharts(){
+      const labels = loans.map(l=>l.name);
+      const balances = loans.map(l=>l.balance);
+      const emis = loans.map(l=>l.emi);
+
+      if(balanceChart) balanceChart.destroy();
+      const ctx = el('#balanceChart');
+      balanceChart = new Chart(ctx,{type:'bar',data:{labels, datasets:[{label:'Balance',data:balances}]}, options:{plugins:{legend:{display:false}}}});
+
+      if(emiChart) emiChart.destroy();
+      const ctx2 = el('#emiChart');
+      emiChart = new Chart(ctx2,{type:'bar',data:{labels, datasets:[{label:'EMI per month',data:emis}]}, options:{plugins:{legend:{display:false}}}});
+    }
+
+    // Utility: simple amortization for a loan given extra payment applied now
+    function amortize(balance, rate, emi){
+      // monthly rate
+      if(emi<=0) return {months:0, totalPaid:0, totalInterest:0};
+      const r = rate/100/12;
+      let m=0, totalPaid=0, totalInterest=0;
+      let bal = balance;
+      while(bal>0.5 && m<1000){
+        const interest = bal * r;
+        const principal = Math.min(emi - interest, bal);
+        if(principal<=0) { // negative amortization
+          return {months:999, totalPaid:Infinity, totalInterest:Infinity};
+        }
+        bal -= principal;
+        totalInterest += interest;
+        totalPaid += (interest+principal);
+        m++;
+      }
+      return {months:m, totalPaid:totalPaid, totalInterest:totalInterest};
+    }
+
+    // Simulate Snowball/Avalanche with optional one-time prepayment
+    function simulate(){
+      readLoansFromTable();
+      const strategy = document.querySelector('input[name="strategy"]:checked').value;
+      let prepay = Number(el('#prepayAmount').value) || 0;
+      const cashReserve = Number(el('#cashReserve').value) || 0;
+      if(prepay>cashReserve) prepay = cashReserve;
+
+      // copy loans array deep
+      let pool = loans.map(l=>Object.assign({}, l));
+
+      if(strategy==='snowball'){
+        pool.sort((a,b)=>a.balance - b.balance);
+      } else {
+        pool.sort((a,b)=>b.rate - a.rate);
+      }
+
+      // apply prepayment to first target
+      if(prepay>0 && pool.length>0){
+        pool[0].balance = Math.max(0, pool[0].balance - prepay);
+      }
+
+      // For each loan compute new amortization months using existing EMI
+      const timeline = [];
+      let month=0;
+      const monthlyIncome = Number(el('#monthlyIncome').value) || 1;
+      let totalEmi = pool.reduce((s,l)=>s+l.emi,0);
+
+      // We'll simulate for up to 240 months or until all loans cleared
+      const maxMonths = 240;
+      const active = pool.map(l=>Object.assign({}, l));
+
+      for(month=1; month<=maxMonths; month++){
+        // find loans still outstanding
+        const outstanding = active.filter(a=>a.balance>0);
+        if(outstanding.length===0) break;
+        // pay EMI for each loan; if a loan's EMI pays off this month, free that EMI next month
+        for(const loan of outstanding){
+          const r = loan.rate/100/12;
+          const interest = loan.balance * r;
+          const principal = Math.min(Math.max(loan.emi - interest,0), loan.balance);
+          loan.balance = Math.max(0, loan.balance - principal);
+        }
+        // after payments, if any loan cleared this month, roll its EMI into next target
+        const cleared = active.filter(a=>a.balance<=0 && !a._notedClear);
+        for(const c of cleared){
+          c._notedClear = true;
+          // find next target: the next loan in 'active' with balance>0 according to strategy
+          const targets = active.filter(a=>a.balance>0 && a.id!==c.id);
+          if(targets.length>0){
+            // add freed EMI to the highest priority target (first in sorted list)
+            targets[0].emi += c.emi;
+          }
+        }
+        // store timeline snapshot for first 24 months
+        if(month<=24){
+          timeline.push({month, totalOutstanding: active.reduce((s,a)=>s+a.balance,0), totalEmi: active.reduce((s,a)=>s+a.emi,0)});
+        }
+      }
+
+      // final totals
+      const monthsToClear = month<=maxMonths?month:Infinity;
+      const totalOutstandingNow = active.reduce((s,a)=>s+a.balance,0);
+      const totalEmiNow = active.reduce((s,a)=>s+a.emi,0);
+
+      // Update UI
+      el('#timeline').innerText = timeline.map(t=>`M${t.month}: Remaining ₹${Math.round(t.totalOutstanding).toLocaleString('en-IN')} | EMI ₹${Math.round(t.totalEmi).toLocaleString('en-IN')}`).join('\n') || 'All cleared';
+
+      // show insights
+      const dtiBefore = (loans.reduce((s,l)=>s+l.emi,0) / (Number(el('#monthlyIncome').value)||1));
+      const dtiAfter = (totalEmiNow / (Number(el('#monthlyIncome').value)||1));
+      const insights = [];
+      insights.push(`<b>Strategy:</b> ${strategy.charAt(0).toUpperCase()+strategy.slice(1)}`);
+      insights.push(`<b>Applied prepayment:</b> ${money(prepay)} (from reserve ${money(cashReserve)})`);
+      insights.push(`<b>Estimated months to clear (sim):</b> ${isFinite(monthsToClear)?monthsToClear+' months':'>240 months'}`);
+      insights.push(`<b>DTI before:</b> ${(dtiBefore*100).toFixed(1)}% • <b>after:</b> ${(dtiAfter*100).toFixed(1)}%`);
+
+      // suggestion engine (simple)
+      if(dtiAfter>0.6) insights.push('<b>Suggestion:</b> Consider consolidation to lower rate or larger prepayment to high-rate accounts (credit card).');
+      else if(dtiAfter>0.4) insights.push('<b>Suggestion:</b> Target highest EMI loans for prepayment — aim to free one EMI within 3 months.');
+      else insights.push('<b>Suggestion:</b> Good progress — consider maintaining emergency reserve of at least 3 months of EMI.');
+
+      el('#insights').innerHTML = insights.join('<br/>');
+
+      // Update summary after simulation
+      el('#totalOutstanding').innerText = money(active.reduce((s,a)=>s+a.balance,0));
+      el('#totalEmi').innerText = money(active.reduce((s,a)=>s+a.emi,0));
+      el('#dti').innerText = ((active.reduce((s,a)=>s+a.emi,0)/Number(el('#monthlyIncome').value)||1)*100).toFixed(1)+'%';
+
+      // redraw charts with new balances & emis
+      const labels = active.map(a=>a.name);
+      const balances = active.map(a=>Math.round(a.balance));
+      const emis = active.map(a=>Math.round(a.emi));
+      balanceChart.data.labels = labels; balanceChart.data.datasets[0].data = balances; balanceChart.update();
+      emiChart.data.labels = labels; emiChart.data.datasets[0].data = emis; emiChart.update();
+    }
+
+    // Export CSV of current loans
+    function exportCsv(){
+      readLoansFromTable();
+      let csv = 'Loan,Balance,Rate,EMI,Tenure\n';
+      loans.forEach(l=>{csv += `${l.name},${l.balance},${l.rate},${l.emi},${l.tenure}\n`});
+      const blob = new Blob([csv], {type:'text/csv'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a'); a.href=url; a.download = 'debt-summary.csv'; a.click(); URL.revokeObjectURL(url);
+    }
+
+    // Event wiring
+    document.addEventListener('click', e=>{
+      if(e.target.id==='addLoanBtn'){
+        const id = Date.now(); loans.push({id,name:'New Loan',balance:0,rate:12,emi:0,tenure:12}); renderLoans();
+      }
+      if(e.target.classList && e.target.classList.contains('remove')){
+        const id = Number(e.target.dataset.id); loans = loans.filter(l=>l.id!==id); renderLoans(); updateSummary();
+      }
+      if(e.target.id==='simulateBtn') simulate();
+      if(e.target.id==='resetBtn'){
+        loans = [
+          {id:1,name:'Axis PL', balance:900000, rate:14, emi:65002, tenure:24},
+          {id:2,name:'Chola Loan', balance:450000, rate:13, emi:32000, tenure:18},
+          {id:3,name:'Fullerton', balance:250000, rate:15, emi:28000, tenure:12}
+        ]; renderLoans(); updateSummary();
+      }
+      if(e.target.id==='exportCsv') exportCsv();
+    });
+
+    // table input change
+    document.addEventListener('input', e=>{ if(e.target.closest && e.target.closest('table')) readLoansFromTable(); });
+
+    // init
+    renderLoans(); updateSummary();
   </script>
 </body>
 </html>
