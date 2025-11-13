@@ -7,7 +7,7 @@ import Charts from './components/Charts';
 import Timeline from './components/Timeline';
 import Insights from './components/Insights';
 import { simulate } from './utils/amortize';
-// trigger deploy
+
 export default function App() {
   const [monthlyIncome, setMonthlyIncome] = useState(150000);
   const [cashReserve, setCashReserve] = useState(900000);
@@ -32,7 +32,7 @@ export default function App() {
     };
     setLoans([...loans, newLoan]);
   };
-
+// trigger deploy
   const handleUpdateLoan = (id, field, value) => {
     setLoans(loans.map((loan) => (loan.id === id ? { ...loan, [field]: value } : loan)));
   };
