@@ -100,7 +100,11 @@ export default function App() {
       />
 
       <StrategySelector strategy={strategy} onChange={handleStrategyChange} />
-      <button className="btn" onClick={handleSimulate}>Simulate</button>
+      
+      <div style={{ marginTop: '12px' }}>
+        <button className="btn" onClick={handleSimulate}>Simulate</button>
+      </div>
+
 
       <Summary
         totalOutstanding={totalOutstanding}
