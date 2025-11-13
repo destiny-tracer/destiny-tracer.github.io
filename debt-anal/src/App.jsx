@@ -6,6 +6,7 @@ import Summary from './components/Summary';
 import Charts from './components/Charts';
 import Timeline from './components/Timeline';
 import Insights from './components/Insights';
+import { simulate } from './utils/amortize';
 
 export default function App() {
   const [monthlyIncome, setMonthlyIncome] = useState(150000);
@@ -65,6 +66,12 @@ export default function App() {
   const handleStrategyChange = (e) => {
     setStrategy(e.target.value);
   };
+  const handleSimulate = () => {
+  const result = simulate(loans, strategy, prepayAmount, monthlyIncome);
+  setTimeline(result.timeline);
+  setInsights(result.insights);
+  setLoans(result.updatedLoans);
+  };
 
   const totalOutstanding = loans.reduce((sum, loan) => sum + loan.balance, 0);
   const totalEmi = loans.reduce((sum, loan) => sum + loan.emi, 0);
@@ -93,6 +100,7 @@ export default function App() {
       />
 
       <StrategySelector strategy={strategy} onChange={handleStrategyChange} />
+      <button className="btn" onClick={handleSimulate}>Simulate</button>
 
       <Summary
         totalOutstanding={totalOutstanding}
