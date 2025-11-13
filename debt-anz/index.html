@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Debt & EMI Analyzer</title>
+  style.css
+  https://cdn.jsdelivr.net/npm/chart.js</script>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>💸 Debt & EMI Analyzer</h1>
+      <p>Track your debts, calculate EMIs, and reduce financial burden smartly.</p>
+      <button id="themeToggle">🌙 Toggle Dark Mode</button>
+    </header>
+
+    <section class="card">
+      <h2>Income Details</h2>
+      <div class="grid">
+        <input type="number" id="primaryIncome" placeholder="Primary Income">
+        <input type="number" id="additionalIncome" placeholder="Additional Income">
+        <input type="number" id="reserveCash" placeholder="Reserve Cash">
+        <input type="number" id="rentalIncome" placeholder="Rental Income">
+        <input type="number" id="miscIncome" placeholder="Misc Income">
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Add Debt</h2>
+      <div class="grid">
+        <input type="text" id="accountName" placeholder="Account Name">
+        <select id="accountType">
+          <option>Credit Card</option>
+          <option>Housing Loan</option>
+          <option>Personal Loan</option>
+          <option>App Loan</option>
+          <option>Auto Loan</option>
+          <option>Insurance Loan</option>
+          <option>Non-Banking Loan</option>
+          <option>Jewellery Loan</option>
+        </select>
+        <input type="text" id="accountNo" placeholder="Account Number">
+        <input type="date" id="dateOpened">
+        <input type="number" id="sanctionAmount" placeholder="Sanction Amount">
+        <input type="number" id="interestRate" placeholder="Interest Rate (%)">
+        <input type="number" id="tenure" placeholder="Tenure (months)">
+        <input type="number" id="paidEMI" placeholder="Paid EMI">
+      </div>
+      <button onclick="addDebt()">➕ Add Debt</button>
+    </section>
+
+    <section class="card">
+      <h2>Summary</h2>
+      <div id="summary"></div>
+      <canvas id="debtChart"></canvas>
+    </section>
+  </div>
+
+  script.js</script>
+  charts.js</script>
+</body>
+</html>
