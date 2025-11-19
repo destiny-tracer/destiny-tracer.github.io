@@ -123,3 +123,22 @@ function updateSummary() {
 
 // ===== Load Data on Start =====
 window.onload = loadData;
+function resetAllData() {
+  if (!confirm("⚠️ Are you sure you want to reset all data? This cannot be undone.")) return;
+
+  // Clear arrays and objects
+  debts = [];
+  savings = [];
+  income = {};
+  expenses = {};
+
+  // Clear localStorage
+  localStorage.removeItem('smartDebt');
+
+  // Reset all input fields
+  document.querySelectorAll('input').forEach(input => input.value = '');
+  document.querySelectorAll('select').forEach(select => select.selectedIndex = 0);
+
+  // Update summary and charts
+  updateSummary();
+}
