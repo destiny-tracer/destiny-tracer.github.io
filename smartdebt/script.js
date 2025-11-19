@@ -1,144 +1,157 @@
-// ===== Data Arrays =====
-let debts = [];
-let savings = [];
-let income = {};
-let expenses = {};
+// script.js
 
-// ===== LocalStorage =====
-function saveData() {
-  localStorage.setItem('smartDebt', JSON.stringify({debts, savings, income, expenses}));
+// ======== Helper Functions ========
+function getData(key) {
+  return JSON.parse(localStorage.getItem(key) || '[]');
 }
 
-function loadData() {
-  const data = JSON.parse(localStorage.getItem('smartDebt'));
-  if (!data) return;
-  debts = data.debts || [];
-  savings = data.savings || [];
-  income = data.income || {};
-  expenses = data.expenses || {};
-  updateSummary();
+function saveData(key, data) {
+  localStorage.setItem(key, JSON.stringify(data));
 }
 
-// ===== Income & Expense =====
-function collectIncomeExpenses() {
-  income.primary = parseFloat(document.getElementById('primaryIncome').value) || 0;
-  income.additional = parseFloat(document.getElementById('additionalIncome').value) || 0;
-  income.rental = parseFloat(document.getElementById('rentalIncome').value) || 0;
-  income.misc = parseFloat(document.getElementById('miscIncome').value) || 0;
-
-  expenses.living = parseFloat(document.getElementById('livingExpense').value) || 0;
-  expenses.education = parseFloat(document.getElementById('educationExpense').value) || 0;
-  expenses.travel = parseFloat(document.getElementById('travelExpense').value) || 0;
-  expenses.misc = parseFloat(document.getElementById('miscExpense').value) || 0;
+function resetData() {
+  localStorage.clear();
+  location.reload();
 }
 
-// ===== Debt =====
-function calculateEMI(principal, rate, tenure) {
-  if (rate === 0) return Math.round(principal / tenure);
-  let monthlyRate = rate / 12 / 100;
-  return Math.round((principal * monthlyRate * Math.pow(1 + monthlyRate, tenure)) /
-    (Math.pow(1 + monthlyRate, tenure) - 1));
+// ======== Data Arrays ========
+let debts = getData('debts');
+let savings = getData('savings');
+let incomeData = getData('income');
+let expensesData = getData('expenses');
+
+// ======== DOM Elements ========
+const addBtn = document.getElementById('addBtn');
+const resetBtn = document.getElementById('resetBtn');
+
+const totalIncomeEl = document.getElementById('totalIncome');
+const totalExpensesEl = document.getElementById('totalExpenses');
+const totalDebtEl = document.getElementById('totalDebt');
+const totalSavingsEl = document.getElementById('totalSavings');
+
+const debtStrategyEl = document.getElementById('debtStrategy');
+const savingStrategyEl = document.getElementById('savingStrategy');
+
+const statusChartEl = document.getElementById('statusChart').getContext('2d');
+
+let chartInstance = null;
+
+// ======== Functions ========
+
+function calculateTotals() {
+  const totalIncome = incomeData.reduce((a, b) => a + b, 0);
+  const totalExpenses = expensesData.reduce((a, b) => a + b, 0);
+  const totalDebt = debts.reduce((a, b) => a + b.amount, 0);
+  const totalSavings = savings.reduce((a, b) => a + b.amount, 0);
+
+  totalIncomeEl.textContent = `₹ ${totalIncome.toLocaleString()}`;
+  totalExpensesEl.textContent = `₹ ${totalExpenses.toLocaleString()}`;
+  totalDebtEl.textContent = `₹ ${totalDebt.toLocaleString()}`;
+  totalSavingsEl.textContent = `₹ ${totalSavings.toLocaleString()}`;
+
+  return { totalIncome, totalExpenses, totalDebt, totalSavings };
 }
 
-function addDebt() {
-  collectIncomeExpenses();
-  const debt = {
-    name: document.getElementById('debtName').value,
-    type: document.getElementById('debtType').value,
-    principal: parseFloat(document.getElementById('debtAmount').value) || 0,
-    interest: parseFloat(document.getElementById('debtInterest').value) || 0,
-    tenure: parseInt(document.getElementById('debtTenure').value) || 0,
-    paid: parseInt(document.getElementById('debtPaid').value) || 0
+function generateDebtStrategy(totalDebt, totalIncome) {
+  if (totalDebt === 0) return 'No debts! 🎉 Keep saving.';
+  const ratio = totalDebt / totalIncome;
+  if (ratio > 2) return 'High debt: prioritize clearing highest interest debts first 💳.';
+  if (ratio > 1) return 'Medium debt: consider EMI consolidation or balance transfer ⚡.';
+  return 'Manageable debt: continue regular payments 🏦.';
+}
+
+function generateSavingStrategy(totalSavings, totalIncome) {
+  if (totalSavings === 0) return 'Start saving! Allocate at least 20% of income 💰.';
+  const ratio = totalSavings / totalIncome;
+  if (ratio < 0.5) return 'Increase SIP or FD contributions to grow savings faster 📈.';
+  return 'Good savings! Explore high-yield options like mutual funds or gold 💎.';
+}
+
+function updateChart(totals) {
+  const data = {
+    labels: ['Income', 'Expenses', 'Debt', 'Savings'],
+    datasets: [{
+      label: 'Financial Overview',
+      data: [totals.totalIncome, totals.totalExpenses, totals.totalDebt, totals.totalSavings],
+      backgroundColor: ['#0ea5a4', '#f97316', '#ef4444', '#3b82f6'],
+      borderRadius: 6
+    }]
   };
-  debt.emi = calculateEMI(debt.principal, debt.interest, debt.tenure);
-  debt.remainingEMI = debt.tenure - debt.paid;
-  debts.push(debt);
-  saveData();
-  updateSummary();
+
+  if (chartInstance) {
+    chartInstance.data = data;
+    chartInstance.update();
+  } else {
+    chartInstance = new Chart(statusChartEl, {
+      type: 'bar',
+      data: data,
+      options: {
+        responsive: true,
+        plugins: { legend: { display: false } },
+        scales: {
+          y: { beginAtZero: true }
+        }
+      }
+    });
+  }
 }
 
-// ===== Savings =====
-function addSaving() {
-  const saving = {
-    name: document.getElementById('savingName').value,
-    type: document.getElementById('savingType').value,
-    amount: parseFloat(document.getElementById('savingAmount').value) || 0
-  };
-  savings.push(saving);
-  saveData();
-  updateSummary();
-}
-
-// ===== Summary & Strategies =====
 function updateSummary() {
-  collectIncomeExpenses();
-
-  // Debt totals
-  const totalDebtEMI = debts.reduce((sum,d)=>sum+d.emi,0);
-  const totalDebtOutstanding = debts.reduce((sum,d)=>sum+d.emi*d.remainingEMI,0);
-
-  // Savings totals
-  const totalSavings = savings.reduce((sum,s)=>sum+s.amount,0);
-
-  // Income & Expenses
-  const totalIncome = Object.values(income).reduce((a,b)=>a+b,0);
-  const totalExpenses = Object.values(expenses).reduce((a,b)=>a+b,0);
-  const surplus = totalIncome - totalExpenses - totalDebtEMI;
-
-  // Display summary
-  let html = `
-    <p><strong>Total Income:</strong> ₹${totalIncome}</p>
-    <p><strong>Total Expenses:</strong> ₹${totalExpenses}</p>
-    <p><strong>Total Debt EMI:</strong> ₹${totalDebtEMI}</p>
-    <p><strong>Total Debt Outstanding:</strong> ₹${totalDebtOutstanding}</p>
-    <p><strong>Total Savings:</strong> ₹${totalSavings}</p>
-    <p><strong>Available Surplus:</strong> ₹${surplus}</p>
-    <h3>💡 Debt Strategy</h3>
-  `;
-
-  // Debt strategies: Snowball & Avalanche
-  const snowball = [...debts].sort((a,b)=>a.remainingEMI*a.emi - b.remainingEMI*b.emi);
-  const avalanche = [...debts].sort((a,b)=>b.interest - a.interest);
-
-  html += `<h4>Snowball (smallest debt first)</h4><ul>`;
-  snowball.forEach(d=>html+=`<li>${d.name} - ₹${d.remainingEMI*d.emi} remaining</li>`);
-  html += `</ul><h4>Avalanche (highest interest first)</h4><ul>`;
-  avalanche.forEach(d=>html+=`<li>${d.name} - ${d.interest}% interest</li>`);
-  html += `</ul>`;
-
-  // Savings strategy (double current savings in 5 years approx)
-  html += `<h3>💰 Savings Strategy</h3>`;
-  savings.forEach(s=>{
-    const doubled = s.amount * 2;
-    html += `<p>${s.name} (${s.type}) → Target: ₹${doubled}</p>`;
-  });
-
-  document.getElementById('summary').innerHTML = html;
-
-  // Render Charts
-  renderDebtChart(debts);
-  renderSavingChart(savings);
-  renderCashflowChart(totalIncome, totalExpenses, totalDebtEMI, totalSavings);
+  const totals = calculateTotals();
+  debtStrategyEl.textContent = generateDebtStrategy(totals.totalDebt, totals.totalIncome);
+  savingStrategyEl.textContent = generateSavingStrategy(totals.totalSavings, totals.totalIncome);
+  updateChart(totals);
 }
 
-// ===== Load Data on Start =====
-window.onload = loadData;
-function resetAllData() {
-  if (!confirm("⚠️ Are you sure you want to reset all data? This cannot be undone.")) return;
+// ======== Event Listeners ========
 
-  // Clear arrays and objects
-  debts = [];
-  savings = [];
-  income = {};
-  expenses = {};
+addBtn.addEventListener('click', () => {
+  // Income
+  const primaryIncome = parseFloat(document.getElementById('primaryIncome').value) || 0;
+  const additionalIncome = parseFloat(document.getElementById('additionalIncome').value) || 0;
+  if (primaryIncome) incomeData.push(primaryIncome);
+  if (additionalIncome) incomeData.push(additionalIncome);
 
-  // Clear localStorage
-  localStorage.removeItem('smartDebt');
+  // Expenses
+  const expenses = parseFloat(document.getElementById('expenses').value) || 0;
+  const emiPayments = parseFloat(document.getElementById('emiPayments').value) || 0;
+  if (expenses) expensesData.push(expenses);
+  if (emiPayments) expensesData.push(emiPayments);
 
-  // Reset all input fields
-  document.querySelectorAll('input').forEach(input => input.value = '');
-  document.querySelectorAll('select').forEach(select => select.selectedIndex = 0);
+  // Debts
+  const debtName = document.getElementById('debtName').value.trim();
+  const debtType = document.getElementById('debtType').value;
+  const debtAmount = parseFloat(document.getElementById('debtAmount').value) || 0;
+  const debtInterest = parseFloat(document.getElementById('debtInterest').value) || 0;
+  const debtTenure = parseInt(document.getElementById('debtTenure').value) || 0;
 
-  // Update summary and charts
+  if (debtName && debtAmount > 0) {
+    debts.push({ debtName, debtType, amount: debtAmount, interest: debtInterest, tenure: debtTenure });
+  }
+
+  // Savings
+  const savingName = document.getElementById('savingName').value.trim();
+  const savingType = document.getElementById('savingType').value;
+  const savingAmount = parseFloat(document.getElementById('savingAmount').value) || 0;
+
+  if (savingName && savingAmount > 0) {
+    savings.push({ savingName, savingType, amount: savingAmount });
+  }
+
+  // Save to localStorage
+  saveData('debts', debts);
+  saveData('savings', savings);
+  saveData('income', incomeData);
+  saveData('expenses', expensesData);
+
+  // Update summary
   updateSummary();
-}
+
+  // Clear inputs
+  document.getElementById('debtForm').reset();
+});
+
+resetBtn.addEventListener('click', resetData);
+
+// ======== Initialize ========
+updateSummary();
