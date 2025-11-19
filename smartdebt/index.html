@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>SmartDebt — Small apps</title>
+
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <!-- Shared site styles -->
+  <link rel="stylesheet" href="../style.css">
+
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <main class="home">
+    <header class="home-header">
+      <div class="brand">
+        <div class="logo" style="font-size: 36px;">💳</div>
+        <div>
+          <h1>SmartDebt</h1>
+          <p class="tag">Track debts, savings & income — analyze and optimize finances</p>
+        </div>
+      </div>
+    </header>
+
+    <section class="card">
+      <h2>Income</h2>
+      <div class="grid">
+        <input type="number" id="primaryIncome" placeholder="Primary Income">
+        <input type="number" id="additionalIncome" placeholder="Additional Income">
+        <input type="number" id="rentalIncome" placeholder="Rental Income">
+        <input type="number" id="miscIncome" placeholder="Misc Income">
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Expenses</h2>
+      <div class="grid">
+        <input type="number" id="livingExpense" placeholder="Living Expenses">
+        <input type="number" id="educationExpense" placeholder="Education">
+        <input type="number" id="travelExpense" placeholder="Travel">
+        <input type="number" id="miscExpense" placeholder="Miscellaneous">
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Add Debt</h2>
+      <div class="grid">
+        <input type="text" id="debtName" placeholder="Debt Name">
+        <select id="debtType">
+          <option>Credit Card</option>
+          <option>App Loan</option>
+          <option>Personal Loan</option>
+          <option>Housing Loan</option>
+          <option>Motor Loan</option>
+          <option>Insurance Loan</option>
+          <option>Gold Loan</option>
+          <option>Chit (Private)</option>
+        </select>
+        <input type="number" id="debtAmount" placeholder="Principal Amount">
+        <input type="number" id="debtInterest" placeholder="Interest Rate (%)">
+        <input type="number" id="debtTenure" placeholder="Tenure (months)">
+        <input type="number" id="debtPaid" placeholder="EMIs Paid">
+      </div>
+      <button onclick="addDebt()">➕ Add Debt</button>
+    </section>
+
+    <section class="card">
+      <h2>Add Savings</h2>
+      <div class="grid">
+        <input type="text" id="savingName" placeholder="Saving Name">
+        <select id="savingType">
+          <option>Fixed Deposit</option>
+          <option>Insurance</option>
+          <option>Mutual Funds</option>
+          <option>Gold Chit</option>
+          <option>Private Chit</option>
+        </select>
+        <input type="number" id="savingAmount" placeholder="Amount">
+      </div>
+      <button onclick="addSaving()">➕ Add Saving</button>
+    </section>
+
+    <section class="card">
+      <h2>Summary</h2>
+      <div id="summary"></div>
+      <canvas id="debtChart"></canvas>
+      <canvas id="savingChart"></canvas>
+      <canvas id="cashflowChart"></canvas>
+    </section>
+  </main>
+
+  <script src="charts.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
