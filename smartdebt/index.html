@@ -1,91 +1,164 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>SmartDebt — Destiny Tracer</title>
+
+  <!-- Google Font -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../style.css" />
+
+  <link rel="stylesheet" href="style.css" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-  <main class="home">
-    <header class="home-header">
-      <h1>💳💰 SmartDebt</h1>
-      <p>Track your debts, savings, income & expenses — get strategies to reduce EMI and double savings!</p>
+  <main class="site">
+    <header class="header">
+      <div class="brand">
+        <svg class="mark" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <defs>
+            <linearGradient id="grad" x1="0" x2="1">
+              <stop offset="0" stop-color="#0ea5a4" />
+              <stop offset="1" stop-color="#3b82f6" />
+            </linearGradient>
+          </defs>
+          <rect x="2" y="4" width="20" height="16" rx="4" fill="url(#grad)"></rect>
+          <path d="M7 14l3-5 4 6 3-4" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+        </svg>
+        <div>
+          <h1>SmartDebt</h1>
+          <p class="tag">Modern debt, savings & EMI management</p>
+        </div>
+      </div>
     </header>
 
-    <section class="apps-grid">
-      <!-- Income Section -->
-      <article class="app-card">
-        <h3 class="app-title">Income 💵</h3>
-        <div class="grid">
-          <input type="number" placeholder="Primary Income" id="primaryIncome">
-          <input type="number" placeholder="Additional Income" id="additionalIncome">
-          <input type="number" placeholder="Rental Income" id="rentalIncome">
-          <input type="number" placeholder="Misc Income" id="miscIncome">
-        </div>
-      </article>
+    <section class="content">
+      <form id="debtForm" class="panel" onsubmit="return false;" aria-labelledby="formTitle">
+        <h2 id="formTitle">Add Debt / Savings / Income</h2>
 
-      <!-- Expenses Section -->
-      <article class="app-card">
-        <h3 class="app-title">Expenses 💸</h3>
         <div class="grid">
-          <input type="number" placeholder="Monthly Expenses" id="expenses">
-          <input type="number" placeholder="EMI Payments" id="emiPayments">
-          <input type="number" placeholder="Other Obligations" id="otherObligations">
-        </div>
-      </article>
+          <!-- Income -->
+          <label class="field">
+            <span class="label">Primary Income</span>
+            <input id="primaryIncome" type="number" placeholder="Enter your main income" />
+          </label>
+          <label class="field">
+            <span class="label">Additional Income</span>
+            <input id="additionalIncome" type="number" placeholder="Other income" />
+          </label>
 
-      <!-- Debts Section -->
-      <article class="app-card">
-        <h3 class="app-title">Debts 🏦</h3>
-        <div class="grid">
-          <input type="text" placeholder="Account Name" id="debtName">
-          <select id="debtType">
-            <option>Credit Card</option>
-            <option>App Loan</option>
-            <option>Personal Loan</option>
-            <option>Housing Loan</option>
-            <option>Motor Loan</option>
-            <option>Insurance Loan</option>
-            <option>Gold Loan</option>
-            <option>Chit (Private)</option>
-          </select>
-          <input type="number" placeholder="Sanction Amount" id="debtAmount">
-          <input type="number" placeholder="Interest Rate %" id="debtInterest">
-          <input type="number" placeholder="Tenure (months)" id="debtTenure">
-          <input type="number" placeholder="Paid EMIs" id="debtPaid">
-        </div>
-        <button onclick="addDebt()">➕ Add Debt</button>
-      </article>
+          <!-- Expenses -->
+          <label class="field">
+            <span class="label">Monthly Expenses</span>
+            <input id="expenses" type="number" placeholder="Rent, bills, etc." />
+          </label>
+          <label class="field">
+            <span class="label">EMI Payments</span>
+            <input id="emiPayments" type="number" placeholder="Total EMI per month" />
+          </label>
 
-      <!-- Savings Section -->
-      <article class="app-card">
-        <h3 class="app-title">Savings 💎</h3>
-        <div class="grid">
-          <input type="text" placeholder="Account Name" id="savingName">
-          <select id="savingType">
-            <option>Fixed Deposit</option>
-            <option>Insurance</option>
-            <option>Mutual Funds</option>
-            <option>Gold</option>
-            <option>Chit</option>
-            <option>Private Chit</option>
-          </select>
-          <input type="number" placeholder="Amount Saved" id="savingAmount">
-        </div>
-        <button onclick="addSaving()">➕ Add Saving</button>
-      </article>
+          <!-- Debts -->
+          <label class="field">
+            <span class="label">Debt Name</span>
+            <input id="debtName" type="text" placeholder="e.g. Credit Card, Personal Loan" />
+          </label>
+          <label class="field">
+            <span class="label">Debt Type</span>
+            <select id="debtType">
+              <option>Credit Card</option>
+              <option>App Loan</option>
+              <option>Personal Loan</option>
+              <option>Housing Loan</option>
+              <option>Motor Loan</option>
+              <option>Insurance Loan</option>
+              <option>Gold Loan</option>
+              <option>Chit (Private)</option>
+            </select>
+          </label>
+          <label class="field">
+            <span class="label">Debt Amount</span>
+            <input id="debtAmount" type="number" placeholder="Sanctioned amount" />
+          </label>
+          <label class="field">
+            <span class="label">Interest Rate %</span>
+            <input id="debtInterest" type="number" placeholder="Annual interest rate" />
+          </label>
+          <label class="field">
+            <span class="label">Tenure (months)</span>
+            <input id="debtTenure" type="number" placeholder="Duration in months" />
+          </label>
 
-      <!-- Summary Section -->
-      <article class="app-card">
-        <h3 class="app-title">Summary 📊</h3>
-        <div id="summary"></div>
-        <canvas id="statusChart"></canvas>
-        <button onclick="resetAll()">🗑 Reset All Data</button>
-      </article>
+          <!-- Savings -->
+          <label class="field">
+            <span class="label">Saving Name</span>
+            <input id="savingName" type="text" placeholder="FD, Mutual Fund, Chit, etc." />
+          </label>
+          <label class="field">
+            <span class="label">Saving Type</span>
+            <select id="savingType">
+              <option>Fixed Deposit</option>
+              <option>Insurance</option>
+              <option>Mutual Funds</option>
+              <option>Gold</option>
+              <option>Chit</option>
+              <option>Private Chit</option>
+            </select>
+          </label>
+          <label class="field">
+            <span class="label">Amount Saved</span>
+            <input id="savingAmount" type="number" placeholder="Current savings" />
+          </label>
+        </div>
+
+        <div class="actions">
+          <button id="addBtn" class="btn primary" type="button">Add Entry</button>
+          <button id="resetBtn" class="btn ghost" type="button">Reset All Data</button>
+        </div>
+      </form>
+
+      <aside class="result" id="results" aria-live="polite">
+        <h2 class="panel-title">Summary 📊</h2>
+
+        <div class="breakdown" style="margin-bottom:12px; padding:12px; border-radius:8px; background:linear-gradient(180deg,#fff,#fbfdff); border:1px solid rgba(3,7,18,0.03);">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:8px">
+            <div style="color:var(--muted);font-size:0.9rem">Total Income</div>
+            <div id="totalIncome" style="font-weight:700;color:var(--accent-strong)">—</div>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:8px">
+            <div style="color:var(--muted);font-size:0.9rem">Total Expenses</div>
+            <div id="totalExpenses" style="font-weight:700;color:var(--accent-strong)">—</div>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:12px">
+            <div style="color:var(--muted);font-size:0.9rem">Total Debt</div>
+            <div id="totalDebt" style="font-weight:700;color:var(--accent-strong)">—</div>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:12px">
+            <div style="color:var(--muted);font-size:0.9rem">Total Savings</div>
+            <div id="totalSavings" style="font-weight:700;color:var(--accent-strong)">—</div>
+          </div>
+        </div>
+
+        <div class="cards">
+          <div class="card">
+            <div class="card-title">Debt Reduction Strategy</div>
+            <div class="card-value" id="debtStrategy">—</div>
+            <div class="card-note">Suggested method to reduce EMI burden</div>
+          </div>
+
+          <div class="card">
+            <div class="card-title">Savings Growth Strategy</div>
+            <div class="card-value" id="savingStrategy">—</div>
+            <div class="card-note">Suggested ways to double current savings</div>
+          </div>
+        </div>
+
+        <canvas id="statusChart" style="margin-top:16px;"></canvas>
+      </aside>
     </section>
+
+    <footer class="footer">
+      <small>Built by destiny-tracer — runs entirely in your browser, no data leaves your device.</small>
+    </footer>
   </main>
 
   <script src="script.js"></script>
