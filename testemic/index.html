@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>EMI Calculator</title>
+  style.css
+</head>
+<body>
+  <div class="container">
+    <h1>EMI Calculator</h1>
+    <div class="calculator">
+      <input type="number" id="loanAmount" placeholder="Loan Amount (₹)" />
+      <input type="number" id="interestRate" placeholder="Interest Rate (%)" />
+      <input type="number" id="loanTenure" placeholder="Tenure (Months)" />
+      <button onclick="calculateEMI()">Calculate</button>
+      <button onclick="resetForm()">Reset</button>
+    </div>
+
+    <div class="results" id="results" style="display: none;">
+      <p><strong>Monthly EMI:</strong> ₹<span id="emiResult">0</span></p>
+      <p><strong>Total Interest:</strong> ₹<span id="interestResult">0</span></p>
+      <p><strong>Total Payment:</strong> ₹<span id="totalPaymentResult">0</span></p>
+    </div>
+
+    <canvas id="emiChart" width="400" height="300" style="display: none;"></canvas>
+  </div>
+
+  chart.js</script>
+  script.js</script>
+</body>
+</html>
