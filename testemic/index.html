@@ -5,28 +5,57 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>EMI Calculator</title>
   style.css
+  https://fonts.googleapis.com/css2?family=Inter&display=swap
 </head>
 <body>
-  <div class="container">
-    <h1>EMI Calculator</h1>
-    <div class="calculator">
-      <input type="number" id="loanAmount" placeholder="Loan Amount (₹)" />
-      <input type="number" id="interestRate" placeholder="Interest Rate (%)" />
-      <input type="number" id="loanTenure" placeholder="Tenure (Months)" />
-      <button onclick="calculateEMI()">Calculate</button>
-      <button onclick="resetForm()">Reset</button>
+  <div class="home">
+    <div class="home-header">
+      <div class="brand">
+        <img src="https://destiny-tracer.github.io/savgcalc/logo.png"iv>
+          <h1>EMI Calculator</h1>
+          <p class="tag">Calculate your monthly loan repayments</p>
+        </div>
+      </div>
+      <div class="header-actions">
+        <a href="#" class="btn ghoster</a>
+      </div>
     </div>
 
-    <div class="results" id="results" style="display: none;">
-      <p><strong>Monthly EMI:</strong> ₹<span id="emiResult">0</span></p>
-      <p><strong>Total Interest:</strong> ₹<span id="interestResult">0</span></p>
-      <p><strong>Total Payment:</strong> ₹<span id="totalPaymentResult">0</span></p>
+    <p class="intro">Enter your loan details below to calculate your monthly EMI, total interest, and total payment.</p>
+
+    <div class="apps-grid">
+      <div class="app-card">
+        <div class="app-icon">💰</div>
+        <h2 class="app-title">EMI Calculator</h2>
+        <p class="app-desc">Simple tool to calculate loan repayments.</p>
+
+        <div class="calculator">
+          <input type="number" id="loanAmount" placeholder="Loan Amount (₹)" />
+          <input type="number" id="interestRate" placeholder="Interest Rate (%)" />
+          <input type="number" id="loanTenure" placeholder="Tenure (Months)" />
+          <div class="header-actions">
+            <button class="btn primary" onclick="calculateEMI()">Calculate</button>
+            <button class="btn ghost" onclick="resetForm()">Reset</button>
+          </div>
+        </div>
+
+        <div class="results" id="results" style="display: none;">
+          <p><strong>Monthly EMI:</strong> ₹<span id="emiResult">0</span></p>
+          <p><strong>Total Interest:</strong> ₹<span id="interestResult">0</span></p>
+          <p><strong>Total Payment:</strong> ₹<span id="totalPaymentResult">0</span></p>
+        </div>
+
+        <canvas id="emiChart" width="400" height="300" style="display: none;"></canvas>
+      </div>
     </div>
 
-    <canvas id="emiChart" width="400" height="300" style="display: none;"></canvas>
+    <div class="home-footer">
+      <p>Made with ❤️ | EMI Calculator</p>
+    </div>
   </div>
 
-  chart.js</script>
-  script.js</script>
+  https://cdn.jsdelivr.net/npm/chart.js</script>
+  <script src="chart.js"></script>
+ript>
 </body>
 </html>
