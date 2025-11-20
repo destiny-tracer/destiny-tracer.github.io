@@ -44,7 +44,7 @@ function renderChart(principal, interest) {
       labels: ['Principal', 'Interest'],
       datasets: [{
         data: [principal, interest],
-        backgroundColor: ['#3b82f6', '#f59e0b'],
+        backgroundColor: ['#0ea5a4', '#3b82f6'],
         borderWidth: 1
       }]
     },
