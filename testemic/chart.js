@@ -1,1 +1,1 @@
-https://cdn.jsdelivr.net/npm/chart.js</script>
+<script>https://cdn.jsdelivr.net/npm/chart.js</script>
