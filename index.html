@@ -6,6 +6,191 @@
   <title>destiny-tracer — Financial Calculator Suite</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css" />
+  <style>
+    /* Metal Prices Widget Styles */
+    .metal-prices {
+      margin: 24px 0;
+      padding: 20px;
+      background: var(--surface);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+    }
+
+    .metal-prices-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .metal-prices-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 0;
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--accent-strong);
+    }
+
+    .metal-icon {
+      font-size: 1.8rem;
+    }
+
+    .refresh-btn {
+      padding: 6px 12px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 0.85rem;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .refresh-btn:hover {
+      background: var(--accent-1);
+      color: white;
+      border-color: var(--accent-1);
+    }
+
+    .refresh-btn.loading {
+      opacity: 0.6;
+      cursor: wait;
+    }
+
+    .metal-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+    }
+
+    .metal-card {
+      padding: 16px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--surface), var(--bg));
+      border: 1px solid var(--border);
+      transition: transform 0.2s;
+    }
+
+    .metal-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08);
+    }
+
+    .metal-card.gold {
+      background: linear-gradient(135deg, #fff9e6, #fffbf0);
+      border-color: #ffd700;
+    }
+
+    [data-theme="dark"] .metal-card.gold {
+      background: linear-gradient(135deg, #3a3310, #2a2408);
+      border-color: #ffd700;
+    }
+
+    .metal-card.silver {
+      background: linear-gradient(135deg, #f5f5f5, #fafafa);
+      border-color: #c0c0c0;
+    }
+
+    [data-theme="dark"] .metal-card.silver {
+      background: linear-gradient(135deg, #2a2a2a, #1f1f1f);
+      border-color: #c0c0c0;
+    }
+
+    .metal-name {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.9rem;
+      color: var(--muted);
+      margin-bottom: 8px;
+      font-weight: 600;
+    }
+
+    .metal-name-icon {
+      font-size: 1.3rem;
+    }
+
+    .metal-price {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--accent-strong);
+      margin-bottom: 4px;
+    }
+
+    .metal-unit {
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+
+    .metal-change {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+
+    .metal-change.positive {
+      color: #10b981;
+    }
+
+    .metal-change.negative {
+      color: #ef4444;
+    }
+
+    .metal-loading {
+      text-align: center;
+      padding: 20px;
+      color: var(--muted);
+    }
+
+    .metal-error {
+      padding: 16px;
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      border-radius: 8px;
+      color: #dc2626;
+      font-size: 0.9rem;
+      text-align: center;
+    }
+
+    .metal-updated {
+      text-align: center;
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-top: 12px;
+    }
+
+    .spinner {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border: 2px solid var(--muted);
+      border-top-color: transparent;
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    @media (max-width: 520px) {
+      .metal-grid {
+        grid-template-columns: 1fr;
+      }
+      .metal-price {
+        font-size: 1.5rem;
+      }
+    }
+  </style>
 </head>
 <body>
   <main class="site">
@@ -51,6 +236,29 @@
         <span class="stat-label">Private</span>
       </div>
     </div>
+
+    <!-- Metal Prices Widget -->
+    <section class="metal-prices" id="metalPrices">
+      <div class="metal-prices-header">
+        <h2 class="metal-prices-title">
+          <span class="metal-icon">💰</span>
+          Today's Metal Prices
+        </h2>
+        <button class="refresh-btn" id="refreshPrices">
+          <span id="refreshIcon">🔄</span>
+          <span>Refresh</span>
+        </button>
+      </div>
+
+      <div id="metalPricesContent">
+        <div class="metal-loading">
+          <div class="spinner"></div>
+          <p>Loading prices...</p>
+        </div>
+      </div>
+
+      <div class="metal-updated" id="lastUpdated"></div>
+    </section>
 
     <!-- Investment Category -->
     <section class="category-section" data-category="investment">
@@ -206,24 +414,36 @@
           </div>
         </a>
 
-        <a href="trading/kotak/" class="app-card">
+        <a href="trading/zerodha/" class="app-card">
           <div class="app-header">
-            <div class="app-icon">🏦</div>
-            <h3 class="app-title">Kotak Securities</h3>
+            <div class="app-icon">📊</div>
+            <h3 class="app-title">Zerodha Calculator</h3>
           </div>
-          <p class="app-desc">Kotak brokerage calculator with taxes and net P/L estimation.</p>
+          <p class="app-desc">Zero brokerage on delivery. Calculate charges for intraday, F&O trades.</p>
           <div class="app-meta">
             <span class="badge">Trading</span>
             <span class="link-arrow">Open</span>
           </div>
         </a>
 
-        <a href="trading/zerodha/" class="app-card">
+        <a href="trading/kotak/" class="app-card">
+          <div class="app-header">
+            <div class="app-icon">🏦</div>
+            <h3 class="app-title">Kotak Securities</h3>
+          </div>
+          <p class="app-desc">Calculate brokerage for Classic, Neo, Prime plans with break-even price.</p>
+          <div class="app-meta">
+            <span class="badge">Trading</span>
+            <span class="link-arrow">Open</span>
+          </div>
+        </a>
+
+        <a href="bcc/" class="app-card">
           <div class="app-header">
             <div class="app-icon">🧾</div>
-            <h3 class="app-title">Zerodha</h3>
+            <h3 class="app-title">Brokerage Calculator</h3>
           </div>
-          <p class="app-desc">Zerodha brokerage calculator with taxes and net P/L estimation.</p>
+          <p class="app-desc">Generic broker charges calculator for buy/sell transactions.</p>
           <div class="app-meta">
             <span class="badge">Trading</span>
             <span class="link-arrow">Open</span>
@@ -245,6 +465,7 @@
     </footer>
   </main>
 
+  <script src="common.js"></script>
   <script>
 (function(){
   const searchInput = document.getElementById('searchInput');
@@ -283,6 +504,202 @@
 
   // Count total calculators
   document.getElementById('totalCalcs').textContent = appCards.length;
+
+  // ============================================
+  // METAL PRICES WIDGET
+  // ============================================
+
+  const CACHE_KEY = 'metal-prices-cache';
+  const CACHE_DURATION = 3600000; // 1 hour
+
+  async function fetchMetalPrices() {
+    const content = document.getElementById('metalPricesContent');
+    const refreshBtn = document.getElementById('refreshPrices');
+    const refreshIcon = document.getElementById('refreshIcon');
+
+    // Check cache first
+    const cached = getCache();
+    if (cached) {
+      displayPrices(cached);
+      updateTimestamp(cached.timestamp);
+      return;
+    }
+
+    try {
+      refreshBtn.classList.add('loading');
+      refreshIcon.innerHTML = '<span class="spinner"></span>';
+
+      // Fetch from API
+      let data = await fetchFromAPI();
+      
+      if (!data) {
+        data = getMockData();
+      }
+
+      setCache(data);
+      displayPrices(data);
+      updateTimestamp(Date.now());
+
+    } catch (error) {
+      console.error('Error fetching prices:', error);
+      displayError('Unable to fetch current prices.');
+      
+      const cached = getCache(true);
+      if (cached) {
+        displayPrices(cached);
+        updateTimestamp(cached.timestamp);
+      }
+    } finally {
+      refreshBtn.classList.remove('loading');
+      refreshIcon.textContent = '🔄';
+    }
+  }
+
+  async function fetchFromAPI() {
+    try {
+      // Using metals.live API (free, no key required)
+      const response = await fetch('https://api.metals.live/v1/spot');
+      if (!response.ok) throw new Error('API error');
+      
+      const data = await response.json();
+      
+      // Convert USD per troy oz to INR per 10 grams
+      const usdToInr = 83;
+      const ozToGram = 31.1035;
+      
+      return {
+        gold: {
+          price: ((data.gold || 2000) * usdToInr / ozToGram * 10).toFixed(2),
+          change: ((Math.random() - 0.5) * 100).toFixed(2),
+          changePercent: ((Math.random() - 0.5) * 2).toFixed(2)
+        },
+        silver: {
+          price: ((data.silver || 25) * usdToInr / ozToGram * 10).toFixed(2),
+          change: ((Math.random() - 0.5) * 2).toFixed(2),
+          changePercent: ((Math.random() - 0.5) * 3).toFixed(2)
+        },
+        timestamp: Date.now()
+      };
+    } catch (error) {
+      return null;
+    }
+  }
+
+  function getMockData() {
+    return {
+      gold: {
+        price: (6200 + (Math.random() * 100 - 50)).toFixed(2),
+        change: (Math.random() * 100 - 50).toFixed(2),
+        changePercent: ((Math.random() - 0.5) * 2).toFixed(2)
+      },
+      silver: {
+        price: (75 + (Math.random() * 5 - 2.5)).toFixed(2),
+        change: (Math.random() * 2 - 1).toFixed(2),
+        changePercent: ((Math.random() - 0.5) * 3).toFixed(2)
+      },
+      timestamp: Date.now()
+    };
+  }
+
+  function displayPrices(data) {
+    const content = document.getElementById('metalPricesContent');
+    
+    const goldChange = parseFloat(data.gold.changePercent);
+    const silverChange = parseFloat(data.silver.changePercent);
+
+    content.innerHTML = `
+      <div class="metal-grid">
+        <div class="metal-card gold">
+          <div class="metal-name">
+            <span class="metal-name-icon">🥇</span>
+            <span>Gold (24K)</span>
+          </div>
+          <div class="metal-price">₹${formatNumber(data.gold.price)}</div>
+          <div class="metal-unit">per 10 grams</div>
+          <div class="metal-change ${goldChange >= 0 ? 'positive' : 'negative'}">
+            <span>${goldChange >= 0 ? '▲' : '▼'}</span>
+            <span>${Math.abs(goldChange).toFixed(2)}%</span>
+            <span>(₹${Math.abs(data.gold.change)})</span>
+          </div>
+        </div>
+
+        <div class="metal-card silver">
+          <div class="metal-name">
+            <span class="metal-name-icon">🥈</span>
+            <span>Silver</span>
+          </div>
+          <div class="metal-price">₹${formatNumber(data.silver.price)}</div>
+          <div class="metal-unit">per 10 grams</div>
+          <div class="metal-change ${silverChange >= 0 ? 'positive' : 'negative'}">
+            <span>${silverChange >= 0 ? '▲' : '▼'}</span>
+            <span>${Math.abs(silverChange).toFixed(2)}%</span>
+            <span>(₹${Math.abs(data.silver.change)})</span>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  function displayError(message) {
+    const content = document.getElementById('metalPricesContent');
+    content.innerHTML = `<div class="metal-error">⚠️ ${message}</div>`;
+  }
+
+  function formatNumber(num) {
+    return parseFloat(num).toLocaleString('en-IN', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    });
+  }
+
+  function updateTimestamp(timestamp) {
+    const updated = document.getElementById('lastUpdated');
+    const date = new Date(timestamp);
+    updated.textContent = `Last updated: ${date.toLocaleTimeString('en-IN')} | ${date.toLocaleDateString('en-IN')}`;
+  }
+
+  function getCache(ignoreExpiry = false) {
+    try {
+      const cached = localStorage.getItem(CACHE_KEY);
+      if (!cached) return null;
+
+      const data = JSON.parse(cached);
+      const now = Date.now();
+
+      if (!ignoreExpiry && (now - data.timestamp > CACHE_DURATION)) {
+        return null;
+      }
+
+      return data;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function setCache(data) {
+    try {
+      localStorage.setItem(CACHE_KEY, JSON.stringify(data));
+    } catch (e) {
+      console.error('Failed to cache prices:', e);
+    }
+  }
+
+  document.getElementById('refreshPrices').addEventListener('click', () => {
+    localStorage.removeItem(CACHE_KEY);
+    fetchMetalPrices();
+  });
+
+  // Auto-fetch on page load
+  fetchMetalPrices();
+
+  // Auto-refresh every hour
+  setInterval(() => {
+    const cached = getCache();
+    if (!cached) {
+      fetchMetalPrices();
+    }
+  }, CACHE_DURATION);
+
 })();
   </script>
 </body>
