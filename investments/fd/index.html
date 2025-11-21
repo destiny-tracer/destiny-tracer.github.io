@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>PPF Calculator — Public Provident Fund</title>
+  <title>FD Calculator — Fixed Deposit Returns</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../../style.css" />
 </head>
@@ -22,8 +22,8 @@
           <path d="M7 14l3-5 4 6 3-4" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
         </svg>
         <div>
-          <h1>PPF Calculator</h1>
-          <p class="tag">Public Provident Fund returns calculator</p>
+          <h1>FD Calculator</h1>
+          <p class="tag">Fixed deposit maturity calculator</p>
         </div>
       </div>
       <a href="../../index.html" class="back-btn">Back to Home</a>
@@ -31,26 +31,32 @@
 
     <section class="content">
       <form id="calcForm" class="panel" onsubmit="return false;">
-        <h2>PPF Investment Details</h2>
+        <h2>FD Details</h2>
 
         <label class="field">
-          <span class="label">Yearly Investment (₹)</span>
-          <input id="yearlyInv" type="number" step="500" min="500" max="150000" value="150000" required />
-        </label>
-
-        <label class="field">
-          <span class="label">Time Period (years)</span>
-          <input id="timePeriod" type="number" step="1" min="15" max="50" value="15" required />
+          <span class="label">Deposit Amount (₹)</span>
+          <input id="principal" type="number" step="1000" value="100000" required />
         </label>
 
         <label class="field">
           <span class="label">Interest Rate (% per annum)</span>
-          <input id="interestRate" type="number" step="0.1" value="7.1" required />
+          <input id="interestRate" type="number" step="0.1" value="7" required />
         </label>
 
-        <div class="info-box">
-          <p><strong>PPF Rules:</strong> Minimum ₹500/year, Maximum ₹1.5 lakh/year. Lock-in period is 15 years with option to extend. Interest is compounded annually and tax-free under Section 80C.</p>
-        </div>
+        <label class="field">
+          <span class="label">Time Period (years)</span>
+          <input id="timePeriod" type="number" step="0.5" min="0.5" max="10" value="5" required />
+        </label>
+
+        <label class="field">
+          <span class="label">Compounding Frequency</span>
+          <select id="frequency">
+            <option value="1">Yearly</option>
+            <option value="2">Half-Yearly</option>
+            <option value="4" selected>Quarterly</option>
+            <option value="12">Monthly</option>
+          </select>
+        </label>
 
         <div class="actions">
           <button id="calculateBtn" class="btn primary" type="button">Calculate</button>
@@ -63,26 +69,42 @@
 
         <div class="cards">
           <div class="card">
-            <div class="card-title">Total Investment</div>
-            <div class="card-value" id="totalInvested">—</div>
-            <div class="card-note">Amount deposited over tenure</div>
+            <div class="card-title">Principal Amount</div>
+            <div class="card-value" id="principalAmt">—</div>
+            <div class="card-note">Initial deposit</div>
           </div>
 
           <div class="card">
-            <div class="card-title">Total Interest Earned</div>
+            <div class="card-title">Total Interest</div>
             <div class="card-value" id="totalInterest">—</div>
-            <div class="card-note">Tax-free interest earnings</div>
+            <div class="card-note">Interest earned</div>
           </div>
 
           <div class="card">
-            <div class="card-title">Maturity Value</div>
-            <div class="card-value" id="maturityValue">—</div>
-            <div class="card-note">Total corpus at maturity</div>
+            <div class="card-title">Maturity Amount</div>
+            <div class="card-value" id="maturityAmt">—</div>
+            <div class="card-note">Total payout at maturity</div>
+          </div>
+        </div>
+
+        <div class="breakdown">
+          <h3>Tax Details (Estimated)</h3>
+          <div class="breakdown-row">
+            <span class="breakdown-label">TDS Deducted (10%)</span>
+            <span class="breakdown-value" id="tds">—</span>
+          </div>
+          <div class="breakdown-row">
+            <span class="breakdown-label">Post-Tax Interest</span>
+            <span class="breakdown-value" id="postTaxInt">—</span>
+          </div>
+          <div class="breakdown-row">
+            <span class="breakdown-label">Net Maturity Amount</span>
+            <span class="breakdown-value" id="netMaturity">—</span>
           </div>
         </div>
 
         <div class="chart-container">
-          <canvas id="ppfChart"></canvas>
+          <canvas id="fdChart"></canvas>
         </div>
       </aside>
     </section>
@@ -104,80 +126,65 @@
   }
 
   function calculate(){
-    const yearly = parseFloat($('yearlyInv').value) || 0;
-    const years = parseFloat($('timePeriod').value) || 0;
+    const principal = parseFloat($('principal').value) || 0;
     const rate = parseFloat($('interestRate').value) || 0;
+    const years = parseFloat($('timePeriod').value) || 0;
+    const frequency = parseInt($('frequency').value) || 4;
 
-    if (yearly < 500 || yearly > 150000){
-      alert('Yearly investment must be between ₹500 and ₹1,50,000');
+    if (principal <= 0 || rate <= 0 || years <= 0){
+      alert('Please enter valid values for all fields.');
       return;
     }
 
-    if (years < 15){
-      alert('PPF has a minimum lock-in period of 15 years');
-      return;
-    }
-
-    // PPF interest is compounded annually
-    // Formula: FV = P × [((1 + r)^n - 1) / r]
-    let balance = 0;
-    let yearData = [];
+    // Compound Interest: A = P(1 + r/n)^(nt)
+    const maturity = principal * Math.pow(1 + (rate/100)/frequency, frequency * years);
+    const interest = maturity - principal;
     
-    for (let i = 1; i <= years; i++){
-      balance = (balance + yearly) * (1 + rate/100);
-      yearData.push({year: i, balance: balance});
-    }
+    // TDS calculation (10% on interest if > 40,000)
+    const tds = interest > 40000 ? interest * 0.10 : 0;
+    const postTaxInterest = interest - tds;
+    const netMaturity = principal + postTaxInterest;
 
-    const totalInvested = yearly * years;
-    const maturity = balance;
-    const interest = maturity - totalInvested;
-
-    $('totalInvested').textContent = fmtNumber(totalInvested);
+    $('principalAmt').textContent = fmtNumber(principal);
     $('totalInterest').textContent = fmtNumber(interest);
-    $('maturityValue').textContent = fmtNumber(maturity);
+    $('maturityAmt').textContent = fmtNumber(maturity);
+    $('tds').textContent = fmtNumber(tds);
+    $('postTaxInt').textContent = fmtNumber(postTaxInterest);
+    $('netMaturity').textContent = fmtNumber(netMaturity);
 
-    drawChart(yearData, totalInvested);
+    drawChart(principal, interest);
   }
 
-  function drawChart(data){
-    const ctx = $('ppfChart').getContext('2d');
+  function drawChart(principal, interest){
+    const ctx = $('fdChart').getContext('2d');
     
     if (chartInstance) chartInstance.destroy();
 
     chartInstance = new Chart(ctx, {
-      type: 'line',
+      type: 'doughnut',
       data: {
-        labels: data.map(d => `Year ${d.year}`),
+        labels: ['Principal Amount', 'Interest Earned'],
         datasets: [{
-          label: 'PPF Balance',
-          data: data.map(d => d.balance),
-          borderColor: '#0ea5a4',
-          backgroundColor: 'rgba(14, 165, 164, 0.1)',
-          tension: 0.3,
-          fill: true,
-          pointRadius: 3,
-          pointHoverRadius: 5
+          data: [principal, interest],
+          backgroundColor: ['#0ea5a4', '#3b82f6'],
+          borderWidth: 0
         }]
       },
       options: {
         responsive: true,
         maintainAspectRatio: false,
         plugins: {
-          legend: {display: false},
+          legend: {
+            position: 'bottom',
+            labels: {
+              padding: 12,
+              font: {size: 12, family: 'Inter'}
+            }
+          },
           tooltip: {
             callbacks: {
               label: function(context) {
-                return 'Balance: ₹' + context.parsed.y.toLocaleString('en-IN');
-              }
-            }
-          }
-        },
-        scales: {
-          y: {
-            beginAtZero: true,
-            ticks: {
-              callback: function(value) {
-                return '₹' + (value/100000).toFixed(0) + 'L';
+                return context.label + ': ₹' + context.parsed.toLocaleString('en-IN');
               }
             }
           }
@@ -188,9 +195,12 @@
 
   function reset(){
     $('calcForm').reset();
-    $('totalInvested').textContent = '—';
+    $('principalAmt').textContent = '—';
     $('totalInterest').textContent = '—';
-    $('maturityValue').textContent = '—';
+    $('maturityAmt').textContent = '—';
+    $('tds').textContent = '—';
+    $('postTaxInt').textContent = '—';
+    $('netMaturity').textContent = '—';
     if (chartInstance) {
       chartInstance.destroy();
       chartInstance = null;
