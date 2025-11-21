@@ -1,0 +1,416 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Home Loan Calculator — EMI with Amortization</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../style.css" />
+  <style>
+    /* Additional styles for amortization table */
+    .amortization-section {
+      margin-top: 20px;
+      background: var(--surface);
+      border-radius: var(--radius);
+      padding: 18px;
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(3,7,18,0.03);
+    }
+    .amortization-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+    .amortization-header h3 {
+      margin: 0;
+      font-size: 1.05rem;
+      font-weight: 600;
+    }
+    .table-wrapper {
+      max-height: 400px;
+      overflow-y: auto;
+      border-radius: 8px;
+      border: 1px solid rgba(3,7,18,0.03);
+    }
+    .amortization-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.88rem;
+    }
+    .amortization-table thead {
+      position: sticky;
+      top: 0;
+      background: linear-gradient(180deg, #fff, #fbfdff);
+      z-index: 10;
+    }
+    .amortization-table th {
+      padding: 10px 8px;
+      text-align: right;
+      font-weight: 600;
+      color: var(--muted);
+      border-bottom: 2px solid rgba(3,7,18,0.06);
+    }
+    .amortization-table th:first-child {
+      text-align: left;
+    }
+    .amortization-table td {
+      padding: 8px;
+      text-align: right;
+      border-bottom: 1px solid rgba(3,7,18,0.03);
+      color: var(--accent-strong);
+    }
+    .amortization-table td:first-child {
+      text-align: left;
+      font-weight: 600;
+    }
+    .amortization-table tbody tr:hover {
+      background: rgba(59,130,246,0.02);
+    }
+    .year-row {
+      background: linear-gradient(90deg,rgba(14,165,164,0.08),rgba(59,130,246,0.08)) !important;
+      font-weight: 600;
+    }
+    .btn-export {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      border-radius: 8px;
+      background: linear-gradient(90deg, #10b981, #059669);
+      color: white;
+      border: none;
+      font-weight: 600;
+      font-size: 0.9rem;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(16,185,129,0.2);
+    }
+    .btn-export:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(16,185,129,0.3);
+    }
+    @media print {
+      body * { visibility: hidden; }
+      .print-content, .print-content * { visibility: visible; }
+      .print-content {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="site">
+    <header class="header">
+      <div class="brand">
+        <svg class="mark" viewBox="0 0 24 24" aria-hidden="true">
+          <defs>
+            <linearGradient id="grad" x1="0" x2="1">
+              <stop offset="0" stop-color="#0ea5a4" />
+              <stop offset="1" stop-color="#3b82f6" />
+            </linearGradient>
+          </defs>
+          <rect x="2" y="4" width="20" height="16" rx="4" fill="url(#grad)"></rect>
+          <path d="M7 14l3-5 4 6 3-4" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+        </svg>
+        <div>
+          <h1>Home Loan Calculator</h1>
+          <p class="tag">EMI, amortization & prepayment planning</p>
+        </div>
+      </div>
+      <a href="../../index.html" class="back-btn">Back to Home</a>
+    </header>
+
+    <section class="content">
+      <form id="calcForm" class="panel" onsubmit="return false;">
+        <h2>Loan Details</h2>
+
+        <label class="field">
+          <span class="label">Loan Amount (₹)</span>
+          <input id="loanAmount" type="number" step="100000" value="5000000" required />
+        </label>
+
+        <label class="field">
+          <span class="label">Interest Rate (% per annum)</span>
+          <input id="interestRate" type="number" step="0.1" value="8.5" required />
+        </label>
+
+        <label class="field">
+          <span class="label">Loan Tenure (years)</span>
+          <input id="tenure" type="number" step="1" min="1" max="30" value="20" required />
+        </label>
+
+        <label class="field">
+          <span class="label">Prepayment Amount (optional, ₹)</span>
+          <input id="prepayment" type="number" step="10000" value="0" />
+        </label>
+
+        <div class="actions">
+          <button id="calculateBtn" class="btn primary" type="button">Calculate EMI</button>
+          <button id="resetBtn" class="btn ghost" type="button">Reset</button>
+        </div>
+      </form>
+
+      <aside class="result" id="results">
+        <h2 class="panel-title">EMI Summary</h2>
+
+        <div class="cards">
+          <div class="card">
+            <div class="card-title">Monthly EMI</div>
+            <div class="card-value" id="emiAmount">—</div>
+            <div class="card-note">Principal + Interest per month</div>
+          </div>
+
+          <div class="card">
+            <div class="card-title">Total Interest</div>
+            <div class="card-value" id="totalInterest">—</div>
+            <div class="card-note">Interest paid over tenure</div>
+          </div>
+
+          <div class="card">
+            <div class="card-title">Total Payment</div>
+            <div class="card-value" id="totalPayment">—</div>
+            <div class="card-note">Principal + Interest</div>
+          </div>
+        </div>
+
+        <div class="chart-container">
+          <canvas id="loanChart"></canvas>
+        </div>
+      </aside>
+    </section>
+
+    <!-- Amortization Schedule -->
+    <section class="amortization-section" id="amortizationSection" style="display:none">
+      <div class="amortization-header">
+        <h3>Amortization Schedule</h3>
+        <button id="exportPdfBtn" class="btn-export">📄 Export to PDF</button>
+      </div>
+      
+      <div class="table-wrapper">
+        <table class="amortization-table">
+          <thead>
+            <tr>
+              <th>Month</th>
+              <th>EMI</th>
+              <th>Principal</th>
+              <th>Interest</th>
+              <th>Balance</th>
+            </tr>
+          </thead>
+          <tbody id="scheduleBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <small>Built by destiny-tracer — runs entirely in your browser, no data leaves your device.</small>
+    </footer>
+  </main>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+  <script>
+(function(){
+  const $ = id => document.getElementById(id);
+  let chartInstance = null;
+  let scheduleData = [];
+
+  function fmtNumber(n){
+    if (typeof n !== 'number' || !isFinite(n)) return '—';
+    return '₹' + n.toLocaleString('en-IN', {minimumFractionDigits:0, maximumFractionDigits:0});
+  }
+
+  function calculate(){
+    const principal = parseFloat($('loanAmount').value) || 0;
+    const annualRate = parseFloat($('interestRate').value) || 0;
+    const years = parseFloat($('tenure').value) || 0;
+    const prepay = parseFloat($('prepayment').value) || 0;
+
+    if (principal <= 0 || annualRate <= 0 || years <= 0){
+      alert('Please enter valid values for all fields.');
+      return;
+    }
+
+    const monthlyRate = annualRate / 12 / 100;
+    const months = years * 12;
+
+    // EMI Formula: P × r × (1 + r)^n / ((1 + r)^n - 1)
+    const emi = principal * monthlyRate * Math.pow(1 + monthlyRate, months) / 
+                (Math.pow(1 + monthlyRate, months) - 1);
+
+    let balance = principal;
+    let totalInterest = 0;
+    scheduleData = [];
+
+    // Generate amortization schedule
+    for (let i = 1; i <= months; i++){
+      const interestPaid = balance * monthlyRate;
+      const principalPaid = emi - interestPaid;
+      balance -= principalPaid;
+      totalInterest += interestPaid;
+
+      scheduleData.push({
+        month: i,
+        emi: emi,
+        principal: principalPaid,
+        interest: interestPaid,
+        balance: Math.max(0, balance)
+      });
+
+      if (balance <= 0) break;
+    }
+
+    const totalPayment = principal + totalInterest;
+
+    $('emiAmount').textContent = fmtNumber(emi);
+    $('totalInterest').textContent = fmtNumber(totalInterest);
+    $('totalPayment').textContent = fmtNumber(totalPayment);
+
+    drawChart(principal, totalInterest);
+    generateSchedule(scheduleData);
+    $('amortizationSection').style.display = 'block';
+  }
+
+  function drawChart(principal, interest){
+    const ctx = $('loanChart').getContext('2d');
+    
+    if (chartInstance) chartInstance.destroy();
+
+    chartInstance = new Chart(ctx, {
+      type: 'doughnut',
+      data: {
+        labels: ['Principal Amount', 'Total Interest'],
+        datasets: [{
+          data: [principal, interest],
+          backgroundColor: ['#0ea5a4', '#f59e0b'],
+          borderWidth: 0
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            position: 'bottom',
+            labels: {
+              padding: 16,
+              font: {size: 13, family: 'Inter'}
+            }
+          },
+          tooltip: {
+            callbacks: {
+              label: function(context) {
+                return context.label + ': ₹' + context.parsed.toLocaleString('en-IN');
+              }
+            }
+          }
+        }
+      }
+    });
+  }
+
+  function generateSchedule(data){
+    const tbody = $('scheduleBody');
+    tbody.innerHTML = '';
+    
+    data.forEach((row, idx) => {
+      const isYearEnd = row.month % 12 === 0;
+      const className = isYearEnd ? 'year-row' : '';
+      
+      tbody.innerHTML += `<tr class="${className}">
+        <td>Month ${row.month}${isYearEnd ? ' (Year ' + (row.month/12) + ')' : ''}</td>
+        <td>${fmtNumber(row.emi)}</td>
+        <td>${fmtNumber(row.principal)}</td>
+        <td>${fmtNumber(row.interest)}</td>
+        <td>${fmtNumber(row.balance)}</td>
+      </tr>`;
+    });
+  }
+
+  function exportPDF(){
+    if (scheduleData.length === 0){
+      alert('Please calculate EMI first.');
+      return;
+    }
+
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+
+    // Title
+    doc.setFontSize(18);
+    doc.setTextColor(5, 32, 71);
+    doc.text('Home Loan Amortization Schedule', 14, 20);
+
+    // Loan details
+    doc.setFontSize(11);
+    doc.setTextColor(107, 114, 128);
+    const loanAmt = $('loanAmount').value;
+    const rate = $('interestRate').value;
+    const tenure = $('tenure').value;
+    const emi = $('emiAmount').textContent;
+    
+    doc.text(`Loan Amount: ₹${parseFloat(loanAmt).toLocaleString('en-IN')}`, 14, 30);
+    doc.text(`Interest Rate: ${rate}% p.a.`, 14, 36);
+    doc.text(`Tenure: ${tenure} years`, 14, 42);
+    doc.text(`Monthly EMI: ${emi}`, 14, 48);
+
+    // Table data
+    const tableData = scheduleData.map(row => [
+      `Month ${row.month}`,
+      fmtNumber(row.emi),
+      fmtNumber(row.principal),
+      fmtNumber(row.interest),
+      fmtNumber(row.balance)
+    ]);
+
+    doc.autoTable({
+      head: [['Month', 'EMI', 'Principal', 'Interest', 'Balance']],
+      body: tableData,
+      startY: 55,
+      styles: { fontSize: 8, cellPadding: 2 },
+      headStyles: { fillColor: [14, 165, 164], textColor: 255 },
+      alternateRowStyles: { fillColor: [246, 251, 255] },
+      margin: { top: 55 }
+    });
+
+    // Footer
+    const pageCount = doc.internal.getNumberOfPages();
+    for(let i = 1; i <= pageCount; i++) {
+      doc.setPage(i);
+      doc.setFontSize(8);
+      doc.setTextColor(150);
+      doc.text(
+        `Page ${i} of ${pageCount} | Generated by destiny-tracer`,
+        doc.internal.pageSize.getWidth() / 2,
+        doc.internal.pageSize.getHeight() - 10,
+        { align: 'center' }
+      );
+    }
+
+    doc.save('home-loan-amortization.pdf');
+  }
+
+  function reset(){
+    $('calcForm').reset();
+    $('emiAmount').textContent = '—';
+    $('totalInterest').textContent = '—';
+    $('totalPayment').textContent = '—';
+    $('amortizationSection').style.display = 'none';
+    scheduleData = [];
+    if (chartInstance) {
+      chartInstance.destroy();
+      chartInstance = null;
+    }
+  }
+
+  $('calculateBtn').addEventListener('click', calculate);
+  $('resetBtn').addEventListener('click', reset);
+  $('exportPdfBtn').addEventListener('click', exportPDF);
+})();
+  </script>
+</body>
+</html>
