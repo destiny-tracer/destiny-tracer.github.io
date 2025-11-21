@@ -11,9 +11,24 @@
   --accent-1: #0ea5a4;        /* Teal */
   --accent-2: #3b82f6;        /* Blue */
   --accent-strong: #052047;   /* Dark blue */
+  --text: #04203a;
+  --border: rgba(3, 7, 18, 0.03);
+  --shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
   --radius: 14px;
   --max-width: 1200px;
-  --shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+}
+
+/* Dark Mode Variables */
+[data-theme="dark"] {
+  --bg: #0f172a;
+  --surface: #1e293b;
+  --muted: #94a3b8;
+  --accent-1: #14b8a6;
+  --accent-2: #60a5fa;
+  --accent-strong: #e0f2fe;
+  --text: #f1f5f9;
+  --border: rgba(255, 255, 255, 0.1);
+  --shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
 }
 
 /* Base Reset */
@@ -29,11 +44,12 @@ body {
 
 body {
   font-family: 'Inter', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  background: linear-gradient(180deg, #f8fbff 0%, var(--bg) 100%);
-  color: #04203a;
+  background: linear-gradient(180deg, var(--bg) 0%, var(--bg) 100%);
+  color: var(--text);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   padding: 28px 18px 60px;
+  transition: background 0.3s ease, color 0.3s ease;
 }
 
 /* Container */
@@ -93,6 +109,39 @@ body {
   flex: 0 0 48px;
 }
 
+/* Theme Toggle & Actions */
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.theme-toggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--accent-strong);
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: all 0.2s;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+}
+
+.theme-toggle:hover {
+  background: linear-gradient(90deg, var(--accent-1), var(--accent-2));
+  color: white;
+  transform: translateY(-2px);
+}
+
+.theme-icon {
+  font-size: 1.2rem;
+}
+
 /* Back Button */
 .back-btn {
   display: inline-flex;
@@ -100,7 +149,7 @@ body {
   gap: 6px;
   padding: 8px 14px;
   border-radius: 8px;
-  border: 1px solid rgba(3, 7, 18, 0.06);
+  border: 1px solid var(--border);
   background: var(--surface);
   color: var(--accent-strong);
   text-decoration: none;
@@ -135,10 +184,10 @@ body {
   width: 100%;
   padding: 14px 48px 14px 18px;
   border-radius: 12px;
-  border: 1px solid rgba(10, 20, 30, 0.08);
+  border: 1px solid var(--border);
   background: var(--surface);
   font-size: 1rem;
-  color: inherit;
+  color: var(--text);
   outline: none;
   box-shadow: var(--shadow);
 }
@@ -184,7 +233,7 @@ body {
   background: var(--surface);
   border-radius: 12px;
   box-shadow: var(--shadow);
-  border: 1px solid rgba(3, 7, 18, 0.03);
+  border: 1px solid var(--border);
   flex-wrap: wrap;
 }
 
@@ -218,7 +267,7 @@ body {
   gap: 12px;
   margin-bottom: 20px;
   padding-bottom: 12px;
-  border-bottom: 2px solid rgba(3, 7, 18, 0.04);
+  border-bottom: 2px solid var(--border);
 }
 
 .category-icon {
@@ -264,7 +313,7 @@ body {
   border-radius: var(--radius);
   padding: 20px;
   box-shadow: var(--shadow);
-  border: 1px solid rgba(3, 7, 18, 0.03);
+  border: 1px solid var(--border);
   transition: transform 0.2s, box-shadow 0.2s;
   cursor: pointer;
   text-decoration: none;
@@ -292,9 +341,9 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(180deg, #fff, #fbfdff);
+  background: linear-gradient(180deg, var(--surface), var(--bg));
   border-radius: 10px;
-  border: 1px solid rgba(3, 7, 18, 0.03);
+  border: 1px solid var(--border);
 }
 
 .app-title {
@@ -318,7 +367,7 @@ body {
   justify-content: space-between;
   gap: 8px;
   padding-top: 12px;
-  border-top: 1px solid rgba(3, 7, 18, 0.03);
+  border-top: 1px solid var(--border);
 }
 
 .badge {
@@ -346,6 +395,97 @@ body {
 }
 
 /* ============================================
+   SAVED CALCULATIONS SECTION
+   ============================================ */
+.saved-section {
+  margin-top: 20px;
+  background: var(--surface);
+  border-radius: var(--radius);
+  padding: 18px;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border);
+}
+
+.saved-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.saved-header h3 {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--accent-strong);
+}
+
+.saved-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.saved-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  background: linear-gradient(180deg, var(--surface), var(--bg));
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  transition: all 0.2s;
+}
+
+.saved-item:hover {
+  transform: translateX(4px);
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.06);
+}
+
+.saved-info {
+  flex: 1;
+}
+
+.saved-name {
+  font-weight: 600;
+  color: var(--accent-strong);
+  font-size: 0.9rem;
+  margin-bottom: 2px;
+}
+
+.saved-details {
+  font-size: 0.82rem;
+  color: var(--muted);
+}
+
+.saved-actions {
+  display: flex;
+  gap: 6px;
+}
+
+.btn-icon {
+  padding: 6px 10px;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.2s;
+}
+
+.btn-icon:hover {
+  background: var(--accent-1);
+  color: white;
+}
+
+.btn-icon.delete:hover {
+  background: #ef4444;
+}
+
+/* ============================================
    CONTENT LAYOUT (Calculator Pages)
    ============================================ */
 .content {
@@ -364,7 +504,7 @@ body {
   border-radius: var(--radius);
   padding: 18px;
   box-shadow: var(--shadow);
-  border: 1px solid rgba(3, 7, 18, 0.03);
+  border: 1px solid var(--border);
 }
 
 .panel h2,
@@ -405,15 +545,21 @@ body {
   width: 100%;
   padding: 10px 12px;
   border-radius: 10px;
-  border: 1px solid rgba(10, 20, 30, 0.06);
-  background: linear-gradient(180deg, #fff, #fbfdff);
+  border: 1px solid var(--border);
+  background: var(--surface);
   font-size: 1rem;
-  color: inherit;
+  color: var(--text);
   outline: none;
+  transition: border 0.2s;
+}
+
+.field input:focus,
+.field select:focus {
+  border-color: var(--accent-1);
 }
 
 .field input::placeholder {
-  color: #bcd6f3;
+  color: var(--muted);
 }
 
 /* Info Box */
@@ -439,7 +585,7 @@ body {
 /* Fees Section */
 .fees {
   border-radius: 10px;
-  border: 1px dashed rgba(10, 20, 30, 0.03);
+  border: 1px dashed var(--border);
   padding: 10px;
   margin: 10px 0;
 }
@@ -485,12 +631,23 @@ body {
 
 .btn.ghost {
   background: transparent;
-  border: 1px solid rgba(3, 7, 18, 0.06);
+  border: 1px solid var(--border);
   color: var(--accent-strong);
 }
 
 .btn.ghost:hover {
-  background: rgba(3, 7, 18, 0.02);
+  background: var(--border);
+}
+
+.btn.save {
+  background: linear-gradient(90deg, #10b981, #059669);
+  color: white;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+}
+
+.btn.save:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(16, 185, 129, 0.3);
 }
 
 /* ============================================
@@ -507,8 +664,8 @@ body {
   flex-direction: column;
   padding: 14px;
   border-radius: 10px;
-  background: linear-gradient(180deg, #ffffff, #fbfdff);
-  border: 1px solid rgba(3, 7, 18, 0.03);
+  background: var(--surface);
+  border: 1px solid var(--border);
 }
 
 .card-title {
@@ -535,9 +692,9 @@ body {
 .breakdown {
   margin-top: 12px;
   padding: 14px;
-  background: linear-gradient(180deg, #fff, #fbfdff);
+  background: var(--surface);
   border-radius: 10px;
-  border: 1px solid rgba(3, 7, 18, 0.03);
+  border: 1px solid var(--border);
 }
 
 .breakdown h3 {
@@ -550,7 +707,7 @@ body {
   display: flex;
   justify-content: space-between;
   padding: 8px 0;
-  border-bottom: 1px solid rgba(3, 7, 18, 0.03);
+  border-bottom: 1px solid var(--border);
 }
 
 .breakdown-row:last-child {
@@ -575,9 +732,9 @@ body {
   height: 280px;
   margin-top: 12px;
   padding: 12px;
-  background: linear-gradient(180deg, #fff, #fbfdff);
+  background: var(--surface);
   border-radius: 10px;
-  border: 1px solid rgba(3, 7, 18, 0.03);
+  border: 1px solid var(--border);
 }
 
 canvas {
@@ -591,9 +748,9 @@ canvas {
 .growth-table {
   margin-top: 12px;
   padding: 12px;
-  background: linear-gradient(180deg, #fff, #fbfdff);
+  background: var(--surface);
   border-radius: 10px;
-  border: 1px solid rgba(3, 7, 18, 0.03);
+  border: 1px solid var(--border);
   max-height: 250px;
   overflow-y: auto;
 }
@@ -613,7 +770,7 @@ canvas {
 .growth-table td {
   padding: 8px;
   text-align: left;
-  border-bottom: 1px solid rgba(3, 7, 18, 0.03);
+  border-bottom: 1px solid var(--border);
   font-size: 0.88rem;
 }
 
@@ -662,7 +819,7 @@ canvas {
 .footer {
   margin-top: 60px;
   padding-top: 32px;
-  border-top: 1px solid rgba(3, 7, 18, 0.06);
+  border-top: 1px solid var(--border);
   text-align: center;
 }
 
