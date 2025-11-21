@@ -87,7 +87,7 @@
       <small>Built by destiny-tracer — runs entirely in your browser, no data leaves your device.</small>
     </footer>
   </main>
-
+ <!--  <script src="../../common.js"></script> -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
   <script>
 (function(){
@@ -177,5 +177,39 @@
   $('resetBtn').addEventListener('click', reset);
 })();
   </script>
+  <!-- 1. Load common.js -->
+<script src="../../common.js"></script>
+
+<!-- 2. Add container for saved list -->
+<section class="saved-section" id="savedCalculations"></section>
+
+<!-- 3. Add save button -->
+<button class="btn save" onclick="saveMyCalculation()">💾 Save</button>
+
+<!-- 4. JavaScript -->
+<script>
+function saveMyCalculation() {
+  DestinyTracer.SaveManager.save({
+    type: 'sip',
+    name: 'My SIP Plan',
+    details: '₹5000/month, 12%, 10 years',
+    data: {
+      monthly: 5000,
+      rate: 12,
+      years: 10
+    }
+  });
+  alert('Saved!');
+}
+
+// Load on page load
+window.addEventListener('DOMContentLoaded', function() {
+  DestinyTracer.showSavedCalculations('savedCalculations', 'sip', function(calc) {
+    // Populate form with calc.data
+    document.getElementById('monthlyInv').value = calc.data.monthly;
+    // ... trigger calculation
+  });
+});
+</script>
 </body>
 </html>
