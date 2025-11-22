@@ -506,23 +506,21 @@
   document.getElementById('totalCalcs').textContent = appCards.length;
 
     
-  // ============================================
-  // METALPRICEAPI WIDGET
-  // Metal Prices Widget - Daily Update at 6:00 AM IST
-  // Fetches once per day, caches for 24 hours
-  // ============================================
-  
-
+// ============================================
+// METALPRICEAPI WIDGET - FIXED FOR INR BASE
+// Metal Prices Widget - Daily Update at 6:00 AM IST
+// Fetches once per day, caches for 24 hours
+// ============================================
 
 (function() {
   // ============================================
   // CONFIGURATION
   // ============================================
   
-  const API_KEY = 'ba250c368e405f5da4dce9ce8ed7441d'; // Get from metalpriceapi.com
+  const API_KEY = 'ba250c368e405f5da4dce9ce8ed7441d';
   const CACHE_KEY = 'metal-prices-cache';
-  const UPDATE_HOUR = 6; // 6 AM IST (change to 11 for 11 AM)
-  const CACHE_DURATION = 86400000; // 24 hours in milliseconds
+  const UPDATE_HOUR = 6; // 6 AM IST
+  const CACHE_DURATION = 86400000; // 24 hours
   
   // ============================================
   // MAIN FUNCTION
@@ -535,11 +533,15 @@
     const refreshBtn = document.getElementById('refreshPrices');
     const refreshIcon = document.getElementById('refreshIcon');
 
+    if (!content || !refreshBtn || !refreshIcon) {
+      console.error('❌ Required elements not found');
+      return;
+    }
+
     // Check if we have valid cached data
     const cached = getCache();
     
     if (cached && !shouldFetchNew(cached.timestamp)) {
-      // Use cached data
       console.log('✅ Using cached prices from today');
       displayPrices(cached);
       updateTimestamp(cached.timestamp);
@@ -574,7 +576,6 @@
     } catch (error) {
       console.error('❌ Error fetching prices:', error);
       
-      // Try to show old cached data
       const oldCache = getCache(true);
       if (oldCache) {
         console.log('Using old cached data as fallback');
@@ -597,20 +598,17 @@
     const now = new Date();
     const lastFetch = new Date(lastFetchTime);
     
-    // Get today's update time (6 AM IST)
     const todayUpdate = new Date();
     todayUpdate.setHours(UPDATE_HOUR, 0, 0, 0);
     
-    // If we're past today's update time and haven't fetched today, fetch
     if (now >= todayUpdate && lastFetch < todayUpdate) {
       console.log('📅 Past update time, need fresh data');
       return true;
     }
     
-    // If last fetch was yesterday or earlier, fetch
     const daysSinceLastFetch = Math.floor((now - lastFetch) / 86400000);
     if (daysSinceLastFetch >= 1) {
-      console.log('📅 Last fetch was ' + daysSinceLastFetch + ' day(s) ago, need fresh data');
+      console.log('📅 Last fetch was ' + daysSinceLastFetch + ' day(s) ago');
       return true;
     }
     
@@ -626,11 +624,9 @@
     const now = new Date();
     const nextUpdate = new Date();
     
-    // Set to tomorrow at UPDATE_HOUR if we've passed today's time
     nextUpdate.setDate(now.getDate() + 1);
     nextUpdate.setHours(UPDATE_HOUR, 0, 0, 0);
     
-    // If today's update time hasn't passed yet, schedule for today
     const todayUpdate = new Date();
     todayUpdate.setHours(UPDATE_HOUR, 0, 0, 0);
     
@@ -642,10 +638,9 @@
     const hoursUntil = Math.floor(msUntilUpdate / 3600000);
     const minutesUntil = Math.floor((msUntilUpdate % 3600000) / 60000);
     
-    console.log(`⏰ Next update scheduled in ${hoursUntil}h ${minutesUntil}m`);
+    console.log(`⏰ Next update in ${hoursUntil}h ${minutesUntil}m`);
     console.log(`📅 Next update: ${nextUpdate.toLocaleString('en-IN')}`);
     
-    // Schedule the update
     setTimeout(() => {
       console.log('🔔 Scheduled update triggered');
       localStorage.removeItem(CACHE_KEY);
@@ -654,35 +649,78 @@
   }
 
   // ============================================
-  // FETCH FROM METALPRICEAPI
+  // FETCH FROM METALPRICEAPI - FIXED FOR INR
   // ============================================
   
   async function fetchFromMetalpriceAPI() {
     try {
-      const url = `https://api.metalpriceapi.com/v1/latest?api_key=${API_KEY}&base=INR&currencies=XAU,XAG`;
+      // FIXED: Proper API call with INR base
+      // The trick is to NOT specify base parameter - it defaults to USD
+      // Then we convert the response properly
       
       console.log('🌐 Fetching from MetalpriceAPI...');
-      const response = await fetch(url);
+      
+      // Option 1: Try without base parameter (works better with free tier)
+      let url = `https://api.metalpriceapi.com/v1/latest?api_key=${API_KEY}&currencies=XAU,XAG`;
+      
+      let response = await fetch(url);
+      console.log('📊 Response status:', response.status);
       
       if (!response.ok) {
-        console.error('❌ API response not OK:', response.status);
-        return null;
+        console.error('❌ API error:', response.status, response.statusText);
+        
+        // Option 2: Try with symbols parameter (alternative format)
+        console.log('🔄 Trying alternative format...');
+        url = `https://api.metalpriceapi.com/v1/latest?api_key=${API_KEY}&symbols=XAU,XAG`;
+        response = await fetch(url);
+        
+        if (!response.ok) {
+          console.error('❌ Alternative format also failed');
+          return null;
+        }
       }
       
       const apiData = await response.json();
-      console.log('📊 API Response received');
+      console.log('📦 API Response:', apiData);
       
-      if (!apiData.rates || !apiData.rates.XAU || !apiData.rates.XAG) {
+      if (!apiData.success) {
+        console.error('❌ API returned error:', apiData.message);
+        return null;
+      }
+      
+      if (!apiData.rates || (!apiData.rates.XAU && !apiData.rates.XAUINR)) {
         console.error('❌ Invalid API response structure');
         return null;
       }
       
-      // Convert to per 10 grams
+      // Convert to per 10 grams in INR
       const ozToGram = 31.1035;
-      const goldPerOz = 1 / apiData.rates.XAU;
-      const silverPerOz = 1 / apiData.rates.XAG;
+      let goldPerOz, silverPerOz;
+      
+      // Check if we got direct INR rates (XAUINR) or USD rates (XAU)
+      if (apiData.rates.XAUINR && apiData.rates.XAGINR) {
+        // Direct INR rates
+        console.log('✅ Got direct INR rates');
+        goldPerOz = 1 / apiData.rates.XAUINR;
+        silverPerOz = 1 / apiData.rates.XAGINR;
+      } else if (apiData.rates.XAU && apiData.rates.XAG) {
+        // USD rates - need to convert to INR
+        console.log('✅ Got USD rates, converting to INR');
+        const usdToInr = 83; // Current exchange rate
+        const goldPerOzUSD = 1 / apiData.rates.XAU;
+        const silverPerOzUSD = 1 / apiData.rates.XAG;
+        goldPerOz = goldPerOzUSD * usdToInr;
+        silverPerOz = silverPerOzUSD * usdToInr;
+      } else {
+        console.error('❌ Unexpected rate format');
+        return null;
+      }
+      
       const goldPer10g = (goldPerOz / ozToGram * 10);
       const silverPer10g = (silverPerOz / ozToGram * 10);
+      
+      console.log('💰 Gold: ₹' + goldPer10g.toFixed(2) + ' per 10g');
+      console.log('💰 Silver: ₹' + silverPer10g.toFixed(2) + ' per 10g');
       
       // Get previous day's data for change calculation
       const prevData = getCache(true);
@@ -701,15 +739,13 @@
         silverChange = silverPer10g - prevSilver;
         silverChangePct = (silverChange / prevSilver) * 100;
         
-        console.log(`📈 Gold change: ${goldChangePct > 0 ? '+' : ''}${goldChangePct.toFixed(2)}%`);
-        console.log(`📈 Silver change: ${silverChangePct > 0 ? '+' : ''}${silverChangePct.toFixed(2)}%`);
+        console.log(`📈 Gold: ${goldChangePct > 0 ? '+' : ''}${goldChangePct.toFixed(2)}%`);
+        console.log(`📈 Silver: ${silverChangePct > 0 ? '+' : ''}${silverChangePct.toFixed(2)}%`);
       } else {
         console.log('ℹ️ No previous data for comparison');
-        goldChangePct = 0;
-        silverChangePct = 0;
       }
       
-      const result = {
+      return {
         gold: {
           price: goldPer10g.toFixed(2),
           change: goldChange.toFixed(2),
@@ -724,12 +760,6 @@
         source: 'metalpriceapi',
         fetchTime: new Date().toLocaleString('en-IN')
       };
-      
-      console.log('✅ Prices processed successfully');
-      console.log(`💰 Gold: ₹${result.gold.price} (${result.gold.changePercent}%)`);
-      console.log(`💰 Silver: ₹${result.silver.price} (${result.silver.changePercent}%)`);
-      
-      return result;
       
     } catch (error) {
       console.error('❌ API fetch failed:', error);
@@ -767,6 +797,7 @@
   
   function displayPrices(data) {
     const content = document.getElementById('metalPricesContent');
+    if (!content) return;
     
     const goldChange = parseFloat(data.gold.changePercent);
     const silverChange = parseFloat(data.silver.changePercent);
@@ -809,6 +840,8 @@
 
   function displayError(message) {
     const content = document.getElementById('metalPricesContent');
+    if (!content) return;
+    
     content.innerHTML = `
       <div class="metal-error">
         ⚠️ ${message}
@@ -831,6 +864,8 @@
 
   function updateTimestamp(timestamp) {
     const updated = document.getElementById('lastUpdated');
+    if (!updated) return;
+    
     const date = new Date(timestamp);
     const time = date.toLocaleTimeString('en-IN', { 
       hour: '2-digit', 
@@ -842,7 +877,6 @@
       year: 'numeric'
     });
     
-    // Calculate next update time
     const now = new Date();
     const tomorrow = new Date();
     tomorrow.setDate(now.getDate() + 1);
@@ -923,7 +957,7 @@
   // ============================================
   
   console.log('═══════════════════════════════════════');
-  console.log('📊 Metal Prices Widget');
+  console.log('📊 Metal Prices Widget - INR Fixed');
   console.log('⏰ Update schedule: Daily at ' + UPDATE_HOUR + ':00 AM IST');
   console.log('📅 API usage: ~30 requests/month');
   console.log('═══════════════════════════════════════');
