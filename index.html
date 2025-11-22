@@ -505,76 +505,9 @@
   // Count total calculators
   document.getElementById('totalCalcs').textContent = appCards.length;
 
+    
   // ============================================
-  // METAL PRICES WIDGET
-  // ============================================
-
-  // Metal Prices Widget - MetalpriceAPI Integration
-// Replace your entire widget JavaScript with this
-
-(function() {
-  // ============================================
-  // CONFIGURATION
-  // ============================================
-  
-  const API_KEY = 'ba250c368e405f5da4dce9ce8ed7441d'; // Get free key from metalpriceapi.com
-  const CACHE_KEY = 'metal-prices-cache';
-  const CACHE_DURATION = 86400000; // 24 hours (24 × 60 × 60 × 1000)
-  
-  // ============================================
-  // MAIN FETCH FUNCTION
-  // ============================================
-  
-  async function fetchMetalPrices() {
-    const content = document.getElementById('metalPricesContent');
-    const refreshBtn = document.getElementById('refreshPrices');
-    const refreshIcon = document.getElementById('refreshIcon');
-
-    // Check cache first
-    const cached = getCache();
-    if (cached) {
-      console.log('Using cached prices (age: ' + Math.round((Date.now() - cached.timestamp) / 60000) + ' minutes)');
-      displayPrices(cached);
-      updateTimestamp(cached.timestamp);
-      return;
-    }
-
-    try {
-      refreshBtn.classList.add('loading');
-      refreshIcon.innerHTML = '<span class="spinner"></span>';
-      console.log('Fetching fresh prices from API...');
-
-      // Fetch from MetalpriceAPI
-      let data = await fetchFromMetalpriceAPI();
-      
-      if (!data) {
-        console.log('API failed, using fallback data');
-        data = getFallbackData();
-      }
-
-      setCache(data);
-      displayPrices(data);
-      updateTimestamp(Date.now());
-
-    } catch (error) {
-      console.error('Error fetching prices:', error);
-      
-      // Try to show cached data even if expired
-      const cached = getCache(true);
-      if (cached) {
-        displayPrices(cached);
-        updateTimestamp(cached.timestamp);
-      } else {
-        displayError('Unable to fetch prices. Please try again later.');
-      }
-    } finally {
-      refreshBtn.classList.remove('loading');
-      refreshIcon.textContent = '🔄';
-    }
-  }
-
-  // ============================================
-  // METALPRICEAPI INTEGRATION
+  // METALPRICEAPI WIDGET
   // Metal Prices Widget - Daily Update at 6:00 AM IST
   // Fetches once per day, caches for 24 hours
   // ============================================
@@ -586,7 +519,7 @@
   // CONFIGURATION
   // ============================================
   
-  const API_KEY = ba250c368e405f5da4dce9ce8ed7441d; // Get from metalpriceapi.com
+  const API_KEY = 'ba250c368e405f5da4dce9ce8ed7441d'; // Get from metalpriceapi.com
   const CACHE_KEY = 'metal-prices-cache';
   const UPDATE_HOUR = 6; // 6 AM IST (change to 11 for 11 AM)
   const CACHE_DURATION = 86400000; // 24 hours in milliseconds
