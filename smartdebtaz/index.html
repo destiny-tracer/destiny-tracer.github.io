@@ -14,7 +14,7 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #1e293b 0%, #581c87 50%, #1e293b 100%);
+            background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 25%, #0d9488 50%, #059669 75%, #d97706 100%);
             min-height: 100vh;
             padding: 20px;
             color: #fff;
@@ -48,7 +48,7 @@
         }
 
         .subtitle {
-            color: #c4b5fd;
+            color: #a7f3d0;
             font-size: 1rem;
         }
 
@@ -72,7 +72,7 @@
         }
 
         .btn-primary {
-            background: linear-gradient(135deg, #a855f7 0%, #ec4899 100%);
+            background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%);
             color: white;
         }
 
@@ -88,6 +88,11 @@
 
         .btn-emerald {
             background: linear-gradient(135deg, #10b981 0%, #14b8a6 100%);
+            color: white;
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
             color: white;
         }
 
@@ -130,10 +135,6 @@
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
         }
 
-        .grid-5 {
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-        }
-
         .input-group {
             display: flex;
             flex-direction: column;
@@ -161,12 +162,12 @@
 
         input:focus, select:focus {
             outline: none;
-            border-color: #a855f7;
-            box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.2);
+            border-color: #10b981;
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
         }
 
         select option {
-            background: #1e293b;
+            background: #0f172a;
             color: white;
         }
 
@@ -224,7 +225,7 @@
         }
 
         .stat-card-purple {
-            background: linear-gradient(135deg, #a855f7 0%, #9333ea 100%);
+            background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
         }
 
         .stat-card-health {
@@ -252,6 +253,10 @@
             position: relative;
             height: 300px;
             margin-top: 20px;
+        }
+
+        .chart-container-large {
+            height: 400px;
         }
 
         .loan-item, .saving-item {
@@ -282,7 +287,7 @@
         }
 
         .priority-badge {
-            background: #a855f7;
+            background: #8b5cf6;
             color: white;
             padding: 4px 12px;
             border-radius: 20px;
@@ -296,12 +301,12 @@
         }
 
         .loan-lender {
-            color: #c4b5fd;
+            color: #a7f3d0;
             font-size: 0.9rem;
             margin-top: 5px;
         }
 
-        .delete-btn {
+        .delete-btn, .view-btn {
             background: rgba(239, 68, 68, 0.2);
             border: 1px solid rgba(239, 68, 68, 0.5);
             color: #fca5a5;
@@ -309,10 +314,21 @@
             border-radius: 8px;
             cursor: pointer;
             transition: all 0.3s;
+            margin-left: 8px;
+        }
+
+        .view-btn {
+            background: rgba(59, 130, 246, 0.2);
+            border: 1px solid rgba(59, 130, 246, 0.5);
+            color: #93c5fd;
         }
 
         .delete-btn:hover {
             background: rgba(239, 68, 68, 0.4);
+        }
+
+        .view-btn:hover {
+            background: rgba(59, 130, 246, 0.4);
         }
 
         .loan-details {
@@ -383,12 +399,14 @@
         }
 
         .modal-content {
-            background: linear-gradient(135deg, #1e293b 0%, #581c87 100%);
+            background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 100%);
             border-radius: 20px;
             padding: 30px;
-            max-width: 800px;
+            max-width: 900px;
             width: 100%;
             border: 1px solid rgba(255, 255, 255, 0.2);
+            max-height: 90vh;
+            overflow-y: auto;
         }
 
         .strategy-card {
@@ -396,7 +414,7 @@
             border-radius: 12px;
             padding: 20px;
             margin-bottom: 15px;
-            border-left: 4px solid #fbbf24;
+            border-left: 4px solid #10b981;
         }
 
         .strategy-title {
@@ -408,6 +426,64 @@
         .strategy-description {
             line-height: 1.6;
             opacity: 0.9;
+        }
+
+        .calendar-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .calendar-table th,
+        .calendar-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .calendar-table th {
+            background: rgba(16, 185, 129, 0.2);
+            font-weight: bold;
+            position: sticky;
+            top: 0;
+        }
+
+        .calendar-table tr:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .comparison-box {
+            background: rgba(16, 185, 129, 0.1);
+            border: 2px solid rgba(16, 185, 129, 0.3);
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .comparison-result {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .comparison-item {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        .alert-box {
+            background: rgba(239, 68, 68, 0.2);
+            border: 2px solid rgba(239, 68, 68, 0.5);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .alert-box.show {
+            display: block;
         }
 
         .hidden {
@@ -424,7 +500,7 @@
                 border: 1px solid #ddd;
                 color: black;
             }
-            .btn-group, .delete-btn, .btn {
+            .btn-group, .delete-btn, .view-btn, .btn {
                 display: none !important;
             }
             .stat-card {
@@ -445,6 +521,9 @@
             .stats-cards {
                 grid-template-columns: 1fr;
             }
+            .calendar-table {
+                font-size: 0.85rem;
+            }
         }
     </style>
 </head>
@@ -461,11 +540,20 @@
                     <button class="btn btn-success" onclick="exportPDF()">
                         📥 Export PDF
                     </button>
+                    <button class="btn btn-warning" onclick="exportCSV()">
+                        📊 Export CSV
+                    </button>
                     <button class="btn btn-info" onclick="window.print()">
                         🖨️ Print
                     </button>
                 </div>
             </div>
+        </div>
+
+        <!-- Alert Box -->
+        <div id="alertBox" class="alert-box">
+            <h3 style="margin-bottom: 10px;">⚠️ Financial Health Warning</h3>
+            <p id="alertMessage"></p>
         </div>
 
         <!-- Income Section -->
@@ -568,6 +656,38 @@
                 <div class="stat-label">Financial Health</div>
                 <div class="stat-value" id="statHealth">N/A</div>
                 <div class="stat-subtitle" id="statDTI">DTI: 0%</div>
+            </div>
+        </div>
+
+        <!-- Monthly Cash Flow Chart -->
+        <div class="section">
+            <h3 class="section-title">📊 Monthly Cash Flow Analysis</h3>
+            <div class="chart-container chart-container-large">
+                <canvas id="cashFlowChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Comparison Calculator -->
+        <div class="section">
+            <h3 class="section-title">🔄 Debt Reduction Comparison Calculator</h3>
+            <p style="opacity: 0.8; margin-bottom: 20px;">See how extra payments can accelerate your debt-free journey</p>
+            <div class="grid grid-3">
+                <div class="input-group">
+                    <label>Extra Monthly Payment (₹)</label>
+                    <input type="number" id="extraPayment" placeholder="₹ 0" oninput="calculateComparison()">
+                </div>
+                <div class="input-group">
+                    <label>Apply Extra Payment To</label>
+                    <select id="extraPaymentTarget" onchange="calculateComparison()">
+                        <option value="highest">Highest Interest Loan</option>
+                        <option value="smallest">Smallest Balance (Snowball)</option>
+                        <option value="all">Distribute Across All</option>
+                    </select>
+                </div>
+            </div>
+            <div id="comparisonResult" class="comparison-box" style="display: none;">
+                <h4 style="margin-bottom: 15px;">💡 Impact Analysis</h4>
+                <div class="comparison-result" id="comparisonDetails"></div>
             </div>
         </div>
 
@@ -738,12 +858,24 @@
         </div>
     </div>
 
+    <!-- EMI Calendar Modal -->
+    <div id="calendarModal" class="modal">
+        <div class="modal-content">
+            <h2 class="section-title">📅 EMI Payment Calendar</h2>
+            <div id="calendarContent"></div>
+            <div class="btn-group" style="margin-top: 20px;">
+                <button class="btn" style="background: #6b7280;" onclick="closeCalendarModal()">Close</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         // Data Storage
         let loans = [];
         let savings = [];
         let loanChart = null;
         let projectionChart = null;
+        let cashFlowChart = null;
 
         // Initialize
         document.addEventListener('DOMContentLoaded', () => {
@@ -835,9 +967,161 @@
             
             document.getElementById('statHealth').textContent = health;
             
+            // Show alerts
+            showAlerts(dti, disposableIncome, totalExpenses);
+            
             // Update charts
             updateCharts();
+            updateCashFlowChart();
             generateStrategies();
+            calculateComparison();
+        }
+
+        // Show financial alerts
+        function showAlerts(dti, disposable, expenses) {
+            const alertBox = document.getElementById('alertBox');
+            const alertMessage = document.getElementById('alertMessage');
+            const alerts = [];
+
+            if (parseFloat(dti) >= 50) {
+                alerts.push('⚠️ CRITICAL: Your Debt-to-Income ratio is ' + dti + '% (very high risk). Immediate action needed to reduce debt burden.');
+            }
+            
+            if (disposable < 0) {
+                alerts.push('⚠️ ALERT: Negative disposable income (₹' + disposable.toFixed(0).toLocaleString() + '). Your expenses and EMIs exceed your income!');
+            }
+            
+            if (savings.length === 0 && loans.length > 0) {
+                alerts.push('⚠️ WARNING: No emergency fund detected. Build 3-6 months of expenses (₹' + (expenses * 3).toFixed(0).toLocaleString() + ') as safety net.');
+            }
+
+            if (alerts.length > 0) {
+                alertMessage.innerHTML = alerts.join('<br><br>');
+                alertBox.classList.add('show');
+            } else {
+                alertBox.classList.remove('show');
+            }
+        }
+
+        // Update Cash Flow Chart
+        function updateCashFlowChart() {
+            const totalIncome = getValue('salary') + getValue('rental') + getValue('bankSavings') + 
+                               getValue('spouse') + getValue('parental') + getValue('miscIncome');
+            const totalExpenses = getValue('groceries') + getValue('communication') + getValue('eb') + 
+                                 getValue('rent') + getValue('maintenance') + getValue('fuel') + 
+                                 getValue('medical') + getValue('miscExpense');
+            const totalEMI = loans.reduce((sum, loan) => sum + parseFloat(loan.emi), 0);
+            const monthlySavingsContribution = savings.reduce((sum, s) => sum + parseFloat(s.monthlyContribution || 0), 0);
+
+            const cashFlowData = {
+                labels: ['Income', 'Expenses', 'EMI Payments', 'Savings', 'Remaining'],
+                datasets: [{
+                    label: 'Monthly Cash Flow (₹)',
+                    data: [
+                        totalIncome,
+                        -totalExpenses,
+                        -totalEMI,
+                        -monthlySavingsContribution,
+                        totalIncome - totalExpenses - totalEMI - monthlySavingsContribution
+                    ],
+                    backgroundColor: [
+                        'rgba(16, 185, 129, 0.8)',
+                        'rgba(239, 68, 68, 0.8)',
+                        'rgba(59, 130, 246, 0.8)',
+                        'rgba(139, 92, 246, 0.8)',
+                        'rgba(245, 158, 11, 0.8)'
+                    ],
+                    borderColor: [
+                        'rgba(16, 185, 129, 1)',
+                        'rgba(239, 68, 68, 1)',
+                        'rgba(59, 130, 246, 1)',
+                        'rgba(139, 92, 246, 1)',
+                        'rgba(245, 158, 11, 1)'
+                    ],
+                    borderWidth: 2
+                }]
+            };
+
+            if (cashFlowChart) cashFlowChart.destroy();
+            const cashCtx = document.getElementById('cashFlowChart').getContext('2d');
+            cashFlowChart = new Chart(cashCtx, {
+                type: 'bar',
+                data: cashFlowData,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return '₹' + Math.abs(context.parsed.y).toLocaleString();
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            ticks: { 
+                                color: '#fff',
+                                callback: function(value) {
+                                    return '₹' + value.toLocaleString();
+                                }
+                            },
+                            grid: { color: 'rgba(255, 255, 255, 0.1)' }
+                        },
+                        x: {
+                            ticks: { color: '#fff' },
+                            grid: { color: 'rgba(255, 255, 255, 0.1)' }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Calculate Comparison
+        function calculateComparison() {
+            const extraPayment = getValue('extraPayment');
+            const target = document.getElementById('extraPaymentTarget').value;
+            
+            if (extraPayment <= 0 || loans.length === 0) {
+                document.getElementById('comparisonResult').style.display = 'none';
+                return;
+            }
+
+            const totalEMI = loans.reduce((sum, loan) => sum + parseFloat(loan.emi), 0);
+            const totalOutstanding = loans.reduce((sum, loan) => sum + parseFloat(loan.outstanding), 0);
+            
+            // Calculate current debt-free date
+            const sortedLoans = [...loans].sort((a, b) => a.remainingEmis - b.remainingEmis);
+            const maxMonths = Math.max(...sortedLoans.map(l => l.remainingEmis));
+            
+            // Estimate accelerated payoff (simplified)
+            const acceleratedMonths = Math.ceil((totalOutstanding / (totalEMI + extraPayment)));
+            const monthsSaved = maxMonths - acceleratedMonths;
+            const interestSaved = monthsSaved * totalEMI * 0.3; // Rough estimate
+
+            document.getElementById('comparisonResult').style.display = 'block';
+            document.getElementById('comparisonDetails').innerHTML = `
+                <div class="comparison-item">
+                    <div class="detail-label">Current Debt-Free Date</div>
+                    <div class="detail-value">${maxMonths} months</div>
+                </div>
+                <div class="comparison-item">
+                    <div class="detail-label">With Extra ₹${extraPayment.toLocaleString()}/month</div>
+                    <div class="detail-value" style="color: #34d399;">${acceleratedMonths} months</div>
+                </div>
+                <div class="comparison-item">
+                    <div class="detail-label">Time Saved</div>
+                    <div class="detail-value" style="color: #fbbf24;">${monthsSaved} months</div>
+                </div>
+                <div class="comparison-item">
+                    <div class="detail-label">Interest Saved (approx)</div>
+                    <div class="detail-value" style="color: #10b981;">₹${interestSaved.toFixed(0).toLocaleString()}</div>
+                </div>
+            `;
         }
 
         // Modal functions
@@ -855,6 +1139,65 @@
 
         function closeSavingsModal() {
             document.getElementById('savingsModal').classList.remove('active');
+        }
+
+        function closeCalendarModal() {
+            document.getElementById('calendarModal').classList.remove('active');
+        }
+
+        // Show EMI Calendar
+        function showEMICalendar(loanId) {
+            const loan = loans.find(l => l.id === loanId);
+            if (!loan) return;
+
+            const emi = parseFloat(loan.emi);
+            const rate = parseFloat(loan.rate) / 12 / 100;
+            let outstanding = parseFloat(loan.outstanding);
+            const startMonth = parseInt(loan.paidEmis) + 1;
+            const endMonth = parseInt(loan.tenure);
+
+            let calendarHTML = `
+                <h3 style="margin-bottom: 15px;">${loan.type} - ${loan.lender}</h3>
+                <p style="opacity: 0.8; margin-bottom: 20px;">EMI: ₹${emi.toLocaleString()} | Remaining: ${loan.remainingEmis} months</p>
+                <div style="overflow-x: auto;">
+                    <table class="calendar-table">
+                        <thead>
+                            <tr>
+                                <th>Month</th>
+                                <th>EMI Payment</th>
+                                <th>Principal</th>
+                                <th>Interest</th>
+                                <th>Outstanding</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+            `;
+
+            for (let month = startMonth; month <= endMonth && outstanding > 0; month++) {
+                const interest = outstanding * rate;
+                const principal = emi - interest;
+                outstanding -= principal;
+                outstanding = Math.max(0, outstanding);
+
+                calendarHTML += `
+                    <tr>
+                        <td>Month ${month}</td>
+                        <td>₹${emi.toLocaleString()}</td>
+                        <td style="color: #34d399;">₹${principal.toFixed(0).toLocaleString()}</td>
+                        <td style="color: #fca5a5;">₹${interest.toFixed(0).toLocaleString()}</td>
+                        <td>₹${outstanding.toFixed(0).toLocaleString()}</td>
+                    </tr>
+                `;
+            }
+
+            calendarHTML += `
+                        </tbody>
+                    </table>
+                </div>
+            `;
+
+            document.getElementById('calendarContent').innerHTML = calendarHTML;
+            document.getElementById('calendarModal').classList.add('active');
         }
 
         // Add Loan
@@ -980,7 +1323,10 @@
                                     <div class="loan-lender">${loan.lender}</div>
                                 </div>
                             </div>
-                            <button class="delete-btn" onclick="deleteLoan(${loan.id})">🗑️ Delete</button>
+                            <div>
+                                <button class="view-btn" onclick="showEMICalendar(${loan.id})">📅 Calendar</button>
+                                <button class="delete-btn" onclick="deleteLoan(${loan.id})">🗑️ Delete</button>
+                            </div>
                         </div>
                         <div class="loan-details">
                             <div class="detail-item">
@@ -1159,35 +1505,102 @@
                                  getValue('rent') + getValue('maintenance') + getValue('fuel') + 
                                  getValue('medical') + getValue('miscExpense');
             const totalEMI = loans.reduce((sum, loan) => sum + parseFloat(loan.emi), 0);
+            const totalOutstanding = loans.reduce((sum, loan) => sum + parseFloat(loan.outstanding), 0);
             const monthlySavingsContribution = savings.reduce((sum, s) => sum + parseFloat(s.monthlyContribution || 0), 0);
             const disposableIncome = totalIncome - totalExpenses - totalEMI - monthlySavingsContribution;
             const dti = totalIncome > 0 ? ((totalEMI / totalIncome) * 100).toFixed(1) : 0;
+            const savingsRate = totalIncome > 0 ? ((monthlySavingsContribution / totalIncome) * 100).toFixed(1) : 0;
 
-            // Sort loans by early closure
+            // Sort loans by priority
             const sortedLoans = [...loans].sort((a, b) => a.remainingEmis - b.remainingEmis);
+            const sortedByInterest = [...loans].sort((a, b) => parseFloat(b.rate) - parseFloat(a.rate));
 
-            // Priority Closure Strategy
+            // 1. Priority Closure Strategy (Snowball Method)
             if (sortedLoans.length > 0) {
                 const firstLoan = sortedLoans[0];
                 strategies.push({
-                    title: '🎯 Priority Closure Strategy',
-                    description: `Focus on closing your ${firstLoan.type} first (${firstLoan.remainingEmis} EMIs remaining). This has the shortest tenure and closing it will free up ₹${parseFloat(firstLoan.emi).toLocaleString()}/month.`
+                    title: '⛄ Snowball Method - Priority Closure',
+                    description: `Focus on closing your ${firstLoan.type} first (${firstLoan.remainingEmis} EMIs remaining, ₹${parseFloat(firstLoan.outstanding).toLocaleString()} outstanding). This has the shortest tenure and closing it will free up ₹${parseFloat(firstLoan.emi).toLocaleString()}/month. The psychological win will motivate you to tackle the next loan with increased momentum.`
                 });
             }
 
-            // Surplus Utilization
-            if (disposableIncome > 0) {
+            // 2. Avalanche Method (Highest Interest First)
+            if (sortedByInterest.length > 0) {
+                const highestInterestLoan = sortedByInterest[0];
+                const totalInterest = sortedByInterest.reduce((sum, l) => {
+                    return sum + (parseFloat(l.emi) * l.remainingEmis - parseFloat(l.outstanding));
+                }, 0);
                 strategies.push({
-                    title: '💰 Surplus Utilization',
-                    description: `You have ₹${disposableIncome.toFixed(0).toLocaleString()} disposable income. Consider using 50% (₹${(disposableIncome * 0.5).toFixed(0).toLocaleString()}) for extra EMI payments to reduce debt faster, and 50% for emergency savings.`
+                    title: '🏔️ Avalanche Method - Highest Interest First',
+                    description: `Target your ${highestInterestLoan.type} with ${highestInterestLoan.rate}% interest rate first. By paying extra on this loan, you'll save approximately ₹${(totalInterest * 0.2).toFixed(0).toLocaleString()} in interest charges. This method saves the most money in the long run, though progress may feel slower initially.`
                 });
             }
 
-            // DTI Alert
+            // 3. Surplus Utilization
+            if (disposableIncome > 0) {
+                const monthlyExtra = disposableIncome * 0.5;
+                const yearlyImpact = monthlyExtra * 12;
+                strategies.push({
+                    title: '💰 Surplus Utilization Strategy',
+                    description: `You have ₹${disposableIncome.toFixed(0).toLocaleString()} disposable income. Apply the 50-30-20 rule: 50% (₹${(disposableIncome * 0.5).toFixed(0).toLocaleString()}) for extra EMI payments, 30% (₹${(disposableIncome * 0.3).toFixed(0).toLocaleString()}) for emergency fund, 20% (₹${(disposableIncome * 0.2).toFixed(0).toLocaleString()}) for investments. This accelerates debt reduction while building financial security.`
+                });
+            }
+
+            // 4. Emergency Fund Check
+            const emergencyFundNeeded = totalExpenses * 6;
+            const currentEmergencyFund = savings.reduce((sum, s) => sum + parseFloat(s.amount || 0), 0);
+            if (currentEmergencyFund < emergencyFundNeeded) {
+                strategies.push({
+                    title: '🛡️ Emergency Fund Priority',
+                    description: `Build an emergency fund of ₹${emergencyFundNeeded.toFixed(0).toLocaleString()} (6 months expenses). You currently have ₹${currentEmergencyFund.toFixed(0).toLocaleString()}. Start with ₹${Math.min(5000, disposableIncome * 0.3).toFixed(0).toLocaleString()}/month in a liquid fund or savings account. This prevents taking new loans during emergencies.`
+                });
+            }
+
+            // 5. DTI Improvement
             if (parseFloat(dti) > 40) {
                 strategies.push({
-                    title: '⚠️ Debt-to-Income Alert',
-                    description: `Your DTI ratio is ${dti}% (above recommended 40%). Focus on: (1) Increasing income sources, (2) Reducing discretionary expenses, (3) Avoiding new loans until DTI improves.`
+                    title: '⚠️ Debt-to-Income Optimization',
+                    description: `Your DTI ratio is ${dti}% (target: <36%). Actions: (1) Freeze new borrowing, (2) Increase income through side hustle/freelancing (target: +₹${(totalIncome * 0.2).toFixed(0).toLocaleString()}), (3) Reduce discretionary expenses by 20% (₹${(totalExpenses * 0.2).toFixed(0).toLocaleString()}), (4) Consider debt consolidation if multiple high-interest loans exist.`
+                });
+            }
+
+            // 6. Debt Consolidation Analysis
+            if (loans.length >= 3) {
+                const avgRate = loans.reduce((sum, l) => sum + parseFloat(l.rate), 0) / loans.length;
+                const potentialSavings = totalOutstanding * (avgRate - 12) / 100 / 12 * 12; // Assuming 12% consolidation rate
+                strategies.push({
+                    title: '🔄 Debt Consolidation Opportunity',
+                    description: `You have ${loans.length} active loans with average ${avgRate.toFixed(1)}% interest. Consider consolidating into a single personal loan at 12-14% if possible. Potential benefits: Simplified payments, potentially lower interest (save ₹${Math.max(0, potentialSavings).toFixed(0).toLocaleString()}/year), improved credit score. Consult with your bank for balance transfer options.`
+                });
+            }
+
+            // 7. Income Increase Strategy
+            strategies.push({
+                title: '📈 Income Growth Strategy',
+                description: `Current income: ₹${totalIncome.toLocaleString()}. Target 20% increase in 12 months: (1) Negotiate salary raise (research market rates), (2) Start freelancing/consulting in your expertise (₹10k-30k/month), (3) Monetize skills online (teaching, writing), (4) Invest in upskilling for better opportunities. Even ₹10,000 extra monthly = ₹120,000 yearly for debt reduction.`
+                });
+
+            // 8. Prepayment Strategy
+            if (disposableIncome > 5000) {
+                const lumpsum = disposableIncome * 6; // 6 months saving
+                const targetLoan = sortedByInterest[0];
+                strategies.push({
+                    title: '⚡ Prepayment Acceleration',
+                    description: `Save ₹${disposableIncome.toFixed(0).toLocaleString()}/month for 6 months = ₹${lumpsum.toFixed(0).toLocaleString()} lumpsum. Prepay your ${targetLoan?.type || 'highest interest loan'} (${targetLoan?.rate || 'N/A'}% interest). Most banks allow prepayment without penalty after 6 months. This reduces principal, thereby reducing future interest substantially.`
+                });
+            }
+
+            // 9. Credit Score Optimization
+            strategies.push({
+                title: '💳 Credit Score Enhancement',
+                description: `Strategies to improve credit score: (1) Never miss EMI payments (set auto-debit), (2) Keep credit utilization below 30%, (3) Don't close old credit cards (credit history matters), (4) Diversify credit mix (secured + unsecured), (5) Check credit report quarterly for errors. Better score = lower interest rates on future loans = long-term savings.`
+            });
+
+            // 10. Savings Rate Improvement
+            if (parseFloat(savingsRate) < 20) {
+                strategies.push({
+                    title: '🎯 Savings Rate Target',
+                    description: `Current savings rate: ${savingsRate}% (target: 20-30%). Start with "pay yourself first" principle: Set up automatic transfer of ₹${Math.min(3000, totalIncome * 0.1).toFixed(0)} to separate savings account on salary day. Increase by ₹500 every quarter. Use ELSS for tax benefits, PPF for long-term, and liquid funds for emergency. Small consistent savings compound over time.`
                 });
             }
 
@@ -1196,41 +1609,26 @@
             const strategyAmount = parseFloat(document.getElementById('strategyAmount').value) || 0;
 
             if (strategyType === 'borrowing' && strategyAmount > 0) {
-                const estimatedEMI = strategyAmount * 0.02; // Rough 2% monthly
+                const estimatedEMI = strategyAmount * 0.02;
                 const newDTI = (((totalEMI + estimatedEMI) / totalIncome) * 100).toFixed(1);
+                const newDisposable = disposableIncome - estimatedEMI;
                 strategies.push({
-                    title: '🔴 Additional Borrowing Impact',
-                    description: `Borrowing ₹${strategyAmount.toLocaleString()} will increase your DTI from ${dti}% to approximately ${newDTI}%. Consider: (1) Postponing if possible, (2) Opting for longer tenure to reduce EMI, (3) Prepaying existing high-interest loans first.`
+                    title: '🔴 Additional Borrowing Impact Analysis',
+                    description: `Borrowing ₹${strategyAmount.toLocaleString()} will increase DTI from ${dti}% to ${newDTI}%. New disposable income: ₹${newDisposable.toFixed(0).toLocaleString()}. Recommendations: (1) Postpone if DTI will exceed 50%, (2) Opt for maximum tenure to minimize EMI impact, (3) Ensure emergency fund covers 6 months before borrowing, (4) Prepay existing high-interest loans first with this amount if possible instead of new borrowing.`
                 });
             }
 
             if (strategyType === 'settlement' && strategyAmount > 0) {
-                const highestInterestLoan = [...loans].sort((a, b) => parseFloat(b.rate) - parseFloat(a.rate))[0];
+                const highestInterestLoan = sortedByInterest[0];
                 strategies.push({
-                    title: '🎉 Settlement Windfall Strategy',
-                    description: `With ₹${strategyAmount.toLocaleString()} from settlement, recommended allocation:
-• 40% (₹${(strategyAmount * 0.4).toLocaleString()}) - Prepay ${highestInterestLoan?.type || 'highest interest loan'} (${highestInterestLoan?.rate || 'N/A'}% interest)
-• 30% (₹${(strategyAmount * 0.3).toLocaleString()}) - Emergency fund (6 months expenses)
-• 20% (₹${(strategyAmount * 0.2).toLocaleString()}) - Invest in mutual funds/FD
-• 10% (₹${(strategyAmount * 0.1).toLocaleString()}) - Personal use/celebration`
-                });
-            }
+                    title: '🎉 Windfall Allocation Strategy',
+                    description: `With ₹${strategyAmount.toLocaleString()} windfall, use the 40-30-20-10 rule:
+• 40% (₹${(strategyAmount * 0.4).toLocaleString()}) → Prepay ${highestInterestLoan?.type || 'highest interest loan'} (${highestInterestLoan?.rate || 'N/A'}% p.a.) to save maximum interest
+• 30% (₹${(strategyAmount * 0.3).toLocaleString()}) → Emergency fund (maintain 6 months expenses)
+• 20% (₹${(strategyAmount * 0.2).toLocaleString()}) → Long-term investments (ELSS/Index Funds for wealth creation)
+• 10% (₹${(strategyAmount * 0.1).toLocaleString()}) → Reward yourself (maintain motivation and financial discipline)
 
-            // Snowball Method
-            if (sortedLoans.length > 1) {
-                const totalEMIFreed = sortedLoans.slice(0, 2).reduce((sum, l) => sum + parseFloat(l.emi), 0);
-                strategies.push({
-                    title: '⛄ Debt Snowball Method',
-                    description: `Close smallest loans first for psychological wins. After closing first 2 loans, you'll free up ₹${totalEMIFreed.toLocaleString()}/month. Redirect this to the next loan to create a snowball effect.`
-                });
-            }
-
-            // Savings Boost
-            const savingsRate = totalIncome > 0 ? ((monthlySavingsContribution / totalIncome) * 100).toFixed(1) : 0;
-            if (parseFloat(savingsRate) < 20 && disposableIncome > 0) {
-                strategies.push({
-                    title: '📈 Increase Savings Rate',
-                    description: `Your current savings rate is ${savingsRate}% (target: 20-30%). Start small: increase monthly savings by ₹${Math.min(2000, disposableIncome * 0.2).toFixed(0)} using automatic transfers. This won't impact your lifestyle significantly.`
+This balanced approach reduces debt, builds security, and creates wealth simultaneously.`
                 });
             }
 
@@ -1244,6 +1642,79 @@
                     </div>
                 `).join('');
             }
+        }
+
+        // Export CSV
+        function exportCSV() {
+            const totalIncome = getValue('salary') + getValue('rental') + getValue('bankSavings') + 
+                               getValue('spouse') + getValue('parental') + getValue('miscIncome');
+            const totalExpenses = getValue('groceries') + getValue('communication') + getValue('eb') + 
+                                 getValue('rent') + getValue('maintenance') + getValue('fuel') + 
+                                 getValue('medical') + getValue('miscExpense');
+            const totalEMI = loans.reduce((sum, loan) => sum + parseFloat(loan.emi), 0);
+            const totalOutstanding = loans.reduce((sum, loan) => sum + parseFloat(loan.outstanding), 0);
+            const totalSavings = savings.reduce((sum, s) => sum + parseFloat(s.amount || 0), 0);
+
+            let csv = 'Smart Debt Analyzer - Financial Report\n';
+            csv += `Generated on,${new Date().toLocaleString()}\n\n`;
+
+            // Income Section
+            csv += 'INCOME BREAKDOWN\n';
+            csv += 'Category,Amount (INR)\n';
+            csv += `Salary Income,${getValue('salary')}\n`;
+            csv += `Rental Income,${getValue('rental')}\n`;
+            csv += `Bank Savings Income,${getValue('bankSavings')}\n`;
+            csv += `Spouse Income,${getValue('spouse')}\n`;
+            csv += `Parental Income,${getValue('parental')}\n`;
+            csv += `Miscellaneous Income,${getValue('miscIncome')}\n`;
+            csv += `Total Monthly Income,${totalIncome}\n\n`;
+
+            // Expenses Section
+            csv += 'EXPENSE BREAKDOWN\n';
+            csv += 'Category,Amount (INR)\n';
+            csv += `Groceries,${getValue('groceries')}\n`;
+            csv += `Communication,${getValue('communication')}\n`;
+            csv += `Electricity Bill,${getValue('eb')}\n`;
+            csv += `Rent,${getValue('rent')}\n`;
+            csv += `Maintenance,${getValue('maintenance')}\n`;
+            csv += `Fuel,${getValue('fuel')}\n`;
+            csv += `Medical Expense,${getValue('medical')}\n`;
+            csv += `Miscellaneous Expense,${getValue('miscExpense')}\n`;
+            csv += `Total Monthly Expenses,${totalExpenses}\n\n`;
+
+            // Summary
+            csv += 'FINANCIAL SUMMARY\n';
+            csv += 'Metric,Value\n';
+            csv += `Total Monthly Income,${totalIncome}\n`;
+            csv += `Total Monthly Expenses,${totalExpenses}\n`;
+            csv += `Total EMI Payment,${totalEMI.toFixed(0)}\n`;
+            csv += `Total Outstanding Debt,${totalOutstanding.toFixed(0)}\n`;
+            csv += `Total Savings,${totalSavings.toFixed(0)}\n`;
+            csv += `Debt-to-Income Ratio,${totalIncome > 0 ? ((totalEMI / totalIncome) * 100).toFixed(1) : 0}%\n\n`;
+
+            // Loans Section
+            csv += 'LOAN DETAILS\n';
+            csv += 'Type,Lender,Principal,Interest Rate,Tenure,Paid EMIs,Remaining EMIs,Monthly EMI,Outstanding\n';
+            loans.forEach(loan => {
+                csv += `${loan.type},${loan.lender},${loan.principal},${loan.rate}%,${loan.tenure},${loan.paidEmis},${loan.remainingEmis},${loan.emi},${loan.outstanding}\n`;
+            });
+            csv += '\n';
+
+            // Savings Section
+            csv += 'SAVINGS PORTFOLIO\n';
+            csv += 'Type,Institution,Amount,Monthly Contribution,Maturity/Goal\n';
+            savings.forEach(saving => {
+                csv += `${saving.type},${saving.institution},${saving.amount},${saving.monthlyContribution},${saving.goal}\n`;
+            });
+
+            // Download CSV
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `financial-report-${new Date().toISOString().split('T')[0]}.csv`;
+            a.click();
+            URL.revokeObjectURL(url);
         }
 
         // Export PDF
