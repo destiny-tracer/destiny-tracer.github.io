@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Property Registration Calculator | destiny-tracer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        header p {
+            font-size: 1.1em;
+            opacity: 0.95;
+        }
+
+        .back-link {
+            display: inline-block;
+            color: white;
+            text-decoration: none;
+            margin-bottom: 20px;
+            padding: 8px 16px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 6px;
+            transition: all 0.3s;
+        }
+
+        .back-link:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 20px;
+        }
+
+        .card h2 {
+            font-size: 1.5em;
+            margin-bottom: 20px;
+            color: #667eea;
+            border-bottom: 2px solid #f0f0f0;
+            padding-bottom: 10px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #555;
+            font-size: 0.95em;
+        }
+
+        input[type="number"], select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: all 0.3s;
+        }
+
+        input[type="number"]:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .radio-group {
+            display: flex;
+            gap: 20px;
+            margin-top: 8px;
+            flex-wrap: wrap;
+        }
+
+        .radio-option {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .radio-option input[type="radio"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        .radio-option label {
+            margin: 0;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .calculate-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+            margin-top: 10px;
+        }
+
+        .calculate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .results {
+            display: none;
+        }
+
+        .results.active {
+            display: block;
+        }
+
+        .total-card {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            border-radius: 12px;
+            padding: 30px;
+            text-align: center;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .total-card h3 {
+            font-size: 1.3em;
+            margin-bottom: 15px;
+            opacity: 0.9;
+        }
+
+        .total-amount {
+            font-size: 3em;
+            font-weight: 700;
+            margin: 10px 0;
+        }
+
+        .total-label {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .breakdown-section {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 20px;
+        }
+
+        .breakdown-section h3 {
+            font-size: 1.3em;
+            margin-bottom: 20px;
+            color: #667eea;
+        }
+
+        .breakdown-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .breakdown-item:last-child {
+            border-bottom: none;
+            padding-top: 15px;
+            margin-top: 10px;
+            border-top: 2px solid #667eea;
+            font-weight: 700;
+            font-size: 1.1em;
+        }
+
+        .breakdown-label {
+            color: #666;
+            font-weight: 500;
+        }
+
+        .breakdown-value {
+            font-weight: 600;
+            color: #333;
+            font-size: 1.1em;
+        }
+
+        .info-box {
+            background: #f0f7ff;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 6px;
+        }
+
+        .info-box h4 {
+            color: #667eea;
+            margin-bottom: 8px;
+        }
+
+        .info-box ul {
+            margin-left: 20px;
+            color: #555;
+            line-height: 1.8;
+        }
+
+        .info-box li {
+            margin: 5px 0;
+        }
+
+        .state-info {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 12px;
+            margin-top: 10px;
+            border-radius: 6px;
+            font-size: 0.9em;
+            color: #856404;
+        }
+
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            header h1 {
+                font-size: 1.8em;
+            }
+
+            .total-amount {
+                font-size: 2.2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="../../index.html" class="back-link">← Back to Home</a>
+        
+        <header>
+            <h1>🏠 Property Registration Calculator</h1>
+            <p>Calculate stamp duty & registration charges across India</p>
+        </header>
+
+        <div class="card">
+            <h2>Property Details</h2>
+            
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>State</label>
+                    <select id="state" onchange="updateStateInfo()">
+                        <option value="">Select State</option>
+                        <option value="maharashtra">Maharashtra</option>
+                        <option value="delhi">Delhi</option>
+                        <option value="karnataka">Karnataka</option>
+                        <option value="tamilnadu">Tamil Nadu</option>
+                        <option value="gujarat">Gujarat</option>
+                        <option value="haryana">Haryana</option>
+                        <option value="up">Uttar Pradesh</option>
+                        <option value="westbengal">West Bengal</option>
+                        <option value="rajasthan">Rajasthan</option>
+                        <option value="telangana">Telangana</option>
+                        <option value="punjab">Punjab</option>
+                        <option value="mp">Madhya Pradesh</option>
+                    </select>
+                    <div id="stateInfo" class="state-info" style="display: none;"></div>
+                </div>
+
+                <div class="form-group">
+                    <label>Property Value (₹)</label>
+                    <input type="number" id="propertyValue" placeholder="e.g., 5000000" value="5000000">
+                </div>
+
+                <div class="form-group full-width">
+                    <label>Property Type</label>
+                    <div class="radio-group">
+                        <div class="radio-option">
+                            <input type="radio" id="residential" name="propertyType" value="residential" checked>
+                            <label for="residential">Residential</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" id="commercial" name="propertyType" value="commercial">
+                            <label for="commercial">Commercial</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group full-width">
+                    <label>Location Type</label>
+                    <div class="radio-group">
+                        <div class="radio-option">
+                            <input type="radio" id="urban" name="locationType" value="urban" checked>
+                            <label for="urban">Urban / Municipal Corporation</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" id="rural" name="locationType" value="rural">
+                            <label for="rural">Rural / Gram Panchayat</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group full-width">
+                    <label>Buyer Gender</label>
+                    <div class="radio-group">
+                        <div class="radio-option">
+                            <input type="radio" id="male" name="buyerGender" value="male" checked>
+                            <label for="male">Male</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" id="female" name="buyerGender" value="female">
+                            <label for="female">Female</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" id="joint" name="buyerGender" value="joint">
+                            <label for="joint">Joint (Male + Female)</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <button class="calculate-btn" onclick="calculateCharges()">Calculate Charges</button>
+        </div>
+
+        <div class="results" id="results">
+            <div class="total-card">
+                <h3>💰 Total Amount Payable</h3>
+                <div class="total-amount" id="totalAmount">₹0</div>
+                <div class="total-label">Including all charges</div>
+            </div>
+
+            <div class="breakdown-section">
+                <h3>📊 Detailed Breakdown</h3>
+                <div id="breakdownDetails"></div>
+            </div>
+
+            <div class="info-box">
+                <h4>💡 Important Information:</h4>
+                <ul>
+                    <li><strong>Stamp Duty:</strong> State government tax on property transactions (varies by state)</li>
+                    <li><strong>Registration Charges:</strong> Fee for registering the property in buyer's name (usually 1% of property value with cap)</li>
+                    <li><strong>Women Buyers:</strong> Many states offer 1-2% discount on stamp duty for female buyers</li>
+                    <li><strong>Joint Ownership:</strong> Some states offer partial discount when property is jointly owned by male and female</li>
+                    <li><strong>Rural Properties:</strong> Lower stamp duty rates in rural/gram panchayat areas in some states</li>
+                    <li><strong>Payment:</strong> Stamp duty can be paid via e-stamping, challan, or franking</li>
+                </ul>
+            </div>
+
+            <div class="info-box" style="background: #fff3cd; border-left-color: #ffc107;">
+                <h4 style="color: #856404;">⚠️ Disclaimer:</h4>
+                <ul style="color: #856404;">
+                    <li>These are approximate calculations based on general rates. Actual charges may vary.</li>
+                    <li>Some states have different rates for different property values or locations.</li>
+                    <li>Additional charges like GST on registration, legal fees, etc. are not included.</li>
+                    <li>Please verify with local sub-registrar office for exact charges.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // State-wise stamp duty and registration data
+        const stateData = {
+            maharashtra: {
+                name: 'Maharashtra',
+                stampDuty: { male: 6, female: 5, commercial: 7 },
+                registration: 1,
+                registrationCap: 30000,
+                femaleDiscount: true,
+                info: 'Women buyers get 1% discount. Metro areas (Mumbai, Pune, Nagpur) have slightly higher rates.'
+            },
+            delhi: {
+                name: 'Delhi',
+                stampDuty: { male: 6, female: 4, commercial: 6 },
+                registration: 1,
+                registrationCap: null,
+                femaleDiscount: true,
+                info: 'Women buyers get 2% discount (only 4% stamp duty).'
+            },
+            karnataka: {
+                name: 'Karnataka',
+                stampDuty: { male: 5, female: 5, commercial: 5 },
+                registration: 1,
+                registrationCap: null,
+                femaleDiscount: false,
+                info: 'Uniform 5% stamp duty across property types. Additional 0.5% surcharge for Bangalore.'
+            },
+            tamilnadu: {
+                name: 'Tamil Nadu',
+                stampDuty: { male: 7, female: 7, commercial: 8 },
+                registration: 1,
+                registrationCap: null,
+                femaleDiscount: false,
+                info: '7% for residential, 8% for commercial properties.'
+            },
+            gujarat: {
+                name: 'Gujarat',
+                stampDuty: { male: 4.9, female: 3.9, commercial: 4.9 },
+                registration: 1,
+                registrationCap: null,
+                femaleDiscount: true,
+                info: 'Women buyers get 1% discount. One of the lowest stamp duties in India.'
+            },
+            haryana: {
+                name: 'Haryana',
+                stampDuty: { male: 7, female: 5, commercial: 7 },
+                registration: 1,
+                registrationCap: null,
+                femaleDiscount: true,
+                info: 'Women buyers get 2% discount. Rural areas may have lower rates.'
+            },
+            up: {
+                name: 'Uttar Pradesh',
+                stampDuty: { male: 7, female: 6, commercial: 7 },
+                registration: 1,
+                registrationCap: null,
+                femaleDiscount: true,
+                info: 'Women buyers get 1% discount. Rural areas: 6% for male, 5% for female.'
+            },
+            westbengal: {
+                name: 'West Bengal',
+                stampDuty: { male: 7, female: 6, commercial: 7 },
+                registration: 1,
+                registrationCap: null,
+                femaleDiscount: true,
+                info: 'Women buyers get 1% discount. Kolkata may have additional charges.'
+            },
+            rajasthan: {
+                name: 'Rajasthan',
+                stampDuty: { male: 6, female: 5, commercial: 6 },
+                registration: 1,
+                registrationCap: null,
+                femaleDiscount: true,
+                info: 'Women buyers get 1% discount on stamp duty.'
+            },
+            telangana: {
+                name: 'Telangana',
+                stampDuty: { male: 5, female: 5, commercial: 6 },
+                registration: 0.5,
+                registrationCap: null,
+                femaleDiscount: false,
+                info: 'Registration charges are only 0.5% (lower than most states).'
+            },
+            punjab: {
+                name: 'Punjab',
+                stampDuty: { male: 7, female: 6, commercial: 7 },
+                registration: 1,
+                registrationCap: null,
+                femaleDiscount: true,
+                info: 'Women buyers get 1% discount on stamp duty.'
+            },
+            mp: {
+                name: 'Madhya Pradesh',
+                stampDuty: { male: 7.5, female: 7.5, commercial: 7.5 },
+                registration: 1,
+                registrationCap: null,
+                femaleDiscount: false,
+                info: 'Uniform 7.5% stamp duty. No gender-based discount.'
+            }
+        };
+
+        function updateStateInfo() {
+            const state = document.getElementById('state').value;
+            const infoDiv = document.getElementById('stateInfo');
+            
+            if (state && stateData[state]) {
+                infoDiv.style.display = 'block';
+                infoDiv.textContent = `ℹ️ ${stateData[state].info}`;
+            } else {
+                infoDiv.style.display = 'none';
+            }
+        }
+
+        function calculateCharges() {
+            const state = document.getElementById('state').value;
+            const propertyValue = parseFloat(document.getElementById('propertyValue').value) || 0;
+            const propertyType = document.querySelector('input[name="propertyType"]:checked').value;
+            const locationType = document.querySelector('input[name="locationType"]:checked').value;
+            const buyerGender = document.querySelector('input[name="buyerGender"]:checked').value;
+
+            if (!state) {
+                alert('Please select a state');
+                return;
+            }
+
+            if (propertyValue <= 0) {
+                alert('Please enter a valid property value');
+                return;
+            }
+
+            const data = stateData[state];
+            
+            // Calculate stamp duty
+            let stampDutyRate;
+            if (propertyType === 'commercial') {
+                stampDutyRate = data.stampDuty.commercial;
+            } else if (buyerGender === 'female') {
+                stampDutyRate = data.stampDuty.female;
+            } else if (buyerGender === 'joint' && data.femaleDiscount) {
+                // Joint ownership: average of male and female rates
+                stampDutyRate = (data.stampDuty.male + data.stampDuty.female) / 2;
+            } else {
+                stampDutyRate = data.stampDuty.male;
+            }
+
+            // Rural discount (if applicable)
+            if (locationType === 'rural' && ['up', 'haryana'].includes(state)) {
+                stampDutyRate -= 1; // 1% discount for rural in some states
+            }
+
+            const stampDuty = (propertyValue * stampDutyRate) / 100;
+
+            // Calculate registration charges
+            let registrationCharges = (propertyValue * data.registration) / 100;
+            if (data.registrationCap) {
+                registrationCharges = Math.min(registrationCharges, data.registrationCap);
+            }
+
+            // Total
+            const totalCharges = stampDuty + registrationCharges;
+
+            // Display results
+            displayResults({
+                state: data.name,
+                propertyValue: propertyValue,
+                stampDuty: stampDuty,
+                stampDutyRate: stampDutyRate,
+                registrationCharges: registrationCharges,
+                registrationRate: data.registration,
+                totalCharges: totalCharges,
+                propertyType: propertyType,
+                buyerGender: buyerGender,
+                femaleDiscount: data.femaleDiscount && buyerGender !== 'male',
+                capped: data.registrationCap && registrationCharges === data.registrationCap
+            });
+        }
+
+        function displayResults(data) {
+            const resultsDiv = document.getElementById('results');
+            const totalAmount = document.getElementById('totalAmount');
+            const breakdownDiv = document.getElementById('breakdownDetails');
+
+            // Update total
+            totalAmount.textContent = `₹${formatNumber(Math.round(data.totalCharges))}`;
+
+            // Create breakdown
+            let genderNote = '';
+            if (data.buyerGender === 'female') {
+                genderNote = ' (Female buyer discount applied)';
+            } else if (data.buyerGender === 'joint') {
+                genderNote = ' (Joint ownership - partial discount)';
+            }
+
+            let regNote = '';
+            if (data.capped) {
+                regNote = ' (Capped at maximum limit)';
+            }
+
+            breakdownDiv.innerHTML = `
+                <div class="breakdown-item">
+                    <span class="breakdown-label">State</span>
+                    <span class="breakdown-value">${data.state}</span>
+                </div>
+                <div class="breakdown-item">
+                    <span class="breakdown-label">Property Value</span>
+                    <span class="breakdown-value">₹${formatNumber(data.propertyValue)}</span>
+                </div>
+                <div class="breakdown-item">
+                    <span class="breakdown-label">Property Type</span>
+                    <span class="breakdown-value">${data.propertyType.charAt(0).toUpperCase() + data.propertyType.slice(1)}</span>
+                </div>
+                <div class="breakdown-item">
+                    <span class="breakdown-label">Stamp Duty (${data.stampDutyRate}%)${genderNote}</span>
+                    <span class="breakdown-value">₹${formatNumber(Math.round(data.stampDuty))}</span>
+                </div>
+                <div class="breakdown-item">
+                    <span class="breakdown-label">Registration Charges (${data.registrationRate}%)${regNote}</span>
+                    <span class="breakdown-value">₹${formatNumber(Math.round(data.registrationCharges))}</span>
+                </div>
+                <div class="breakdown-item">
+                    <span class="breakdown-label">TOTAL PAYABLE</span>
+                    <span class="breakdown-value">₹${formatNumber(Math.round(data.totalCharges))}</span>
+                </div>
+            `;
+
+            // Show results
+            resultsDiv.classList.add('active');
+            resultsDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        function formatNumber(num) {
+            return num.toLocaleString('en-IN');
+        }
+    </script>
+</body>
+</html>
