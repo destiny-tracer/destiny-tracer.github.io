@@ -412,8 +412,8 @@
             </div>
 
             <div style="display: flex; gap: 10px; margin-top: 30px;">
-                <button class="export-btn" onclick="exportPDF()">📄 Export as PDF</button>
-                <button class="export-btn" onclick="exportCSV()">📊 Export as CSV</button>
+                <button class="export-btn" onclick="exportPDF()" style="flex: 1;">📄 Export as PDF</button>
+                <button class="export-btn" onclick="exportCSV()" style="flex: 1;">📊 Export as CSV</button>
             </div>
         </div>
 
@@ -511,8 +511,8 @@
         }
 
         function saveData() {
-            alert('Data saved successfully!');
             updateSummary();
+            alert('Data calculated successfully! You can now export your report.');
         }
 
         function updateSummary() {
@@ -603,47 +603,92 @@
                 return;
             }
 
-            let content = `DAILY CASH TRACKER REPORT\n`;
-            content += `Date: ${new Date(currentData.date).toLocaleDateString('en-IN')}\n`;
-            content += `Generated: ${new Date().toLocaleString()}\n`;
-            content += `${'='.repeat(60)}\n\n`;
+            const date = new Date(currentData.date);
+            const formattedDate = date.toLocaleDateString('en-IN', { 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            });
+
+            let content = '';
+            content += '═'.repeat(80) + '\n';
+            content += ' '.repeat(20) + 'DAILY CASH STATEMENT\n';
+            content += ' '.repeat(20) + 'destiny-tracer.github.io\n';
+            content += '═'.repeat(80) + '\n\n';
             
-            content += `CASH COLLECTIONS:\n`;
+            content += `Statement Date: ${formattedDate}\n`;
+            content += `Generated: ${new Date().toLocaleString('en-IN')}\n`;
+            content += `Account: Cash Book\n\n`;
+            
+            content += '─'.repeat(80) + '\n';
+            content += ' '.repeat(28) + 'TRANSACTION DETAILS\n';
+            content += '─'.repeat(80) + '\n\n';
+            
+            // Collections section
+            content += 'CASH RECEIPTS (CR)\n';
+            content += '─'.repeat(80) + '\n';
+            content += 'Description'.padEnd(50) + 'Amount (₹)'.padStart(30) + '\n';
+            content += '─'.repeat(80) + '\n';
+            
             if (currentData.collections.length === 0) {
-                content += `  No collections recorded\n`;
+                content += 'No receipts recorded'.padEnd(50) + '0.00'.padStart(30) + '\n';
             } else {
                 currentData.collections.forEach(item => {
-                    content += `  • ${item.desc}: ₹${formatNumber(item.amount)}\n`;
+                    const desc = item.desc.substring(0, 45);
+                    const amount = formatNumber(item.amount);
+                    content += desc.padEnd(50) + amount.padStart(30) + '\n';
                 });
             }
-            content += `\nTOTAL COLLECTION: ₹${formatNumber(currentData.totalCollection)}\n\n`;
             
-            content += `${'='.repeat(60)}\n\n`;
-            content += `CASH EXPENSES:\n`;
+            content += '─'.repeat(80) + '\n';
+            content += 'TOTAL RECEIPTS'.padEnd(50) + formatNumber(currentData.totalCollection).padStart(30) + '\n';
+            content += '═'.repeat(80) + '\n\n';
+            
+            // Expenses section
+            content += 'CASH PAYMENTS (DR)\n';
+            content += '─'.repeat(80) + '\n';
+            content += 'Description'.padEnd(50) + 'Amount (₹)'.padStart(30) + '\n';
+            content += '─'.repeat(80) + '\n';
+            
             if (currentData.expenses.length === 0) {
-                content += `  No expenses recorded\n`;
+                content += 'No payments recorded'.padEnd(50) + '0.00'.padStart(30) + '\n';
             } else {
                 currentData.expenses.forEach(item => {
-                    content += `  • ${item.desc}: ₹${formatNumber(item.amount)}\n`;
+                    const desc = item.desc.substring(0, 45);
+                    const amount = formatNumber(item.amount);
+                    content += desc.padEnd(50) + amount.padStart(30) + '\n';
                 });
             }
-            content += `\nTOTAL EXPENSE: ₹${formatNumber(currentData.totalExpense)}\n\n`;
             
-            content += `${'='.repeat(60)}\n\n`;
-            content += `SUMMARY:\n`;
-            content += `  Total Collection: ₹${formatNumber(currentData.totalCollection)}\n`;
-            content += `  Total Expense: ₹${formatNumber(currentData.totalExpense)}\n`;
-            content += `  Net Balance: ₹${formatNumber(currentData.netBalance)}\n`;
+            content += '─'.repeat(80) + '\n';
+            content += 'TOTAL PAYMENTS'.padEnd(50) + formatNumber(currentData.totalExpense).padStart(30) + '\n';
+            content += '═'.repeat(80) + '\n\n';
             
-            content += `\n${'='.repeat(60)}\n`;
-            content += `Report generated by destiny-tracer.github.io\n`;
-
-            // Download as text file
-            const blob = new Blob([content], { type: 'text/plain' });
+            // Summary section
+            content += ' '.repeat(28) + 'CASH BOOK SUMMARY\n';
+            content += '═'.repeat(80) + '\n';
+            content += 'Opening Balance'.padEnd(50) + '0.00'.padStart(30) + '\n';
+            content += 'Add: Total Receipts'.padEnd(50) + formatNumber(currentData.totalCollection).padStart(30) + '\n';
+            content += 'Less: Total Payments'.padEnd(50) + `(${formatNumber(currentData.totalExpense)})`.padStart(30) + '\n';
+            content += '─'.repeat(80) + '\n';
+            
+            const balanceLabel = currentData.netBalance >= 0 ? 'CLOSING BALANCE' : 'DEFICIT';
+            const balanceAmount = Math.abs(currentData.netBalance);
+            content += balanceLabel.padEnd(50) + formatNumber(balanceAmount).padStart(30) + '\n';
+            content += '═'.repeat(80) + '\n\n';
+            
+            // Footer
+            content += '\n';
+            content += 'This is a computer generated statement and does not require signature.\n';
+            content += 'For queries, visit: destiny-tracer.github.io\n';
+            content += '─'.repeat(80) + '\n';
+            
+            // Create blob and download
+            const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = `cash-tracker-${currentData.date}.txt`;
+            a.download = `cash-statement-${currentData.date}.txt`;
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
