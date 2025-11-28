@@ -3,16 +3,427 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Monthly Income-Expense Snapshot | destiny-tracer</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../../style.css" />
+    <title>Monthly Account Planner | destiny-tracer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        header p {
+            font-size: 1.1em;
+            opacity: 0.95;
+        }
+
+        .back-link {
+            display: inline-block;
+            color: white;
+            text-decoration: none;
+            margin-bottom: 20px;
+            padding: 8px 16px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 6px;
+            transition: all 0.3s;
+        }
+
+        .back-link:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .month-selector {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 20px;
+        }
+
+        .month-nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+        }
+
+        .month-nav button {
+            padding: 10px 20px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .month-nav button:hover {
+            background: #5568d3;
+        }
+
+        .month-display {
+            flex: 1;
+            text-align: center;
+            font-size: 1.5em;
+            font-weight: 700;
+            color: #667eea;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 20px;
+        }
+
+        .card h2 {
+            font-size: 1.5em;
+            margin-bottom: 20px;
+            color: #667eea;
+            border-bottom: 2px solid #f0f0f0;
+            padding-bottom: 10px;
+        }
+
+        .transaction-row {
+            display: grid;
+            grid-template-columns: 120px 1fr 1fr 100px 120px 40px;
+            gap: 10px;
+            margin-bottom: 12px;
+            align-items: center;
+        }
+
+        .transaction-row select,
+        .transaction-row input {
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 0.95em;
+            transition: all 0.3s;
+        }
+
+        .transaction-row select:focus,
+        .transaction-row input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .remove-btn {
+            padding: 8px;
+            background: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .remove-btn:hover {
+            background: #c0392b;
+        }
+
+        .add-btn {
+            width: 100%;
+            padding: 12px;
+            background: #f0f0f0;
+            color: #667eea;
+            border: 2px dashed #667eea;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 1em;
+            transition: all 0.3s;
+            margin-top: 10px;
+        }
+
+        .add-btn:hover {
+            background: #e9ecef;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        .results {
+            display: none;
+        }
+
+        .results.active {
+            display: block;
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .summary-box {
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+
+        .summary-label {
+            font-size: 0.9em;
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .summary-value {
+            font-size: 1.5em;
+            font-weight: 700;
+            color: #333;
+        }
+
+        .summary-value.positive {
+            color: #10b981;
+        }
+
+        .summary-value.negative {
+            color: #e74c3c;
+        }
+
+        .account-summary {
+            margin-top: 20px;
+        }
+
+        .account-item {
+            padding: 15px;
+            margin-bottom: 10px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+
+        .account-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .account-name {
+            font-size: 1.2em;
+            font-weight: 700;
+            color: #667eea;
+        }
+
+        .account-total {
+            font-size: 1.3em;
+            font-weight: 700;
+        }
+
+        .transaction-list {
+            font-size: 0.9em;
+            color: #666;
+            margin-top: 10px;
+        }
+
+        .transaction-item {
+            padding: 8px 0;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .transaction-item:last-child {
+            border-bottom: none;
+        }
+
+        .calendar {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .calendar-day {
+            aspect-ratio: 1;
+            padding: 8px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            text-align: center;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+        }
+
+        .calendar-day:hover {
+            background: #e9ecef;
+            transform: scale(1.05);
+            z-index: 10;
+        }
+
+        .calendar-day.has-transaction {
+            background: #667eea;
+            color: white;
+        }
+
+        .calendar-day-number {
+            font-weight: 700;
+            font-size: 1.1em;
+            margin-bottom: 5px;
+            border-bottom: 1px solid rgba(255,255,255,0.3);
+            padding-bottom: 3px;
+        }
+
+        .calendar-day-amount {
+            font-size: 0.75em;
+            font-weight: 600;
+            margin-top: 3px;
+        }
+
+        .calendar-day-accounts {
+            font-size: 0.65em;
+            margin-top: 5px;
+            line-height: 1.3;
+        }
+
+        .account-line {
+            margin: 2px 0;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .calendar-header {
+            font-weight: 700;
+            color: #667eea;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .snapshot {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            white-space: pre-wrap;
+            font-size: 0.9em;
+        }
+
+        .print-calendar {
+            background: white;
+            padding: 30px;
+            display: none;
+        }
+
+        .print-calendar.printing {
+            display: block;
+        }
+
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            
+            .print-calendar,
+            .print-calendar * {
+                visibility: visible;
+            }
+            
+            .print-calendar {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+            }
+
+            .calendar-day {
+                border: 1px solid #333 !important;
+                page-break-inside: avoid;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .transaction-row {
+                grid-template-columns: 1fr;
+            }
+
+            .calendar {
+                grid-template-columns: repeat(7, 1fr);
+                gap: 5px;
+            }
+
+            .calendar-day {
+                padding: 5px;
+            }
+
+            .calendar-day-number {
+                font-size: 0.9em;
+            }
+
+            .calendar-day-amount {
+                font-size: 0.7em;
+            }
+        }
+    </style>
 </head>
-<body class="alt-page">
+<body>
     <div class="container">
         <a href="../../index.html" class="back-link">← Back to Home</a>
         
         <header>
-            <h1>📅 Monthly Income-Expense Snapshot</h1>
+            <h1>📅 Monthly Account Planner</h1>
             <p>Track income & expenses across multiple accounts</p>
         </header>
 
@@ -70,7 +481,17 @@
 
             <div class="card">
                 <h2>📆 Calendar View</h2>
+                <div style="text-align: right; margin-bottom: 15px;">
+                    <button class="btn btn-primary" onclick="printCalendar()" style="flex: none; padding: 10px 20px;">
+                        🖨️ Print Calendar
+                    </button>
+                </div>
                 <div class="calendar" id="calendar"></div>
+            </div>
+
+            <div class="print-calendar" id="printCalendar">
+                <h1 style="text-align: center; margin-bottom: 20px;" id="printTitle"></h1>
+                <div class="calendar" id="printCalendarGrid"></div>
             </div>
 
             <div class="card">
@@ -294,13 +715,23 @@
                 calendar.appendChild(header);
             });
 
-            // Group transactions by date
+            // Group transactions by date and account
             const dateData = {};
             transactions.forEach(t => {
                 if (!dateData[t.date]) {
-                    dateData[t.date] = [];
+                    dateData[t.date] = {
+                        accounts: {},
+                        total: 0
+                    };
                 }
-                dateData[t.date].push(t);
+                
+                if (!dateData[t.date].accounts[t.account]) {
+                    dateData[t.date].accounts[t.account] = 0;
+                }
+                
+                const amount = t.type === 'income' ? t.amount : -t.amount;
+                dateData[t.date].accounts[t.account] += amount;
+                dateData[t.date].total += amount;
             });
 
             // Get first day of month
@@ -325,18 +756,39 @@
 
                 if (dateData[day]) {
                     dayDiv.classList.add('has-transaction');
-                    const total = dateData[day].reduce((sum, t) => {
-                        return sum + (t.type === 'income' ? t.amount : -t.amount);
-                    }, 0);
                     
-                    const amountDiv = document.createElement('div');
-                    amountDiv.className = 'calendar-day-amount';
-                    amountDiv.textContent = `₹${formatNumber(Math.abs(total))}`;
-                    dayDiv.appendChild(amountDiv);
+                    // Add account-wise breakdown
+                    const accountsDiv = document.createElement('div');
+                    accountsDiv.className = 'calendar-day-accounts';
                     
-                    dayDiv.title = dateData[day].map(t => 
-                        `${t.account}: ${t.type === 'income' ? '+' : '-'}₹${formatNumber(t.amount)}`
-                    ).join('\n');
+                    Object.keys(dateData[day].accounts).sort().forEach(account => {
+                        const accountAmount = dateData[day].accounts[account];
+                        const accountLine = document.createElement('div');
+                        accountLine.className = 'account-line';
+                        accountLine.textContent = `${account}: ${accountAmount >= 0 ? '+' : ''}₹${formatNumber(Math.abs(accountAmount))}`;
+                        accountsDiv.appendChild(accountLine);
+                    });
+                    
+                    dayDiv.appendChild(accountsDiv);
+                    
+                    // Add total at bottom
+                    const total = dateData[day].total;
+                    const totalDiv = document.createElement('div');
+                    totalDiv.className = 'calendar-day-amount';
+                    totalDiv.style.marginTop = '5px';
+                    totalDiv.style.paddingTop = '5px';
+                    totalDiv.style.borderTop = '1px solid rgba(255,255,255,0.3)';
+                    totalDiv.innerHTML = `<strong>Total: ${total >= 0 ? '+' : ''}₹${formatNumber(Math.abs(total))}</strong>`;
+                    dayDiv.appendChild(totalDiv);
+                    
+                    // Tooltip with full details
+                    let tooltipText = `Date: ${day}\n\n`;
+                    Object.keys(dateData[day].accounts).forEach(account => {
+                        const amount = dateData[day].accounts[account];
+                        tooltipText += `${account}: ${amount >= 0 ? '+' : ''}₹${formatNumber(Math.abs(amount))}\n`;
+                    });
+                    tooltipText += `\nTotal: ${total >= 0 ? '+' : ''}₹${formatNumber(Math.abs(total))}`;
+                    dayDiv.title = tooltipText;
                 }
 
                 calendar.appendChild(dayDiv);
@@ -460,6 +912,31 @@
 
         function formatNumber(num) {
             return Math.abs(Math.round(num)).toLocaleString('en-IN');
+        }
+
+        function printCalendar() {
+            const months = ['January', 'February', 'March', 'April', 'May', 'June', 
+                          'July', 'August', 'September', 'October', 'November', 'December'];
+            
+            // Set print title
+            document.getElementById('printTitle').textContent = `${months[currentMonth]} ${currentYear} - Account Calendar`;
+            
+            // Clone calendar to print area
+            const originalCalendar = document.getElementById('calendar');
+            const printCalendarGrid = document.getElementById('printCalendarGrid');
+            printCalendarGrid.innerHTML = originalCalendar.innerHTML;
+            
+            // Show print calendar
+            document.getElementById('printCalendar').classList.add('printing');
+            
+            // Trigger print
+            setTimeout(() => {
+                window.print();
+                // Hide print calendar after printing
+                setTimeout(() => {
+                    document.getElementById('printCalendar').classList.remove('printing');
+                }, 100);
+            }, 100);
         }
 
         // Initialize app
