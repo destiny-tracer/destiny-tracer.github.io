@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily Cash Tracker | destiny-tracer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        header p {
+            font-size: 1.1em;
+            opacity: 0.95;
+        }
+
+        .back-link {
+            display: inline-block;
+            color: white;
+            text-decoration: none;
+            margin-bottom: 20px;
+            padding: 8px 16px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 6px;
+            transition: all 0.3s;
+        }
+
+        .back-link:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .date-selector {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .date-selector input[type="date"] {
+            padding: 12px;
+            font-size: 1.1em;
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            font-weight: 600;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 15px;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .tab.active {
+            background: white;
+            color: #667eea;
+        }
+
+        .tab:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .tab.active:hover {
+            background: white;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .card.active {
+            display: block;
+        }
+
+        .card h2 {
+            font-size: 1.5em;
+            margin-bottom: 20px;
+            color: #667eea;
+            border-bottom: 2px solid #f0f0f0;
+            padding-bottom: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #555;
+            font-size: 0.95em;
+        }
+
+        input[type="text"], input[type="number"], select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: all 0.3s;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .entry-item {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 12px;
+            padding: 12px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .entry-desc {
+            flex: 2;
+        }
+
+        .entry-amount {
+            flex: 1;
+        }
+
+        .remove-btn {
+            padding: 8px 12px;
+            background: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .remove-btn:hover {
+            background: #c0392b;
+        }
+
+        .add-entry-btn {
+            width: 100%;
+            padding: 12px;
+            background: #f0f0f0;
+            color: #667eea;
+            border: 2px dashed #667eea;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 1em;
+            transition: all 0.3s;
+        }
+
+        .add-entry-btn:hover {
+            background: #e9ecef;
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .summary-box {
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            color: white;
+        }
+
+        .summary-box.collection {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        }
+
+        .summary-box.expense {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+        }
+
+        .summary-box.balance {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .summary-label {
+            font-size: 0.9em;
+            opacity: 0.9;
+            margin-bottom: 8px;
+        }
+
+        .summary-amount {
+            font-size: 2em;
+            font-weight: 700;
+        }
+
+        .list-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px;
+            margin-bottom: 8px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+
+        .list-item.collection {
+            border-left-color: #10b981;
+        }
+
+        .list-item.expense {
+            border-left-color: #ef4444;
+        }
+
+        .list-desc {
+            flex: 1;
+            font-weight: 600;
+        }
+
+        .list-amount {
+            font-weight: 700;
+            font-size: 1.1em;
+        }
+
+        .export-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+            margin-top: 10px;
+        }
+
+        .export-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .info-box {
+            background: #f0f7ff;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 6px;
+        }
+
+        .info-box h4 {
+            color: #667eea;
+            margin-bottom: 8px;
+        }
+
+        .info-box ul {
+            margin-left: 20px;
+            color: #555;
+            line-height: 1.8;
+        }
+
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 1.8em;
+            }
+
+            .summary-amount {
+                font-size: 1.5em;
+            }
+
+            .entry-item {
+                flex-direction: column;
+            }
+
+            .entry-desc, .entry-amount {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="../../index.html" class="back-link">← Back to Home</a>
+        
+        <header>
+            <h1>💰 Daily Cash Tracker</h1>
+            <p>Track your daily collections & expenses</p>
+        </header>
+
+        <div class="date-selector">
+            <label style="font-weight: 600; color: #667eea; margin-bottom: 10px; display: block;">Select Date</label>
+            <input type="date" id="selectedDate">
+        </div>
+
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab('collection')">💵 Collection</button>
+            <button class="tab" onclick="switchTab('expense')">💸 Expense</button>
+            <button class="tab" onclick="switchTab('summary')">📊 Summary</button>
+        </div>
+
+        <div class="card active" id="collectionCard">
+            <h2>Cash Collection</h2>
+            
+            <div id="collectionList">
+                <div class="entry-item" data-entry-id="c1">
+                    <div class="entry-desc">
+                        <input type="text" placeholder="Description (e.g., Sales)" class="entry-desc-input">
+                    </div>
+                    <div class="entry-amount">
+                        <input type="number" placeholder="Amount (₹)" class="entry-amount-input" value="0">
+                    </div>
+                    <button class="remove-btn" onclick="removeEntry('collection', 'c1')" style="display: none;">×</button>
+                </div>
+            </div>
+
+            <button class="add-entry-btn" onclick="addEntry('collection')">+ Add Collection Entry</button>
+            <button class="export-btn" onclick="saveData()">Save & Calculate</button>
+        </div>
+
+        <div class="card" id="expenseCard">
+            <h2>Cash Expenses</h2>
+            
+            <div id="expenseList">
+                <div class="entry-item" data-entry-id="e1">
+                    <div class="entry-desc">
+                        <input type="text" placeholder="Description (e.g., Rent)" class="entry-desc-input">
+                    </div>
+                    <div class="entry-amount">
+                        <input type="number" placeholder="Amount (₹)" class="entry-amount-input" value="0">
+                    </div>
+                    <button class="remove-btn" onclick="removeEntry('expense', 'e1')" style="display: none;">×</button>
+                </div>
+            </div>
+
+            <button class="add-entry-btn" onclick="addEntry('expense')">+ Add Expense Entry</button>
+            <button class="export-btn" onclick="saveData()">Save & Calculate</button>
+        </div>
+
+        <div class="card" id="summaryCard">
+            <h2>Daily Summary</h2>
+            
+            <div class="summary-grid">
+                <div class="summary-box collection">
+                    <div class="summary-label">Total Collection</div>
+                    <div class="summary-amount" id="totalCollection">₹0</div>
+                </div>
+                <div class="summary-box expense">
+                    <div class="summary-label">Total Expense</div>
+                    <div class="summary-amount" id="totalExpense">₹0</div>
+                </div>
+                <div class="summary-box balance">
+                    <div class="summary-label">Net Balance</div>
+                    <div class="summary-amount" id="netBalance">₹0</div>
+                </div>
+            </div>
+
+            <div style="margin-top: 30px;">
+                <h3 style="color: #667eea; margin-bottom: 15px;">Collection Details</h3>
+                <div id="collectionSummaryList"></div>
+            </div>
+
+            <div style="margin-top: 30px;">
+                <h3 style="color: #667eea; margin-bottom: 15px;">Expense Details</h3>
+                <div id="expenseSummaryList"></div>
+            </div>
+
+            <div style="display: flex; gap: 10px; margin-top: 30px;">
+                <button class="export-btn" onclick="exportPDF()" style="flex: 1;">📄 Export as PDF</button>
+                <button class="export-btn" onclick="exportCSV()" style="flex: 1;">📊 Export as CSV</button>
+            </div>
+        </div>
+
+        <div class="info-box">
+            <h4>💡 How to Use:</h4>
+            <ul>
+                <li><strong>Select Date:</strong> Choose the date for which you want to track cash</li>
+                <li><strong>Add Collection:</strong> Record all cash received (sales, payments, etc.)</li>
+                <li><strong>Add Expenses:</strong> Record all cash spent (purchases, bills, etc.)</li>
+                <li><strong>Save & Calculate:</strong> Click to save and see your daily summary</li>
+                <li><strong>View Summary:</strong> See total collection, expense, and net balance</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        let collectionCounter = 1;
+        let expenseCounter = 1;
+        let currentData = null;
+
+        // Set today's date by default
+        document.getElementById('selectedDate').valueAsDate = new Date();
+
+        function switchTab(tab) {
+            // Update tab buttons
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+
+            // Update cards
+            document.querySelectorAll('.card').forEach(c => c.classList.remove('active'));
+            if (tab === 'collection') {
+                document.getElementById('collectionCard').classList.add('active');
+            } else if (tab === 'expense') {
+                document.getElementById('expenseCard').classList.add('active');
+            } else if (tab === 'summary') {
+                document.getElementById('summaryCard').classList.add('active');
+                updateSummary();
+            }
+        }
+
+        function addEntry(type) {
+            const listId = type === 'collection' ? 'collectionList' : 'expenseList';
+            const list = document.getElementById(listId);
+            
+            if (type === 'collection') {
+                collectionCounter++;
+                const entryId = 'c' + collectionCounter;
+                const newEntry = createEntryElement(type, entryId);
+                list.appendChild(newEntry);
+            } else {
+                expenseCounter++;
+                const entryId = 'e' + expenseCounter;
+                const newEntry = createEntryElement(type, entryId);
+                list.appendChild(newEntry);
+            }
+            
+            updateRemoveButtons(type);
+        }
+
+        function createEntryElement(type, id) {
+            const div = document.createElement('div');
+            div.className = 'entry-item';
+            div.setAttribute('data-entry-id', id);
+            div.innerHTML = `
+                <div class="entry-desc">
+                    <input type="text" placeholder="Description" class="entry-desc-input">
+                </div>
+                <div class="entry-amount">
+                    <input type="number" placeholder="Amount (₹)" class="entry-amount-input" value="0">
+                </div>
+                <button class="remove-btn" onclick="removeEntry('${type}', '${id}')">×</button>
+            `;
+            return div;
+        }
+
+        function removeEntry(type, id) {
+            const entry = document.querySelector(`[data-entry-id="${id}"]`);
+            if (entry) {
+                entry.remove();
+                updateRemoveButtons(type);
+            }
+        }
+
+        function updateRemoveButtons(type) {
+            const listId = type === 'collection' ? 'collectionList' : 'expenseList';
+            const entries = document.querySelectorAll(`#${listId} .entry-item`);
+            entries.forEach((entry, index) => {
+                const removeBtn = entry.querySelector('.remove-btn');
+                if (entries.length > 1) {
+                    removeBtn.style.display = 'block';
+                } else {
+                    removeBtn.style.display = 'none';
+                }
+            });
+        }
+
+        function saveData() {
+            updateSummary();
+            alert('Data calculated successfully! You can now export your report.');
+        }
+
+        function updateSummary() {
+            const selectedDate = document.getElementById('selectedDate').value;
+            
+            // Calculate collections
+            let totalCollection = 0;
+            const collections = [];
+            document.querySelectorAll('#collectionList .entry-item').forEach(entry => {
+                const desc = entry.querySelector('.entry-desc-input').value.trim() || 'Unnamed';
+                const amount = parseFloat(entry.querySelector('.entry-amount-input').value) || 0;
+                if (amount > 0) {
+                    collections.push({ desc, amount });
+                    totalCollection += amount;
+                }
+            });
+
+            // Calculate expenses
+            let totalExpense = 0;
+            const expenses = [];
+            document.querySelectorAll('#expenseList .entry-item').forEach(entry => {
+                const desc = entry.querySelector('.entry-desc-input').value.trim() || 'Unnamed';
+                const amount = parseFloat(entry.querySelector('.entry-amount-input').value) || 0;
+                if (amount > 0) {
+                    expenses.push({ desc, amount });
+                    totalExpense += amount;
+                }
+            });
+
+            // Calculate balance
+            const netBalance = totalCollection - totalExpense;
+
+            // Store current data for export
+            currentData = {
+                date: selectedDate,
+                collections: collections,
+                expenses: expenses,
+                totalCollection: totalCollection,
+                totalExpense: totalExpense,
+                netBalance: netBalance
+            };
+
+            // Update summary boxes
+            document.getElementById('totalCollection').textContent = `₹${formatNumber(totalCollection)}`;
+            document.getElementById('totalExpense').textContent = `₹${formatNumber(totalExpense)}`;
+            document.getElementById('netBalance').textContent = `₹${formatNumber(netBalance)}`;
+
+            // Update collection list
+            let collectionHTML = '';
+            if (collections.length === 0) {
+                collectionHTML = '<div style="text-align: center; color: #999; padding: 20px;">No collections recorded</div>';
+            } else {
+                collections.forEach(item => {
+                    collectionHTML += `
+                        <div class="list-item collection">
+                            <div class="list-desc">${item.desc}</div>
+                            <div class="list-amount">₹${formatNumber(item.amount)}</div>
+                        </div>
+                    `;
+                });
+            }
+            document.getElementById('collectionSummaryList').innerHTML = collectionHTML;
+
+            // Update expense list
+            let expenseHTML = '';
+            if (expenses.length === 0) {
+                expenseHTML = '<div style="text-align: center; color: #999; padding: 20px;">No expenses recorded</div>';
+            } else {
+                expenses.forEach(item => {
+                    expenseHTML += `
+                        <div class="list-item expense">
+                            <div class="list-desc">${item.desc}</div>
+                            <div class="list-amount">₹${formatNumber(item.amount)}</div>
+                        </div>
+                    `;
+                });
+            }
+            document.getElementById('expenseSummaryList').innerHTML = expenseHTML;
+        }
+
+        function formatNumber(num) {
+            return Math.round(num).toLocaleString('en-IN');
+        }
+
+        function exportPDF() {
+            if (!currentData) {
+                alert('Please save and calculate data first before exporting');
+                return;
+            }
+
+            const date = new Date(currentData.date);
+            const formattedDate = date.toLocaleDateString('en-IN', { 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            });
+
+            let content = '';
+            content += '═'.repeat(80) + '\n';
+            content += ' '.repeat(20) + 'DAILY CASH STATEMENT\n';
+            content += ' '.repeat(20) + 'destiny-tracer.github.io\n';
+            content += '═'.repeat(80) + '\n\n';
+            
+            content += `Statement Date: ${formattedDate}\n`;
+            content += `Generated: ${new Date().toLocaleString('en-IN')}\n`;
+            content += `Account: Cash Book\n\n`;
+            
+            content += '─'.repeat(80) + '\n';
+            content += ' '.repeat(28) + 'TRANSACTION DETAILS\n';
+            content += '─'.repeat(80) + '\n\n';
+            
+            // Collections section
+            content += 'CASH RECEIPTS (CR)\n';
+            content += '─'.repeat(80) + '\n';
+            content += 'Description'.padEnd(50) + 'Amount (₹)'.padStart(30) + '\n';
+            content += '─'.repeat(80) + '\n';
+            
+            if (currentData.collections.length === 0) {
+                content += 'No receipts recorded'.padEnd(50) + '0.00'.padStart(30) + '\n';
+            } else {
+                currentData.collections.forEach(item => {
+                    const desc = item.desc.substring(0, 45);
+                    const amount = formatNumber(item.amount);
+                    content += desc.padEnd(50) + amount.padStart(30) + '\n';
+                });
+            }
+            
+            content += '─'.repeat(80) + '\n';
+            content += 'TOTAL RECEIPTS'.padEnd(50) + formatNumber(currentData.totalCollection).padStart(30) + '\n';
+            content += '═'.repeat(80) + '\n\n';
+            
+            // Expenses section
+            content += 'CASH PAYMENTS (DR)\n';
+            content += '─'.repeat(80) + '\n';
+            content += 'Description'.padEnd(50) + 'Amount (₹)'.padStart(30) + '\n';
+            content += '─'.repeat(80) + '\n';
+            
+            if (currentData.expenses.length === 0) {
+                content += 'No payments recorded'.padEnd(50) + '0.00'.padStart(30) + '\n';
+            } else {
+                currentData.expenses.forEach(item => {
+                    const desc = item.desc.substring(0, 45);
+                    const amount = formatNumber(item.amount);
+                    content += desc.padEnd(50) + amount.padStart(30) + '\n';
+                });
+            }
+            
+            content += '─'.repeat(80) + '\n';
+            content += 'TOTAL PAYMENTS'.padEnd(50) + formatNumber(currentData.totalExpense).padStart(30) + '\n';
+            content += '═'.repeat(80) + '\n\n';
+            
+            // Summary section
+            content += ' '.repeat(28) + 'CASH BOOK SUMMARY\n';
+            content += '═'.repeat(80) + '\n';
+            content += 'Opening Balance'.padEnd(50) + '0.00'.padStart(30) + '\n';
+            content += 'Add: Total Receipts'.padEnd(50) + formatNumber(currentData.totalCollection).padStart(30) + '\n';
+            content += 'Less: Total Payments'.padEnd(50) + `(${formatNumber(currentData.totalExpense)})`.padStart(30) + '\n';
+            content += '─'.repeat(80) + '\n';
+            
+            const balanceLabel = currentData.netBalance >= 0 ? 'CLOSING BALANCE' : 'DEFICIT';
+            const balanceAmount = Math.abs(currentData.netBalance);
+            content += balanceLabel.padEnd(50) + formatNumber(balanceAmount).padStart(30) + '\n';
+            content += '═'.repeat(80) + '\n\n';
+            
+            // Footer
+            content += '\n';
+            content += 'This is a computer generated statement and does not require signature.\n';
+            content += 'For queries, visit: destiny-tracer.github.io\n';
+            content += '─'.repeat(80) + '\n';
+            
+            // Create blob and download
+            const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `cash-statement-${currentData.date}.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        function exportCSV() {
+            if (!currentData) {
+                alert('Please save and calculate data first before exporting');
+                return;
+            }
+
+            let csv = 'Daily Cash Tracker Report\n';
+            csv += `Date,${currentData.date}\n`;
+            csv += `Generated,${new Date().toLocaleString()}\n\n`;
+            
+            csv += 'COLLECTIONS\n';
+            csv += 'Description,Amount\n';
+            if (currentData.collections.length > 0) {
+                currentData.collections.forEach(item => {
+                    csv += `"${item.desc}",${item.amount}\n`;
+                });
+            }
+            csv += `TOTAL COLLECTION,${currentData.totalCollection}\n\n`;
+            
+            csv += 'EXPENSES\n';
+            csv += 'Description,Amount\n';
+            if (currentData.expenses.length > 0) {
+                currentData.expenses.forEach(item => {
+                    csv += `"${item.desc}",${item.amount}\n`;
+                });
+            }
+            csv += `TOTAL EXPENSE,${currentData.totalExpense}\n\n`;
+            
+            csv += 'SUMMARY\n';
+            csv += 'Item,Amount\n';
+            csv += `Total Collection,${currentData.totalCollection}\n`;
+            csv += `Total Expense,${currentData.totalExpense}\n`;
+            csv += `Net Balance,${currentData.netBalance}\n`;
+
+            // Download CSV
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `cash-tracker-${currentData.date}.csv`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        // Initialize
+        updateRemoveButtons('collection');
+        updateRemoveButtons('expense');
+    </script>
+</body>
+</html>

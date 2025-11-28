@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Splitwise Calculator | destiny-tracer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        header p {
+            font-size: 1.1em;
+            opacity: 0.95;
+        }
+
+        .back-link {
+            display: inline-block;
+            color: white;
+            text-decoration: none;
+            margin-bottom: 20px;
+            padding: 8px 16px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 6px;
+            transition: all 0.3s;
+        }
+
+        .back-link:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 20px;
+        }
+
+        .card h2 {
+            font-size: 1.5em;
+            margin-bottom: 20px;
+            color: #667eea;
+            border-bottom: 2px solid #f0f0f0;
+            padding-bottom: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #555;
+            font-size: 0.95em;
+        }
+
+        input[type="text"], input[type="number"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: all 0.3s;
+        }
+
+        input[type="text"]:focus, input[type="number"]:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .person-item {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 12px;
+            padding: 12px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .person-item input {
+            margin-bottom: 0;
+        }
+
+        .person-name {
+            flex: 2;
+        }
+
+        .person-paid {
+            flex: 1;
+        }
+
+        .remove-btn {
+            padding: 8px 12px;
+            background: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .remove-btn:hover {
+            background: #c0392b;
+        }
+
+        .add-person-btn {
+            width: 100%;
+            padding: 12px;
+            background: #f0f0f0;
+            color: #667eea;
+            border: 2px dashed #667eea;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 1em;
+            transition: all 0.3s;
+        }
+
+        .add-person-btn:hover {
+            background: #e9ecef;
+        }
+
+        .calculate-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+            margin-top: 10px;
+        }
+
+        .calculate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .results {
+            display: none;
+        }
+
+        .results.active {
+            display: block;
+        }
+
+        .summary-card {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .summary-card h3 {
+            font-size: 1.2em;
+            opacity: 0.9;
+            margin-bottom: 15px;
+        }
+
+        .summary-amount {
+            font-size: 2.5em;
+            font-weight: 700;
+            margin: 10px 0;
+        }
+
+        .settlement-card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 20px;
+        }
+
+        .settlement-card h3 {
+            font-size: 1.3em;
+            margin-bottom: 20px;
+            color: #667eea;
+        }
+
+        .settlement-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            margin-bottom: 10px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+
+        .settlement-item.owes {
+            border-left-color: #e74c3c;
+            background: #fee;
+        }
+
+        .settlement-item.gets {
+            border-left-color: #10b981;
+            background: #efe;
+        }
+
+        .settlement-text {
+            flex: 1;
+            font-size: 1.05em;
+        }
+
+        .settlement-amount {
+            font-weight: 700;
+            font-size: 1.2em;
+            color: #333;
+        }
+
+        .transaction-list {
+            margin-top: 20px;
+        }
+
+        .transaction-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            margin-bottom: 8px;
+            background: white;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .transaction-arrow {
+            margin: 0 15px;
+            color: #667eea;
+            font-size: 1.5em;
+            font-weight: 700;
+        }
+
+        .info-box {
+            background: #f0f7ff;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 6px;
+        }
+
+        .info-box h4 {
+            color: #667eea;
+            margin-bottom: 8px;
+        }
+
+        .info-box ul {
+            margin-left: 20px;
+            color: #555;
+            line-height: 1.8;
+        }
+
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 1.8em;
+            }
+
+            .summary-amount {
+                font-size: 2em;
+            }
+
+            .person-item {
+                flex-direction: column;
+            }
+
+            .person-name, .person-paid {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="../../index.html" class="back-link">← Back to Home</a>
+        
+        <header>
+            <h1>💸 Splitwise Calculator</h1>
+            <p>Split bills fairly among friends & groups</p>
+        </header>
+
+        <div class="card">
+            <h2>Multiple Expenses</h2>
+            
+            <div id="expensesList">
+                <div class="expense-item" data-expense-id="1">
+                    <div class="form-group">
+                        <label>Expense Description</label>
+                        <input type="text" class="expense-desc" placeholder="e.g., Dinner at Restaurant">
+                    </div>
+                    <div class="form-group">
+                        <label>Amount (₹)</label>
+                        <input type="number" class="expense-amount" placeholder="e.g., 5000" value="0">
+                    </div>
+                    <button class="remove-btn" onclick="removeExpense(1)" style="display: none; margin-top: 10px;">Remove Expense</button>
+                    <hr style="margin: 20px 0; border: none; border-top: 2px dashed #e0e0e0;">
+                </div>
+            </div>
+
+            <button class="add-person-btn" onclick="addExpense()" style="margin-bottom: 15px;">+ Add Another Expense</button>
+        </div>
+
+        <div class="card">
+            <h2>Add People</h2>
+            
+            <div id="peopleList">
+                <div class="person-item" data-person-id="1">
+                    <div class="person-name">
+                        <input type="text" placeholder="Person name" class="person-name-input" value="Person 1">
+                    </div>
+                    <div class="person-paid">
+                        <input type="number" placeholder="Amount paid (₹)" class="person-paid-input" value="0">
+                    </div>
+                    <button class="remove-btn" onclick="removePerson(1)" style="display: none;">Remove</button>
+                </div>
+            </div>
+
+            <button class="add-person-btn" onclick="addPerson()">+ Add Another Person</button>
+
+            <div style="display: flex; gap: 10px; margin-top: 15px;">
+                <button class="calculate-btn" onclick="calculateSplit()">Calculate Split</button>
+                <button class="calculate-btn" onclick="resetAll()" style="background: #e74c3c;">Reset All</button>
+            </div>
+        </div>
+
+        <div class="results" id="results">
+            <div class="summary-card">
+                <h3>💰 Total Bill Amount</h3>
+                <div class="summary-amount" id="summaryAmount">₹0</div>
+                <div style="opacity: 0.9; margin-top: 10px;" id="summaryPeople"></div>
+            </div>
+
+            <div class="settlement-card">
+                <h3>📊 Individual Breakdown</h3>
+                <div id="individualBreakdown"></div>
+            </div>
+
+            <div class="settlement-card">
+                <h3>💳 Settlement Transactions</h3>
+                <p style="color: #666; margin-bottom: 15px; font-size: 0.95em;">Minimum transactions needed to settle all debts:</p>
+                <div class="transaction-list" id="transactionList"></div>
+            </div>
+
+            <div class="info-box">
+                <h4>💡 How to Use:</h4>
+                <ul>
+                    <li><strong>Add Expenses:</strong> Add multiple expenses that need to be split</li>
+                    <li><strong>Add People:</strong> Click "+ Add Another Person" to add more friends</li>
+                    <li><strong>Enter Amounts:</strong> Put how much each person paid for all expenses combined</li>
+                    <li><strong>Fair Split:</strong> The calculator divides all expenses equally among people</li>
+                    <li><strong>Settle Up:</strong> Shows who owes whom and the exact amounts</li>
+                    <li><strong>Export:</strong> Download as PDF or CSV for your records</li>
+                </ul>
+            </div>
+
+            <div style="display: flex; gap: 10px; margin-top: 20px;">
+                <button class="calculate-btn" onclick="exportPDF()" style="flex: 1;">📄 Export as PDF</button>
+                <button class="calculate-btn" onclick="exportCSV()" style="flex: 1;">📊 Export as CSV</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let personCounter = 1;
+        let expenseCounter = 1;
+        let calculationData = null;
+
+        function addExpense() {
+            expenseCounter++;
+            const expensesList = document.getElementById('expensesList');
+            const newExpense = document.createElement('div');
+            newExpense.className = 'expense-item';
+            newExpense.setAttribute('data-expense-id', expenseCounter);
+            newExpense.innerHTML = `
+                <div class="form-group">
+                    <label>Expense Description</label>
+                    <input type="text" class="expense-desc" placeholder="e.g., Lunch">
+                </div>
+                <div class="form-group">
+                    <label>Amount (₹)</label>
+                    <input type="number" class="expense-amount" placeholder="e.g., 2000" value="0">
+                </div>
+                <button class="remove-btn" onclick="removeExpense(${expenseCounter})" style="margin-top: 10px;">Remove Expense</button>
+                <hr style="margin: 20px 0; border: none; border-top: 2px dashed #e0e0e0;">
+            `;
+            expensesList.appendChild(newExpense);
+            updateExpenseRemoveButtons();
+        }
+
+        function removeExpense(id) {
+            const expense = document.querySelector(`[data-expense-id="${id}"]`);
+            if (expense) {
+                expense.remove();
+                updateExpenseRemoveButtons();
+            }
+        }
+
+        function updateExpenseRemoveButtons() {
+            const expenses = document.querySelectorAll('.expense-item');
+            expenses.forEach((expense, index) => {
+                const removeBtn = expense.querySelector('.remove-btn');
+                if (expenses.length > 1) {
+                    removeBtn.style.display = 'block';
+                } else {
+                    removeBtn.style.display = 'none';
+                }
+            });
+        }
+
+        function addPerson() {
+            personCounter++;
+            const peopleList = document.getElementById('peopleList');
+            const newPerson = document.createElement('div');
+            newPerson.className = 'person-item';
+            newPerson.setAttribute('data-person-id', personCounter);
+            newPerson.innerHTML = `
+                <div class="person-name">
+                    <input type="text" placeholder="Person name" class="person-name-input" value="Person ${personCounter}">
+                </div>
+                <div class="person-paid">
+                    <input type="number" placeholder="Amount paid (₹)" class="person-paid-input" value="0">
+                </div>
+                <button class="remove-btn" onclick="removePerson(${personCounter})">Remove</button>
+            `;
+            peopleList.appendChild(newPerson);
+            updateRemoveButtons();
+        }
+
+        function removePerson(id) {
+            const person = document.querySelector(`[data-person-id="${id}"]`);
+            if (person) {
+                person.remove();
+                updateRemoveButtons();
+            }
+        }
+
+        function updateRemoveButtons() {
+            const people = document.querySelectorAll('.person-item');
+            people.forEach((person, index) => {
+                const removeBtn = person.querySelector('.remove-btn');
+                if (people.length > 1) {
+                    removeBtn.style.display = 'block';
+                } else {
+                    removeBtn.style.display = 'none';
+                }
+            });
+        }
+
+        function calculateSplit() {
+            // Get all expenses
+            const expenses = [];
+            let totalAmount = 0;
+            
+            document.querySelectorAll('.expense-item').forEach(item => {
+                const desc = item.querySelector('.expense-desc').value.trim() || 'Unnamed Expense';
+                const amount = parseFloat(item.querySelector('.expense-amount').value) || 0;
+                if (amount > 0) {
+                    expenses.push({ desc, amount });
+                    totalAmount += amount;
+                }
+            });
+
+            if (totalAmount <= 0) {
+                alert('Please enter at least one expense with a valid amount');
+                return;
+            }
+
+            // Get all people and their payments
+            const people = [];
+            document.querySelectorAll('.person-item').forEach(item => {
+                const name = item.querySelector('.person-name-input').value.trim() || 'Unknown';
+                const paid = parseFloat(item.querySelector('.person-paid-input').value) || 0;
+                people.push({ name, paid });
+            });
+
+            if (people.length === 0) {
+                alert('Please add at least one person');
+                return;
+            }
+
+            // Calculate per person share
+            const perPersonShare = totalAmount / people.length;
+
+            // Calculate balances (positive = gets back, negative = owes)
+            const balances = people.map(person => ({
+                name: person.name,
+                paid: person.paid,
+                share: perPersonShare,
+                balance: person.paid - perPersonShare
+            }));
+
+            // Store calculation data for export
+            calculationData = {
+                expenses: expenses,
+                totalAmount: totalAmount,
+                people: people,
+                balances: balances,
+                transactions: calculateSettlements(balances)
+            };
+
+            // Display results
+            displayResults(totalAmount, people.length, balances, expenses);
+        }
+
+        function displayResults(total, count, balances, expenses) {
+            // Update summary
+            document.getElementById('summaryAmount').textContent = `₹${formatNumber(total)}`;
+            let expensesList = expenses.map(e => `${e.desc}: ₹${formatNumber(e.amount)}`).join(', ');
+            document.getElementById('summaryPeople').textContent = `${expensesList} | Split among ${count} ${count === 1 ? 'person' : 'people'}`;
+
+            // Individual breakdown
+            let breakdownHTML = '';
+            balances.forEach(person => {
+                const statusClass = person.balance > 0.01 ? 'gets' : (person.balance < -0.01 ? 'owes' : '');
+                const statusText = person.balance > 0.01 
+                    ? `Gets back ₹${formatNumber(Math.abs(Math.round(person.balance)))}`
+                    : person.balance < -0.01 
+                    ? `Owes ₹${formatNumber(Math.abs(Math.round(person.balance)))}`
+                    : 'Settled';
+
+                breakdownHTML += `
+                    <div class="settlement-item ${statusClass}">
+                        <div class="settlement-text">
+                            <strong>${person.name}</strong><br>
+                            <span style="font-size: 0.9em; color: #666;">
+                                Paid: ₹${formatNumber(person.paid)} | Share: ₹${formatNumber(Math.round(person.share))}
+                            </span>
+                        </div>
+                        <div class="settlement-amount">${statusText}</div>
+                    </div>
+                `;
+            });
+            document.getElementById('individualBreakdown').innerHTML = breakdownHTML;
+
+            // Calculate optimal settlements
+            const transactions = calculateSettlements(balances);
+            let transactionHTML = '';
+            
+            if (transactions.length === 0) {
+                transactionHTML = '<div style="text-align: center; color: #666; padding: 20px;">✅ All settled! Everyone paid their fair share.</div>';
+            } else {
+                transactions.forEach(t => {
+                    transactionHTML += `
+                        <div class="transaction-item">
+                            <strong>${t.from}</strong>
+                            <span class="transaction-arrow">→</span>
+                            <strong>${t.to}</strong>
+                            <span style="flex: 1; text-align: right; font-weight: 700; color: #667eea;">
+                                ₹${formatNumber(t.amount)}
+                            </span>
+                        </div>
+                    `;
+                });
+            }
+            document.getElementById('transactionList').innerHTML = transactionHTML;
+
+            // Show results
+            document.getElementById('results').classList.add('active');
+            document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        function calculateSettlements(balances) {
+            // Create lists of people who owe and who are owed
+            const owes = balances.filter(b => b.balance < -0.01).map(b => ({ 
+                name: b.name, 
+                amount: Math.abs(b.balance) 
+            }));
+            const gets = balances.filter(b => b.balance > 0.01).map(b => ({ 
+                name: b.name, 
+                amount: b.balance 
+            }));
+
+            const transactions = [];
+            let i = 0, j = 0;
+
+            while (i < owes.length && j < gets.length) {
+                const amount = Math.min(owes[i].amount, gets[j].amount);
+                
+                transactions.push({
+                    from: owes[i].name,
+                    to: gets[j].name,
+                    amount: Math.round(amount)
+                });
+
+                owes[i].amount -= amount;
+                gets[j].amount -= amount;
+
+                if (owes[i].amount < 0.01) i++;
+                if (gets[j].amount < 0.01) j++;
+            }
+
+            return transactions;
+        }
+
+        function formatNumber(num) {
+            return Math.round(num).toLocaleString('en-IN');
+        }
+
+        function resetAll() {
+            if (confirm('Are you sure you want to reset all data?')) {
+                // Reset expenses
+                document.getElementById('expensesList').innerHTML = `
+                    <div class="expense-item" data-expense-id="1">
+                        <div class="form-group">
+                            <label>Expense Description</label>
+                            <input type="text" class="expense-desc" placeholder="e.g., Dinner at Restaurant">
+                        </div>
+                        <div class="form-group">
+                            <label>Amount (₹)</label>
+                            <input type="number" class="expense-amount" placeholder="e.g., 5000" value="0">
+                        </div>
+                        <button class="remove-btn" onclick="removeExpense(1)" style="display: none; margin-top: 10px;">Remove Expense</button>
+                        <hr style="margin: 20px 0; border: none; border-top: 2px dashed #e0e0e0;">
+                    </div>
+                `;
+                expenseCounter = 1;
+
+                // Reset people
+                document.getElementById('peopleList').innerHTML = `
+                    <div class="person-item" data-person-id="1">
+                        <div class="person-name">
+                            <input type="text" placeholder="Person name" class="person-name-input" value="Person 1">
+                        </div>
+                        <div class="person-paid">
+                            <input type="number" placeholder="Amount paid (₹)" class="person-paid-input" value="0">
+                        </div>
+                        <button class="remove-btn" onclick="removePerson(1)" style="display: none;">Remove</button>
+                    </div>
+                `;
+                personCounter = 1;
+
+                // Hide results
+                document.getElementById('results').classList.remove('active');
+                calculationData = null;
+
+                updateRemoveButtons();
+                updateExpenseRemoveButtons();
+            }
+        }
+
+        function exportPDF() {
+            if (!calculationData) {
+                alert('Please calculate the split first before exporting');
+                return;
+            }
+
+            // Create PDF content
+            let content = `SPLITWISE CALCULATION REPORT\n`;
+            content += `Generated: ${new Date().toLocaleString()}\n`;
+            content += `${'='.repeat(60)}\n\n`;
+            
+            content += `EXPENSES:\n`;
+            calculationData.expenses.forEach(exp => {
+                content += `  • ${exp.desc}: ₹${formatNumber(exp.amount)}\n`;
+            });
+            content += `\nTOTAL AMOUNT: ₹${formatNumber(calculationData.totalAmount)}\n`;
+            content += `SPLIT AMONG: ${calculationData.people.length} people\n`;
+            content += `PER PERSON SHARE: ₹${formatNumber(calculationData.totalAmount / calculationData.people.length)}\n\n`;
+            
+            content += `${'='.repeat(60)}\n\n`;
+            content += `INDIVIDUAL BREAKDOWN:\n`;
+            calculationData.balances.forEach(person => {
+                content += `\n${person.name}:\n`;
+                content += `  Paid: ₹${formatNumber(person.paid)}\n`;
+                content += `  Share: ₹${formatNumber(Math.round(person.share))}\n`;
+                if (person.balance > 0.01) {
+                    content += `  Status: Gets back ₹${formatNumber(Math.abs(Math.round(person.balance)))}\n`;
+                } else if (person.balance < -0.01) {
+                    content += `  Status: Owes ₹${formatNumber(Math.abs(Math.round(person.balance)))}\n`;
+                } else {
+                    content += `  Status: Settled\n`;
+                }
+            });
+            
+            content += `\n${'='.repeat(60)}\n\n`;
+            content += `SETTLEMENT TRANSACTIONS:\n`;
+            if (calculationData.transactions.length === 0) {
+                content += `  All settled! Everyone paid their fair share.\n`;
+            } else {
+                calculationData.transactions.forEach(t => {
+                    content += `  ${t.from} → ${t.to}: ₹${formatNumber(t.amount)}\n`;
+                });
+            }
+            
+            content += `\n${'='.repeat(60)}\n`;
+            content += `Report generated by destiny-tracer.github.io\n`;
+
+            // Download as text file (pseudo-PDF)
+            const blob = new Blob([content], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `splitwise-report-${Date.now()}.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        function exportCSV() {
+            if (!calculationData) {
+                alert('Please calculate the split first before exporting');
+                return;
+            }
+
+            let csv = 'Splitwise Calculation Report\n';
+            csv += `Generated,${new Date().toLocaleString()}\n\n`;
+            
+            csv += 'EXPENSES\n';
+            csv += 'Description,Amount\n';
+            calculationData.expenses.forEach(exp => {
+                csv += `"${exp.desc}",${exp.amount}\n`;
+            });
+            csv += `TOTAL,${calculationData.totalAmount}\n\n`;
+            
+            csv += 'PEOPLE BREAKDOWN\n';
+            csv += 'Name,Paid,Share,Balance,Status\n';
+            calculationData.balances.forEach(person => {
+                const status = person.balance > 0.01 ? `Gets ₹${Math.round(Math.abs(person.balance))}` :
+                              person.balance < -0.01 ? `Owes ₹${Math.round(Math.abs(person.balance))}` : 'Settled';
+                csv += `"${person.name}",${person.paid},${Math.round(person.share)},${Math.round(person.balance)},"${status}"\n`;
+            });
+            
+            csv += '\nSETTLEMENT TRANSACTIONS\n';
+            csv += 'From,To,Amount\n';
+            calculationData.transactions.forEach(t => {
+                csv += `"${t.from}","${t.to}",${t.amount}\n`;
+            });
+
+            // Download CSV
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `splitwise-report-${Date.now()}.csv`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        // Initialize
+        updateRemoveButtons();
+        updateExpenseRemoveButtons();
+    </script>
+</body>
+</html>

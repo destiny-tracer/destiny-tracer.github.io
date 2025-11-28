@@ -1,0 +1,303 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Kotak Securities Calculator — Brokerage & Tax</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../style.css" />
+</head>
+<body>
+  <main class="site">
+    <header class="header">
+      <div class="brand">
+        <svg class="mark" viewBox="0 0 24 24" aria-hidden="true">
+          <defs>
+            <linearGradient id="grad" x1="0" x2="1">
+              <stop offset="0" stop-color="#0ea5a4" />
+              <stop offset="1" stop-color="#3b82f6" />
+            </linearGradient>
+          </defs>
+          <rect x="2" y="4" width="20" height="16" rx="4" fill="url(#grad)"></rect>
+          <path d="M7 14l3-5 4 6 3-4" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+        </svg>
+        <div>
+          <h1>Kotak Securities Calculator</h1>
+          <p class="tag">Estimate brokerage, taxes & net P/L</p>
+        </div>
+      </div>
+      <a href="../../index.html" class="back-btn">Back to Home</a>
+    </header>
+
+    <section class="content">
+      <form id="calcForm" class="panel" onsubmit="return false;">
+        <h2>Trade Details</h2>
+
+        <label class="field">
+          <span class="label">Plan Type</span>
+          <select id="planType">
+            <option value="classic">Classic (0.49% per side)</option>
+            <option value="neo">Neo (0.10% per side)</option>
+            <option value="prime">Prime (0.05% per side)</option>
+          </select>
+        </label>
+
+        <label class="field">
+          <span class="label">Segment</span>
+          <select id="segment">
+            <option value="equity">Equity Delivery</option>
+            <option value="intraday">Equity Intraday</option>
+            <option value="futures">Futures</option>
+            <option value="options">Options</option>
+          </select>
+        </label>
+
+        <div class="grid">
+          <label class="field">
+            <span class="label">Buy Price (₹)</span>
+            <input id="buyPrice" type="number" step="0.05" value="1500" required />
+          </label>
+
+          <label class="field">
+            <span class="label">Quantity</span>
+            <input id="quantity" type="number" step="1" min="1" value="10" required />
+          </label>
+        </div>
+
+        <div class="grid">
+          <label class="field">
+            <span class="label">Sell Price (₹)</span>
+            <input id="sellPrice" type="number" step="0.05" value="1520" required />
+          </label>
+
+          <label class="field">
+            <span class="label">Sell Quantity</span>
+            <input id="sellQty" type="number" step="1" min="1" value="10" required />
+          </label>
+        </div>
+
+        <div class="info-box">
+          <p><strong>Kotak Plans:</strong> Classic (0.49%), Neo (0.10%), Prime (0.05%). Includes STT, exchange charges, GST, stamp duty, and SEBI turnover fees.</p>
+        </div>
+
+        <div class="actions">
+          <button id="calculateBtn" class="btn primary" type="button">Calculate</button>
+          <button id="resetBtn" class="btn ghost" type="button">Reset</button>
+        </div>
+      </form>
+
+      <aside class="result" id="results">
+        <h2 class="panel-title">Transaction Summary</h2>
+
+        <div class="cards">
+          <div class="card">
+            <div class="card-title">Gross P/L</div>
+            <div class="card-value" id="grossPL">—</div>
+            <div class="card-note">Before charges</div>
+          </div>
+
+          <div class="card">
+            <div class="card-title">Total Charges</div>
+            <div class="card-value" id="totalCharges">—</div>
+            <div class="card-note">All fees & taxes</div>
+          </div>
+
+          <div class="card">
+            <div class="card-title">Net P/L</div>
+            <div class="card-value" id="netPL">—</div>
+            <div class="card-note">After all charges</div>
+          </div>
+        </div>
+
+        <div class="breakdown">
+          <h3>Charge Breakdown</h3>
+          <div class="breakdown-row">
+            <span class="breakdown-label">Buy Brokerage</span>
+            <span class="breakdown-value" id="buyBrokerage">—</span>
+          </div>
+          <div class="breakdown-row">
+            <span class="breakdown-label">Sell Brokerage</span>
+            <span class="breakdown-value" id="sellBrokerage">—</span>
+          </div>
+          <div class="breakdown-row">
+            <span class="breakdown-label">STT/CTT</span>
+            <span class="breakdown-value" id="stt">—</span>
+          </div>
+          <div class="breakdown-row">
+            <span class="breakdown-label">Exchange Charges</span>
+            <span class="breakdown-value" id="exchange">—</span>
+          </div>
+          <div class="breakdown-row">
+            <span class="breakdown-label">GST (18%)</span>
+            <span class="breakdown-value" id="gst">—</span>
+          </div>
+          <div class="breakdown-row">
+            <span class="breakdown-label">SEBI Charges</span>
+            <span class="breakdown-value" id="sebi">—</span>
+          </div>
+          <div class="breakdown-row">
+            <span class="breakdown-label">Stamp Duty</span>
+            <span class="breakdown-value" id="stamp">—</span>
+          </div>
+        </div>
+
+        <div class="breakdown" style="margin-top:12px">
+          <h3>Buy Side vs Sell Side</h3>
+          <div class="breakdown-row">
+            <span class="breakdown-label">Total Buy Cost</span>
+            <span class="breakdown-value" id="totalBuyCost">—</span>
+          </div>
+          <div class="breakdown-row">
+            <span class="breakdown-label">Total Sell Proceeds</span>
+            <span class="breakdown-value" id="totalSellProceeds">—</span>
+          </div>
+          <div class="breakdown-row">
+            <span class="breakdown-label">Break-even Sell Price</span>
+            <span class="breakdown-value" id="breakeven">—</span>
+          </div>
+        </div>
+      </aside>
+    </section>
+
+    <footer class="footer">
+      <small>Built by destiny-tracer — Unofficial calculator. Charges are approximate. Verify with Kotak Securities for exact charges.</small>
+    </footer>
+  </main>
+
+  <script src="../../common.js"></script>
+  <script>
+(function(){
+  const $ = id => document.getElementById(id);
+
+  function fmtNumber(n){
+    if (typeof n !== 'number' || !isFinite(n)) return '—';
+    const sign = n < 0 ? '-' : '';
+    n = Math.abs(n);
+    return sign + '₹' + n.toLocaleString('en-IN', {minimumFractionDigits:2, maximumFractionDigits:2});
+  }
+
+  function calculate(){
+    const planType = $('planType').value;
+    const segment = $('segment').value;
+    const buyPrice = parseFloat($('buyPrice').value) || 0;
+    const qty = parseFloat($('quantity').value) || 0;
+    const sellPrice = parseFloat($('sellPrice').value) || 0;
+    const sellQty = parseFloat($('sellQty').value) || 0;
+
+    if (buyPrice <= 0 || qty <= 0 || sellPrice <= 0 || sellQty <= 0){
+      alert('Please enter valid values for all fields.');
+      return;
+    }
+
+    const buyValue = buyPrice * qty;
+    const sellValue = sellPrice * sellQty;
+    const grossPL = sellValue - buyValue;
+
+    // Kotak Brokerage Rates
+    let brokerageRate = 0.0049; // Classic default
+    if (planType === 'neo') brokerageRate = 0.001;
+    if (planType === 'prime') brokerageRate = 0.0005;
+
+    // For intraday, some plans have different rates
+    if (segment === 'intraday') {
+      if (planType === 'classic') brokerageRate = 0.0005; // 0.05% for intraday
+    }
+
+    // Calculate brokerage
+    let buyBrokerage = buyValue * brokerageRate;
+    let sellBrokerage = sellValue * brokerageRate;
+
+    // For F&O, use flat ₹20 per trade or percentage (whichever is lower) - simplified
+    if (segment === 'futures' || segment === 'options') {
+      buyBrokerage = Math.min(buyBrokerage, 20);
+      sellBrokerage = Math.min(sellBrokerage, 20);
+    }
+
+    // STT/CTT rates
+    let sttRate = 0;
+    if (segment === 'equity') {
+      sttRate = 0.001; // 0.1% on both sides
+    } else if (segment === 'intraday') {
+      sttRate = 0.00025; // 0.025% on sell side only
+    } else if (segment === 'futures') {
+      sttRate = 0.0001; // 0.01% on sell side
+    } else if (segment === 'options') {
+      sttRate = 0.0005; // 0.05% on sell side
+    }
+
+    const stt = segment === 'equity' 
+      ? (buyValue + sellValue) * sttRate 
+      : sellValue * sttRate;
+
+    // Exchange charges (approximate)
+    const exchangeRate = segment === 'options' ? 0.00053 : 0.0000325;
+    const exchangeCharges = (buyValue + sellValue) * exchangeRate;
+
+    // SEBI charges (₹10 per crore)
+    const sebiCharges = (buyValue + sellValue) * 0.0000001;
+
+    // Stamp duty (0.003% on buy for delivery, 0.002% for others)
+    const stampRate = segment === 'equity' ? 0.00003 : 0.00002;
+    const stampDuty = buyValue * stampRate;
+
+    // GST on brokerage and exchange charges (18%)
+    const gst = (buyBrokerage + sellBrokerage + exchangeCharges + sebiCharges) * 0.18;
+
+    // Total charges
+    const totalCharges = buyBrokerage + sellBrokerage + stt + exchangeCharges + gst + sebiCharges + stampDuty;
+
+    // Net P/L
+    const netPL = grossPL - totalCharges;
+
+    // Total buy cost and sell proceeds
+    const totalBuyCost = buyValue + buyBrokerage + (segment === 'equity' ? stt/2 : 0) + stampDuty;
+    const totalSellProceeds = sellValue - sellBrokerage - (segment === 'equity' ? stt/2 : stt) - exchangeCharges - gst - sebiCharges;
+
+    // Break-even price
+    const breakeven = totalBuyCost / qty;
+
+    // Display results
+    $('grossPL').textContent = fmtNumber(grossPL);
+    $('grossPL').style.color = grossPL >= 0 ? '#10b981' : '#ef4444';
+    
+    $('totalCharges').textContent = fmtNumber(totalCharges);
+    
+    $('netPL').textContent = fmtNumber(netPL);
+    $('netPL').style.color = netPL >= 0 ? '#10b981' : '#ef4444';
+
+    $('buyBrokerage').textContent = fmtNumber(buyBrokerage);
+    $('sellBrokerage').textContent = fmtNumber(sellBrokerage);
+    $('stt').textContent = fmtNumber(stt);
+    $('exchange').textContent = fmtNumber(exchangeCharges);
+    $('gst').textContent = fmtNumber(gst);
+    $('sebi').textContent = fmtNumber(sebiCharges);
+    $('stamp').textContent = fmtNumber(stampDuty);
+
+    $('totalBuyCost').textContent = fmtNumber(totalBuyCost);
+    $('totalSellProceeds').textContent = fmtNumber(totalSellProceeds);
+    $('breakeven').textContent = fmtNumber(breakeven);
+  }
+
+  function reset(){
+    $('calcForm').reset();
+    $('grossPL').textContent = '—';
+    $('totalCharges').textContent = '—';
+    $('netPL').textContent = '—';
+    $('buyBrokerage').textContent = '—';
+    $('sellBrokerage').textContent = '—';
+    $('stt').textContent = '—';
+    $('exchange').textContent = '—';
+    $('gst').textContent = '—';
+    $('sebi').textContent = '—';
+    $('stamp').textContent = '—';
+    $('totalBuyCost').textContent = '—';
+    $('totalSellProceeds').textContent = '—';
+    $('breakeven').textContent = '—';
+  }
+
+  $('calculateBtn').addEventListener('click', calculate);
+  $('resetBtn').addEventListener('click', reset);
+})();
+  </script>
+</body>
+</html>

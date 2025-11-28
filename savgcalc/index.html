@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>SavgCalc — Smart Stock Average Calculator</title>
+
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="site">
+    <header class="header">
+      <div class="brand">
+        <svg class="mark" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <defs>
+            <linearGradient id="grad" x1="0" x2="1">
+              <stop offset="0" stop-color="#0ea5a4" />
+              <stop offset="1" stop-color="#3b82f6" />
+            </linearGradient>
+          </defs>
+          <rect x="2" y="4" width="20" height="16" rx="4" fill="url(#grad)"></rect>
+          <path d="M7 14l3-5 4 6 3-4" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+        </svg>
+        <div>
+          <h1>SavgCalc</h1>
+          <p class="tag">Modern stock average & return calculator</p>
+        </div>
+      </div>
+      <a href="../../index.html" class="back-btn">Back to Home</a>
+      <nav class="nav">
+        <!-- reference removed by request -->
+      </nav>
+    </header>
+
+    <section class="content">
+      <form id="calcForm" class="panel" onsubmit="return false;" aria-labelledby="calcTitle">
+        <h2 id="calcTitle">Trade Inputs</h2>
+
+        <div class="grid">
+          <label class="field">
+            <span class="label">Buy price (per share)</span>
+            <input id="buyPrice" type="number" step="0.01" inputmode="decimal" placeholder="e.g. 125.50" required />
+          </label>
+
+          <label class="field">
+            <span class="label">Quantity (shares)</span>
+            <input id="qty" type="number" step="1" min="1" value="1" required />
+          </label>
+
+          <label class="field">
+            <span class="label">Additional buy price (optional)</span>
+            <input id="addPrice" type="number" step="0.01" inputmode="decimal" placeholder="Second buy price (optional)" />
+          </label>
+
+          <label class="field">
+            <span class="label">Additional quantity</span>
+            <input id="addQty" type="number" step="1" min="0" value="0" />
+          </label>
+        </div>
+
+        <fieldset class="fees" aria-label="Fees and taxes">
+          <legend>Fees & taxes (optional)</legend>
+          <div class="fees-row">
+            <label>
+              <span class="label small">Buy brokerage</span>
+              <input id="buyBroker" type="number" step="0.01" value="0" />
+            </label>
+            <label>
+              <span class="label small">Sell brokerage</span>
+              <input id="sellBroker" type="number" step="0.01" value="0" />
+            </label>
+            <label>
+              <span class="label small">Taxes / others</span>
+              <input id="taxes" type="number" step="0.01" value="0" />
+            </label>
+          </div>
+        </fieldset>
+
+        <div class="actions">
+          <button id="calculateBtn" class="btn primary" type="button">Calculate</button>
+          <button id="resetBtn" class="btn ghost" type="button">Reset</button>
+        </div>
+      </form>
+
+      <aside class="result" id="results" aria-live="polite">
+        <h2 class="panel-title">Summary</h2>
+
+        <!-- NEW: Quick breakdown (matches the screenshot style) -->
+        <div class="breakdown" style="margin-bottom:12px; padding:12px; border-radius:8px; background:linear-gradient(180deg,#fff,#fbfdff); border:1px solid rgba(3,7,18,0.03);">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:8px">
+            <div style="color:var(--muted);font-size:0.9rem">Amount invested — 1st purchase</div>
+            <div id="invested1" style="font-weight:700;color:var(--accent-strong)">—</div>
+          </div>
+
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:8px">
+            <div style="color:var(--muted);font-size:0.9rem">Amount invested — 2nd purchase</div>
+            <div id="invested2" style="font-weight:700;color:var(--accent-strong)">—</div>
+          </div>
+
+          <hr style="border:none;border-top:1px solid rgba(3,7,18,0.04);margin:10px 0" />
+
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:6px">
+            <div style="color:var(--muted);font-size:0.95rem">Total units</div>
+            <div id="totalUnits" style="font-weight:700">—</div>
+          </div>
+
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:6px">
+            <div style="color:var(--muted);font-size:0.95rem">Average price</div>
+            <div id="avgPrice" style="font-weight:700">—</div>
+          </div>
+
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:12px">
+            <div style="color:var(--muted);font-size:0.95rem">Total amount invested</div>
+            <div id="overallAmount" style="font-weight:700">—</div>
+          </div>
+        </div>
+
+        <div class="cards">
+          <div class="card">
+            <div class="card-title">Average Buy (incl. buy fees & taxes)</div>
+            <div class="card-value" id="avgBuyWithFees">—</div>
+            <div class="card-note">Per share (incl. buy fees & taxes)</div>
+          </div>
+
+          <div class="card">
+            <div class="card-title">Net P/L</div>
+            <div class="card-value" id="netPL">—</div>
+            <div class="card-note">After sell fees & taxes (if sell price provided)</div>
+          </div>
+
+          <div class="card">
+            <div class="card-title">Return %</div>
+            <div class="card-value" id="returnPct">—</div>
+            <div class="card-note">Net percent vs total buy cost</div>
+          </div>
+        </div>
+
+        <details id="detailBlock" class="details">
+          <summary>More details</summary>
+          <dl>
+            <dt>Total buy cost (incl. buy fees & taxes)</dt><dd id="totalBuy">—</dd>
+            <dt>Total sell value</dt><dd id="totalSell">—</dd>
+          </dl>
+          <div class="sell-input">
+            <label class="field">
+              <span class="label small">Sell price (optional)</span>
+              <input id="sellPrice" type="number" step="0.01" inputmode="decimal" placeholder="Enter sell price to compute realized P/L" />
+            </label>
+          </div>
+        </details>
+      </aside>
+    </section>
+
+    <footer class="footer">
+      <small>Built by destiny-tracer — runs entirely in your browser, no data leaves your device.</small>
+    </footer>
+  </main>
+
+  <script src="script.js"></script>
+  <script src="../../common.js"></script>
+</body>
+</html>

@@ -1,0 +1,1214 @@
+/* ============================================
+   destiny-tracer — Shared Stylesheet
+   Modern Financial Calculator Suite
+   ============================================ */
+
+/* CSS Variables / Design Tokens */
+:root {
+  --bg: #f6fbff;
+  --surface: #ffffff;
+  --muted: #6b7280;
+  --accent-1: #0ea5a4;        /* Teal */
+  --accent-2: #3b82f6;        /* Blue */
+  --accent-strong: #052047;   /* Dark blue */
+  --text: #04203a;
+  --border: rgba(3, 7, 18, 0.03);
+  --shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+  --radius: 14px;
+  --max-width: 1200px;
+}
+
+/* Dark Mode Variables */
+[data-theme="dark"] {
+  --bg: #0f172a;
+  --surface: #1e293b;
+  --muted: #94a3b8;
+  --accent-1: #14b8a6;
+  --accent-2: #60a5fa;
+  --accent-strong: #e0f2fe;
+  --text: #f1f5f9;
+  --border: rgba(255, 255, 255, 0.1);
+  --shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
+/* Base Reset */
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  min-height: 100%;
+  margin: 0;
+}
+
+body {
+  font-family: 'Inter', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  background: linear-gradient(180deg, var(--bg) 0%, var(--bg) 100%);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  padding: 28px 18px 60px;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+/* Container */
+.site {
+  max-width: var(--max-width);
+  margin: 0 auto;
+}
+
+/* ============================================
+   HEADER
+   ============================================ */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 32px;
+  flex-wrap: wrap;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.brand h1 {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.tagline,
+.tag {
+  margin: 4px 0 0 0;
+  color: var(--muted);
+  font-size: 1rem;
+}
+
+.tag {
+  font-size: 0.92rem;
+}
+
+.logo,
+.mark {
+  width: 56px;
+  height: 56px;
+  border-radius: 12px;
+  flex: 0 0 56px;
+  box-shadow: 0 8px 18px rgba(13, 28, 55, 0.06);
+}
+
+.mark {
+  width: 48px;
+  height: 48px;
+  border-radius: 8px;
+  flex: 0 0 48px;
+}
+
+/* Theme Toggle & Actions */
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.theme-toggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--accent-strong);
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: all 0.2s;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+}
+
+.theme-toggle:hover {
+  background: linear-gradient(90deg, var(--accent-1), var(--accent-2));
+  color: white;
+  transform: translateY(-2px);
+}
+
+.theme-icon {
+  font-size: 1.2rem;
+}
+
+/* Back Button */
+.back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--accent-strong);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: all 0.2s;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+}
+
+.back-btn:hover {
+  background: linear-gradient(90deg, var(--accent-1), var(--accent-2));
+  color: white;
+  transform: translateX(-2px);
+}
+
+.back-btn::before {
+  content: '←';
+  font-size: 1.1rem;
+}
+
+/* ============================================
+   SEARCH BOX (Homepage)
+   ============================================ */
+.search-box {
+  position: relative;
+  width: 100%;
+  max-width: 500px;
+  margin: 0 auto 32px;
+}
+
+.search-box input {
+  width: 100%;
+  padding: 14px 48px 14px 18px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  font-size: 1rem;
+  color: var(--text);
+  outline: none;
+  box-shadow: var(--shadow);
+}
+
+.search-box input::placeholder {
+  color: var(--muted);
+}
+
+.search-icon {
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--muted);
+  font-size: 1.2rem;
+}
+
+/* ============================================
+   INTRO SECTION (Homepage)
+   ============================================ */
+.intro {
+  text-align: center;
+  max-width: 700px;
+  margin: 0 auto 40px;
+}
+
+.intro p {
+  font-size: 1.05rem;
+  color: var(--muted);
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* ============================================
+   STATS BAR (Homepage)
+   ============================================ */
+.stats-bar {
+  display: flex;
+  justify-content: center;
+  gap: 32px;
+  margin: 32px 0;
+  padding: 24px;
+  background: var(--surface);
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border);
+  flex-wrap: wrap;
+}
+
+.stat-item {
+  text-align: center;
+}
+
+.stat-value {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--accent-strong);
+  display: block;
+}
+
+.stat-label {
+  font-size: 0.85rem;
+  color: var(--muted);
+  margin-top: 4px;
+}
+
+/* ============================================
+   CATEGORY SECTIONS (Homepage)
+   ============================================ */
+.category-section {
+  margin-bottom: 48px;
+}
+
+.category-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid var(--border);
+}
+
+.category-icon {
+  font-size: 2rem;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
+}
+
+.category-title {
+  flex: 1;
+}
+
+.category-title h2 {
+  margin: 0;
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--accent-strong);
+}
+
+.category-title p {
+  margin: 4px 0 0 0;
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+/* ============================================
+   APP GRID (Homepage)
+   ============================================ */
+.apps-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.app-card {
+  background: var(--surface);
+  border-radius: var(--radius);
+  padding: 20px;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border);
+  transition: transform 0.2s, box-shadow 0.2s;
+  cursor: pointer;
+  text-decoration: none;
+  color: inherit;
+  display: flex;
+  flex-direction: column;
+}
+
+.app-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 32px rgba(15, 23, 42, 0.12);
+}
+
+.app-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.app-icon {
+  font-size: 2rem;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(180deg, var(--surface), var(--bg));
+  border-radius: 10px;
+  border: 1px solid var(--border);
+}
+
+.app-title {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--accent-strong);
+}
+
+.app-desc {
+  flex: 1;
+  color: var(--muted);
+  font-size: 0.92rem;
+  line-height: 1.5;
+  margin: 0 0 16px 0;
+}
+
+.app-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+}
+
+.badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  background: linear-gradient(90deg, rgba(14, 165, 164, 0.1), rgba(59, 130, 246, 0.1));
+  color: var(--accent-1);
+}
+
+.link-arrow {
+  color: var(--accent-2);
+  font-weight: 600;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.link-arrow::after {
+  content: '→';
+  font-size: 1.1rem;
+}
+
+/* ============================================
+   SAVED CALCULATIONS SECTION
+   ============================================ */
+.saved-section {
+  margin-top: 20px;
+  background: var(--surface);
+  border-radius: var(--radius);
+  padding: 18px;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border);
+}
+
+.saved-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.saved-header h3 {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--accent-strong);
+}
+
+.saved-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.saved-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  background: linear-gradient(180deg, var(--surface), var(--bg));
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  transition: all 0.2s;
+}
+
+.saved-item:hover {
+  transform: translateX(4px);
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.06);
+}
+
+.saved-info {
+  flex: 1;
+}
+
+.saved-name {
+  font-weight: 600;
+  color: var(--accent-strong);
+  font-size: 0.9rem;
+  margin-bottom: 2px;
+}
+
+.saved-details {
+  font-size: 0.82rem;
+  color: var(--muted);
+}
+
+.saved-actions {
+  display: flex;
+  gap: 6px;
+}
+
+.btn-icon {
+  padding: 6px 10px;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.2s;
+}
+
+.btn-icon:hover {
+  background: var(--accent-1);
+  color: white;
+}
+
+.btn-icon.delete:hover {
+  background: #ef4444;
+}
+
+/* ============================================
+   CONTENT LAYOUT (Calculator Pages)
+   ============================================ */
+.content {
+  display: grid;
+  grid-template-columns: 1fr 400px;
+  gap: 20px;
+  align-items: start;
+}
+
+/* ============================================
+   PANELS & CARDS
+   ============================================ */
+.panel,
+.result {
+  background: var(--surface);
+  border-radius: var(--radius);
+  padding: 18px;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border);
+}
+
+.panel h2,
+.panel-title {
+  margin: 0 0 12px 0;
+  font-size: 1.05rem;
+  font-weight: 600;
+}
+
+/* ============================================
+   FORM ELEMENTS
+   ============================================ */
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.field {
+  display: block;
+  margin-bottom: 12px;
+}
+
+.label {
+  display: block;
+  color: var(--muted);
+  font-size: 0.86rem;
+  margin-bottom: 6px;
+}
+
+.label.small {
+  font-size: 0.78rem;
+}
+
+.field input,
+.field select {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  font-size: 1rem;
+  color: var(--text);
+  outline: none;
+  transition: border 0.2s;
+}
+
+.field input:focus,
+.field select:focus {
+  border-color: var(--accent-1);
+}
+
+.field input::placeholder {
+  color: var(--muted);
+}
+
+/* Info Box */
+.info-box {
+  margin-top: 12px;
+  padding: 12px;
+  background: linear-gradient(135deg, rgba(14, 165, 164, 0.05), rgba(59, 130, 246, 0.05));
+  border-radius: 10px;
+  border: 1px solid rgba(14, 165, 164, 0.1);
+}
+
+.info-box p {
+  margin: 0;
+  font-size: 0.88rem;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.info-box strong {
+  color: var(--accent-strong);
+}
+
+/* Fees Section */
+.fees {
+  border-radius: 10px;
+  border: 1px dashed var(--border);
+  padding: 10px;
+  margin: 10px 0;
+}
+
+.fees-row {
+  display: flex;
+  gap: 10px;
+}
+
+.fees-row label {
+  flex: 1;
+}
+
+/* ============================================
+   BUTTONS
+   ============================================ */
+.actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.btn {
+  border: 0;
+  padding: 10px 14px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: all 0.2s;
+}
+
+.btn.primary {
+  background: linear-gradient(90deg, var(--accent-1), var(--accent-2));
+  color: white;
+  box-shadow: 0 8px 20px rgba(59, 130, 246, 0.12);
+}
+
+.btn.primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 24px rgba(59, 130, 246, 0.18);
+}
+
+.btn.ghost {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--accent-strong);
+}
+
+.btn.ghost:hover {
+  background: var(--border);
+}
+
+.btn.save {
+  background: linear-gradient(90deg, #10b981, #059669);
+  color: white;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+}
+
+.btn.save:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(16, 185, 129, 0.3);
+}
+
+/* ============================================
+   RESULT CARDS
+   ============================================ */
+.cards {
+  display: grid;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  padding: 14px;
+  border-radius: 10px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+}
+
+.card-title {
+  font-size: 0.86rem;
+  color: var(--muted);
+}
+
+.card-value {
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin-top: 6px;
+  color: var(--accent-strong);
+}
+
+.card-note {
+  font-size: 0.82rem;
+  color: var(--muted);
+  margin-top: 6px;
+}
+
+/* ============================================
+   BREAKDOWN SECTION
+   ============================================ */
+.breakdown {
+  margin-top: 12px;
+  padding: 14px;
+  background: var(--surface);
+  border-radius: 10px;
+  border: 1px solid var(--border);
+}
+
+.breakdown h3 {
+  margin: 0 0 10px 0;
+  font-size: 0.95rem;
+  color: var(--muted);
+}
+
+.breakdown-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.breakdown-row:last-child {
+  border-bottom: none;
+}
+
+.breakdown-label {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.breakdown-value {
+  font-weight: 600;
+  color: var(--accent-strong);
+}
+
+/* ============================================
+   CHARTS
+   ============================================ */
+.chart-container {
+  position: relative;
+  height: 280px;
+  margin-top: 12px;
+  padding: 12px;
+  background: var(--surface);
+  border-radius: 10px;
+  border: 1px solid var(--border);
+}
+
+canvas {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* ============================================
+   GROWTH TABLE
+   ============================================ */
+.growth-table {
+  margin-top: 12px;
+  padding: 12px;
+  background: var(--surface);
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  max-height: 250px;
+  overflow-y: auto;
+}
+
+.growth-table h3 {
+  margin: 0 0 10px 0;
+  font-size: 0.95rem;
+  color: var(--muted);
+}
+
+.growth-table table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.growth-table th,
+.growth-table td {
+  padding: 8px;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.88rem;
+}
+
+.growth-table th {
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.growth-table td {
+  color: var(--accent-strong);
+}
+
+/* ============================================
+   DETAILS / COLLAPSIBLE
+   ============================================ */
+.details {
+  margin-top: 12px;
+}
+
+.details summary {
+  cursor: pointer;
+  font-weight: 600;
+  color: var(--muted);
+  padding: 6px 0;
+}
+
+.details summary:hover {
+  color: var(--accent-strong);
+}
+
+.details dl {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 6px;
+  color: var(--muted);
+  margin-top: 8px;
+}
+
+.sell-input {
+  margin-top: 8px;
+}
+
+/* ============================================
+   FOOTER
+   ============================================ */
+.footer {
+  margin-top: 60px;
+  padding-top: 32px;
+  border-top: 1px solid var(--border);
+  text-align: center;
+}
+
+.footer-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.footer-links {
+  display: flex;
+  gap: 24px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.footer-links a {
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: color 0.2s;
+}
+
+.footer-links a:hover {
+  color: var(--accent-2);
+}
+
+.footer small {
+  color: var(--muted);
+  font-size: 0.88rem;
+}
+
+/* ============================================
+   RESPONSIVE DESIGN
+   ============================================ */
+@media (max-width: 980px) {
+  .content {
+    grid-template-columns: 1fr;
+  }
+  
+  .grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .apps-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .stats-bar {
+    gap: 20px;
+  }
+  
+  .stat-value {
+    font-size: 1.5rem;
+  }
+}
+
+@media (max-width: 520px) {
+  body {
+    padding: 18px 12px;
+  }
+  
+  .brand h1 {
+    font-size: 1.3rem;
+  }
+  
+  .logo,
+  .mark {
+    width: 40px;
+    height: 40px;
+  }
+}
+
+
+/* ============================================
+   MONTH-PLANNER — CUSTOM STYLES
+   ============================================ */
+
+.month-selector {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 20px;
+        }
+
+        .month-nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+        }
+
+        .month-nav button {
+            padding: 10px 20px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .month-nav button:hover {
+            background: #5568d3;
+        }
+
+        .month-display {
+            flex: 1;
+            text-align: center;
+            font-size: 1.5em;
+            font-weight: 700;
+            color: #667eea;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 20px;
+        }
+
+        .card h2 {
+            font-size: 1.5em;
+            margin-bottom: 20px;
+            color: #667eea;
+            border-bottom: 2px solid #f0f0f0;
+            padding-bottom: 10px;
+        }
+
+        .transaction-row {
+            display: grid;
+            grid-template-columns: 120px 1fr 1fr 100px 120px 40px;
+            gap: 10px;
+            margin-bottom: 12px;
+            align-items: center;
+        }
+
+        .transaction-row select,
+        .transaction-row input {
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 0.95em;
+            transition: all 0.3s;
+        }
+
+        .transaction-row select:focus,
+        .transaction-row input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .remove-btn {
+            padding: 8px;
+            background: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .remove-btn:hover {
+            background: #c0392b;
+        }
+
+        .add-btn {
+            width: 100%;
+            padding: 12px;
+            background: #f0f0f0;
+            color: #667eea;
+            border: 2px dashed #667eea;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 1em;
+            transition: all 0.3s;
+            margin-top: 10px;
+        }
+
+        .add-btn:hover {
+            background: #e9ecef;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        .results {
+            display: none;
+        }
+
+        .results.active {
+            display: block;
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .summary-box {
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+
+        .summary-label {
+            font-size: 0.9em;
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .summary-value {
+            font-size: 1.5em;
+            font-weight: 700;
+            color: #333;
+        }
+
+        .summary-value.positive {
+            color: #10b981;
+        }
+
+        .summary-value.negative {
+            color: #e74c3c;
+        }
+
+        .account-summary {
+            margin-top: 20px;
+        }
+
+        .account-item {
+            padding: 15px;
+            margin-bottom: 10px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+
+        .account-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .account-name {
+            font-size: 1.2em;
+            font-weight: 700;
+            color: #667eea;
+        }
+
+        .account-total {
+            font-size: 1.3em;
+            font-weight: 700;
+        }
+
+        .transaction-list {
+            font-size: 0.9em;
+            color: #666;
+            margin-top: 10px;
+        }
+
+        .transaction-item {
+            padding: 8px 0;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .transaction-item:last-child {
+            border-bottom: none;
+        }
+
+        .calendar {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .calendar-day {
+            aspect-ratio: 1;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            text-align: center;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .calendar-day:hover {
+            background: #e9ecef;
+            transform: scale(1.05);
+        }
+
+        .calendar-day.has-transaction {
+            background: #667eea;
+            color: white;
+        }
+
+        .calendar-day-number {
+            font-weight: 700;
+            font-size: 1.1em;
+            margin-bottom: 5px;
+        }
+
+        .calendar-day-amount {
+            font-size: 0.8em;
+            font-weight: 600;
+        }
+
+        .calendar-header {
+            font-weight: 700;
+            color: #667eea;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .snapshot {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            white-space: pre-wrap;
+            font-size: 0.9em;
+        }
+
+        @media (max-width: 768px) {
+            .transaction-row {
+                grid-template-columns: 1fr;
+            }
+
+            .calendar {
+                grid-template-columns: repeat(7, 1fr);
+                gap: 5px;
+            }
+
+            .calendar-day {
+                padding: 5px;
+            }
+
+            .calendar-day-number {
+                font-size: 0.9em;
+            }
+
+            .calendar-day-amount {
+                font-size: 0.7em;
+            }
+        }
+        

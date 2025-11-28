@@ -1,0 +1,230 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Lumpsum Calculator — One-time Investment</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../style.css" />
+</head>
+<body>
+  <main class="site">
+    <header class="header">
+      <div class="brand">
+        <svg class="mark" viewBox="0 0 24 24" aria-hidden="true">
+          <defs>
+            <linearGradient id="grad" x1="0" x2="1">
+              <stop offset="0" stop-color="#0ea5a4" />
+              <stop offset="1" stop-color="#3b82f6" />
+            </linearGradient>
+          </defs>
+          <rect x="2" y="4" width="20" height="16" rx="4" fill="url(#grad)"></rect>
+          <path d="M7 14l3-5 4 6 3-4" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+        </svg>
+        <div>
+          <h1>Lumpsum Calculator</h1>
+          <p class="tag">Calculate one-time investment returns</p>
+        </div>
+      </div>
+      <a href="../../index.html" class="back-btn">Back to Home</a>
+    </header>
+
+    <section class="content">
+      <form id="calcForm" class="panel" onsubmit="return false;">
+        <h2>Investment Details</h2>
+
+        <label class="field">
+          <span class="label">Investment Amount (₹)</span>
+          <input id="investment" type="number" step="10000" value="100000" required />
+        </label>
+
+        <label class="field">
+          <span class="label">Expected Return Rate (% per annum)</span>
+          <input id="returnRate" type="number" step="0.1" value="12" required />
+        </label>
+
+        <label class="field">
+          <span class="label">Time Period (years)</span>
+          <input id="timePeriod" type="number" step="1" min="1" max="30" value="10" required />
+        </label>
+
+        <div class="actions">
+          <button id="calculateBtn" class="btn primary" type="button">Calculate</button>
+          <button id="resetBtn" class="btn ghost" type="button">Reset</button>
+        </div>
+      </form>
+
+      <aside class="result" id="results">
+        <h2 class="panel-title">Results</h2>
+
+        <div class="cards">
+          <div class="card">
+            <div class="card-title">Total Investment</div>
+            <div class="card-value" id="totalInvestment">—</div>
+            <div class="card-note">Initial amount invested</div>
+          </div>
+
+          <div class="card">
+            <div class="card-title">Estimated Returns</div>
+            <div class="card-value" id="estReturns">—</div>
+            <div class="card-note">Wealth gained from compound interest</div>
+          </div>
+
+          <div class="card">
+            <div class="card-title">Maturity Value</div>
+            <div class="card-value" id="maturityValue">—</div>
+            <div class="card-note">Total corpus at maturity</div>
+          </div>
+        </div>
+
+        <div class="chart-container">
+          <canvas id="lumpsumChart"></canvas>
+        </div>
+
+        <div class="growth-table" id="growthTable" style="display:none">
+          <h3>Year-wise Growth</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Year</th>
+                <th>Amount</th>
+                <th>Growth</th>
+              </tr>
+            </thead>
+            <tbody id="tableBody"></tbody>
+          </table>
+        </div>
+      </aside>
+    </section>
+
+    <footer class="footer">
+      <small>Built by destiny-tracer — runs entirely in your browser, no data leaves your device.</small>
+    </footer>
+  </main>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+  <script>
+(function(){
+  const $ = id => document.getElementById(id);
+  let chartInstance = null;
+
+  function fmtNumber(n){
+    if (typeof n !== 'number' || !isFinite(n)) return '—';
+    return '₹' + n.toLocaleString('en-IN', {minimumFractionDigits:0, maximumFractionDigits:0});
+  }
+
+  function calculate(){
+    const investment = parseFloat($('investment').value) || 0;
+    const rate = parseFloat($('returnRate').value) || 0;
+    const years = parseFloat($('timePeriod').value) || 0;
+
+    if (investment <= 0 || rate <= 0 || years <= 0){
+      alert('Please enter valid values for all fields.');
+      return;
+    }
+
+    // Compound Interest: A = P(1 + r/n)^(nt)
+    // For annual compounding: A = P(1 + r)^t
+    const maturity = investment * Math.pow(1 + rate/100, years);
+    const returns = maturity - investment;
+
+    $('totalInvestment').textContent = fmtNumber(investment);
+    $('estReturns').textContent = fmtNumber(returns);
+    $('maturityValue').textContent = fmtNumber(maturity);
+
+    // Generate year-wise data
+    let yearData = [];
+    for (let i = 1; i <= years; i++){
+      const amount = investment * Math.pow(1 + rate/100, i);
+      yearData.push({year: i, amount: amount});
+    }
+
+    drawChart(yearData, investment);
+    generateTable(yearData, investment);
+  }
+
+  function drawChart(data, principal){
+    const ctx = $('lumpsumChart').getContext('2d');
+    
+    if (chartInstance) chartInstance.destroy();
+
+    chartInstance = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: data.map(d => `Year ${d.year}`),
+        datasets: [{
+          label: 'Investment Value',
+          data: data.map(d => d.amount),
+          borderColor: '#3b82f6',
+          backgroundColor: 'rgba(59, 130, 246, 0.1)',
+          tension: 0.3,
+          fill: true,
+          pointRadius: 4,
+          pointHoverRadius: 6
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {display: false},
+          tooltip: {
+            callbacks: {
+              label: function(context) {
+                return 'Value: ₹' + context.parsed.y.toLocaleString('en-IN');
+              }
+            }
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: false,
+            ticks: {
+              callback: function(value) {
+                return '₹' + (value/100000).toFixed(0) + 'L';
+              }
+            }
+          }
+        }
+      }
+    });
+  }
+
+  function generateTable(data, principal){
+    const tbody = $('tableBody');
+    tbody.innerHTML = '';
+    
+    data.forEach((d, idx) => {
+      const prevAmount = idx === 0 ? principal : data[idx-1].amount;
+      const growth = d.amount - prevAmount;
+      
+      const row = `<tr>
+        <td>${d.year}</td>
+        <td>${fmtNumber(d.amount)}</td>
+        <td style="color:#10b981">${fmtNumber(growth)}</td>
+      </tr>`;
+      tbody.innerHTML += row;
+    });
+    
+    $('growthTable').style.display = 'block';
+  }
+
+  function reset(){
+    $('calcForm').reset();
+    $('totalInvestment').textContent = '—';
+    $('estReturns').textContent = '—';
+    $('maturityValue').textContent = '—';
+    $('growthTable').style.display = 'none';
+    if (chartInstance) {
+      chartInstance.destroy();
+      chartInstance = null;
+    }
+  }
+
+  $('calculateBtn').addEventListener('click', calculate);
+  $('resetBtn').addEventListener('click', reset);
+})();
+  </script>
+  <script src="../../common.js"></script>
+</body>
+</html>

@@ -1,0 +1,1827 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Debt Analyzer - Personal Financial Dashboard</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 25%, #0d9488 50%, #059669 75%, #d97706 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #fff;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #a7f3d0;
+            font-size: 1rem;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%);
+            color: white;
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+        }
+
+        .btn-info {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            color: white;
+        }
+
+        .btn-emerald {
+            background: linear-gradient(135deg, #10b981 0%, #14b8a6 100%);
+            color: white;
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .section {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .grid {
+            display: grid;
+            gap: 20px;
+        }
+
+        .grid-2 {
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        }
+
+        .grid-3 {
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        }
+
+        .grid-4 {
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        label {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #e5e7eb;
+        }
+
+        input, select {
+            padding: 12px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            font-size: 1rem;
+        }
+
+        input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #10b981;
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+        }
+
+        select option {
+            background: #0f172a;
+            color: white;
+        }
+
+        .total-box {
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 20px;
+        }
+
+        .total-box-income {
+            background: rgba(16, 185, 129, 0.2);
+            border: 1px solid rgba(16, 185, 129, 0.5);
+        }
+
+        .total-box-expense {
+            background: rgba(239, 68, 68, 0.2);
+            border: 1px solid rgba(239, 68, 68, 0.5);
+        }
+
+        .total-label {
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+            opacity: 0.9;
+        }
+
+        .total-amount {
+            font-size: 2rem;
+            font-weight: bold;
+        }
+
+        .stats-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            padding: 25px;
+            border-radius: 16px;
+            color: white;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .stat-card-blue {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+        }
+
+        .stat-card-red {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+        }
+
+        .stat-card-green {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        }
+
+        .stat-card-purple {
+            background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+        }
+
+        .stat-card-health {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            margin-bottom: 8px;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+        }
+
+        .stat-subtitle {
+            font-size: 0.85rem;
+            margin-top: 5px;
+            opacity: 0.8;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin-top: 20px;
+        }
+
+        .chart-container-large {
+            height: 400px;
+        }
+
+        .loan-item, .saving-item {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s;
+        }
+
+        .loan-item:hover, .saving-item:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateX(5px);
+        }
+
+        .loan-header, .saving-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 15px;
+        }
+
+        .loan-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .priority-badge {
+            background: #8b5cf6;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .loan-type {
+            font-size: 1.3rem;
+            font-weight: bold;
+        }
+
+        .loan-lender {
+            color: #a7f3d0;
+            font-size: 0.9rem;
+            margin-top: 5px;
+        }
+
+        .delete-btn, .view-btn {
+            background: rgba(239, 68, 68, 0.2);
+            border: 1px solid rgba(239, 68, 68, 0.5);
+            color: #fca5a5;
+            padding: 8px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-left: 8px;
+        }
+
+        .view-btn {
+            background: rgba(59, 130, 246, 0.2);
+            border: 1px solid rgba(59, 130, 246, 0.5);
+            color: #93c5fd;
+        }
+
+        .delete-btn:hover {
+            background: rgba(239, 68, 68, 0.4);
+        }
+
+        .view-btn:hover {
+            background: rgba(59, 130, 246, 0.4);
+        }
+
+        .loan-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .detail-item {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .detail-label {
+            font-size: 0.85rem;
+            opacity: 0.7;
+        }
+
+        .detail-value {
+            font-size: 1.1rem;
+            font-weight: bold;
+        }
+
+        .progress-bar {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            height: 8px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            background: linear-gradient(90deg, #10b981 0%, #34d399 100%);
+            height: 100%;
+            border-radius: 10px;
+            transition: width 0.5s ease;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            opacity: 0.7;
+        }
+
+        .empty-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 100%);
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 900px;
+            width: 100%;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .strategy-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-left: 4px solid #10b981;
+        }
+
+        .strategy-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .strategy-description {
+            line-height: 1.6;
+            opacity: 0.9;
+        }
+
+        .calendar-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .calendar-table th,
+        .calendar-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .calendar-table th {
+            background: rgba(16, 185, 129, 0.2);
+            font-weight: bold;
+            position: sticky;
+            top: 0;
+        }
+
+        .calendar-table tr:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .comparison-box {
+            background: rgba(16, 185, 129, 0.1);
+            border: 2px solid rgba(16, 185, 129, 0.3);
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .comparison-result {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .comparison-item {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        .alert-box {
+            background: rgba(239, 68, 68, 0.2);
+            border: 2px solid rgba(239, 68, 68, 0.5);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .alert-box.show {
+            display: block;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        @media print {
+            body {
+                background: white;
+                color: black;
+            }
+            .section {
+                background: white;
+                border: 1px solid #ddd;
+                color: black;
+            }
+            .btn-group, .delete-btn, .view-btn, .btn {
+                display: none !important;
+            }
+            .stat-card {
+                border: 1px solid #ddd;
+            }
+            .chart-container {
+                display: none;
+            }
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.8rem;
+            }
+            .header-content {
+                flex-direction: column;
+            }
+            .stats-cards {
+                grid-template-columns: 1fr;
+            }
+            .calendar-table {
+                font-size: 0.85rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="header-content">
+                <div>
+                    <h1>💰 Smart Debt Analyzer</h1>
+                    <p class="subtitle">Your Personal Financial Dashboard</p>
+                </div>
+                <div class="btn-group">
+                    <button class="btn btn-secondary" onclick="history.back()">
+                        ⬅️ Back
+                    </button>
+                    <button class="btn btn-success" onclick="exportPDF()">
+                        📥 Export PDF
+                    </button>
+                    <button class="btn btn-warning" onclick="exportCSV()">
+                        📊 Export CSV
+                    </button>
+                    <button class="btn btn-info" onclick="window.print()">
+                        🖨️ Print
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Alert Box -->
+        <div id="alertBox" class="alert-box">
+            <h3 style="margin-bottom: 10px;">⚠️ Financial Health Warning</h3>
+            <p id="alertMessage"></p>
+        </div>
+
+        <!-- Income Section -->
+        <div class="section">
+            <h2 class="section-title">💵 Income Sources</h2>
+            <div class="grid grid-3">
+                <div class="input-group">
+                    <label>Salary Income</label>
+                    <input type="number" id="salary" placeholder="₹ 0" oninput="calculateTotals()">
+                </div>
+                <div class="input-group">
+                    <label>Rental Income</label>
+                    <input type="number" id="rental" placeholder="₹ 0" oninput="calculateTotals()">
+                </div>
+                <div class="input-group">
+                    <label>Bank Savings Income</label>
+                    <input type="number" id="bankSavings" placeholder="₹ 0" oninput="calculateTotals()">
+                </div>
+                <div class="input-group">
+                    <label>Spouse Income</label>
+                    <input type="number" id="spouse" placeholder="₹ 0" oninput="calculateTotals()">
+                </div>
+                <div class="input-group">
+                    <label>Parental Income</label>
+                    <input type="number" id="parental" placeholder="₹ 0" oninput="calculateTotals()">
+                </div>
+                <div class="input-group">
+                    <label>Miscellaneous Income</label>
+                    <input type="number" id="miscIncome" placeholder="₹ 0" oninput="calculateTotals()">
+                </div>
+            </div>
+            <div class="total-box total-box-income">
+                <div class="total-label">Total Monthly Income</div>
+                <div class="total-amount" id="totalIncome">₹0</div>
+            </div>
+        </div>
+
+        <!-- Expenses Section -->
+        <div class="section">
+            <h2 class="section-title">💳 Monthly Expenses</h2>
+            <div class="grid grid-4">
+                <div class="input-group">
+                    <label>Groceries</label>
+                    <input type="number" id="groceries" placeholder="₹ 0" oninput="calculateTotals()">
+                </div>
+                <div class="input-group">
+                    <label>Communication</label>
+                    <input type="number" id="communication" placeholder="₹ 0" oninput="calculateTotals()">
+                </div>
+                <div class="input-group">
+                    <label>Electricity Bill (EB)</label>
+                    <input type="number" id="eb" placeholder="₹ 0" oninput="calculateTotals()">
+                </div>
+                <div class="input-group">
+                    <label>Rent</label>
+                    <input type="number" id="rent" placeholder="₹ 0" oninput="calculateTotals()">
+                </div>
+                <div class="input-group">
+                    <label>Maintenance</label>
+                    <input type="number" id="maintenance" placeholder="₹ 0" oninput="calculateTotals()">
+                </div>
+                <div class="input-group">
+                    <label>Fuel</label>
+                    <input type="number" id="fuel" placeholder="₹ 0" oninput="calculateTotals()">
+                </div>
+                <div class="input-group">
+                    <label>Medical Expense</label>
+                    <input type="number" id="medical" placeholder="₹ 0" oninput="calculateTotals()">
+                </div>
+                <div class="input-group">
+                    <label>Miscellaneous Expense</label>
+                    <input type="number" id="miscExpense" placeholder="₹ 0" oninput="calculateTotals()">
+                </div>
+            </div>
+            <div class="total-box total-box-expense">
+                <div class="total-label">Total Monthly Expenses</div>
+                <div class="total-amount" id="totalExpenses">₹0</div>
+            </div>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="stats-cards">
+            <div class="stat-card stat-card-blue">
+                <div class="stat-label">Total EMI</div>
+                <div class="stat-value" id="statEMI">₹0</div>
+            </div>
+            <div class="stat-card stat-card-red">
+                <div class="stat-label">Outstanding</div>
+                <div class="stat-value" id="statOutstanding">₹0</div>
+            </div>
+            <div class="stat-card stat-card-green">
+                <div class="stat-label">Disposable Income</div>
+                <div class="stat-value" id="statDisposable">₹0</div>
+            </div>
+            <div class="stat-card stat-card-purple">
+                <div class="stat-label">Total Savings</div>
+                <div class="stat-value" id="statSavings">₹0</div>
+            </div>
+            <div class="stat-card stat-card-health">
+                <div class="stat-label">Financial Health</div>
+                <div class="stat-value" id="statHealth">N/A</div>
+                <div class="stat-subtitle" id="statDTI">DTI: 0%</div>
+            </div>
+        </div>
+
+        <!-- Monthly Cash Flow Chart -->
+        <div class="section">
+            <h3 class="section-title">📊 Monthly Cash Flow Analysis</h3>
+            <div class="chart-container chart-container-large">
+                <canvas id="cashFlowChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Comparison Calculator -->
+        <div class="section">
+            <h3 class="section-title">🔄 Debt Reduction Comparison Calculator</h3>
+            <p style="opacity: 0.8; margin-bottom: 20px;">See how extra payments can accelerate your debt-free journey</p>
+            <div class="grid grid-3">
+                <div class="input-group">
+                    <label>Extra Monthly Payment (₹)</label>
+                    <input type="number" id="extraPayment" placeholder="₹ 0" oninput="calculateComparison()">
+                </div>
+                <div class="input-group">
+                    <label>Apply Extra Payment To</label>
+                    <select id="extraPaymentTarget" onchange="calculateComparison()">
+                        <option value="highest">Highest Interest Loan</option>
+                        <option value="smallest">Smallest Balance (Snowball)</option>
+                        <option value="all">Distribute Across All</option>
+                    </select>
+                </div>
+            </div>
+            <div id="comparisonResult" class="comparison-box" style="display: none;">
+                <h4 style="margin-bottom: 15px;">💡 Impact Analysis</h4>
+                <div class="comparison-result" id="comparisonDetails"></div>
+            </div>
+        </div>
+
+        <!-- Charts -->
+        <div class="grid grid-2" id="chartsSection" style="display: none;">
+            <div class="section">
+                <h3 class="section-title">📊 Loan Distribution</h3>
+                <div class="chart-container">
+                    <canvas id="loanChart"></canvas>
+                </div>
+            </div>
+            <div class="section">
+                <h3 class="section-title">📈 Repayment Projection</h3>
+                <div class="chart-container">
+                    <canvas id="projectionChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="btn-group" style="margin-bottom: 30px;">
+            <button class="btn btn-primary" onclick="openLoanModal()">
+                ➕ Add New Loan
+            </button>
+            <button class="btn btn-emerald" onclick="openSavingsModal()">
+                🐷 Add Savings
+            </button>
+        </div>
+
+        <!-- Loans List -->
+        <div class="section">
+            <h2 class="section-title">📉 Loans (Sorted by Early Closure Priority)</h2>
+            <div id="loansList">
+                <div class="empty-state">
+                    <div class="empty-icon">💼</div>
+                    <p>No loans added yet. Click "Add New Loan" to get started.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Savings List -->
+        <div class="section">
+            <h2 class="section-title">🐷 Savings Portfolio</h2>
+            <div id="savingsList">
+                <div class="empty-state">
+                    <div class="empty-icon">🎯</div>
+                    <p>No savings added yet. Click "Add Savings" to track your investments.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Strategy Section -->
+        <div class="section" id="strategyInputSection">
+            <h2 class="section-title">💡 Get Personalized Strategy</h2>
+            <div class="grid grid-2">
+                <div class="input-group">
+                    <label>Scenario</label>
+                    <select id="strategyType">
+                        <option value="">Select scenario...</option>
+                        <option value="borrowing">Planning to borrow additional amount</option>
+                        <option value="settlement">Received settlement/windfall</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>Amount (₹)</label>
+                    <input type="number" id="strategyAmount" placeholder="Enter amount">
+                </div>
+            </div>
+        </div>
+
+        <!-- Strategies Display -->
+        <div class="section" id="strategiesSection" style="display: none;">
+            <h2 class="section-title">💡 Personalized Debt Reduction Strategies</h2>
+            <div id="strategiesList"></div>
+        </div>
+
+        <!-- Footer -->
+        <div style="text-align: center; padding: 20px; opacity: 0.6;">
+            <p>Smart Debt Analyzer - Your Personal Financial Dashboard</p>
+            <p id="footerDate"></p>
+        </div>
+    </div>
+
+    <!-- Loan Modal -->
+    <div id="loanModal" class="modal">
+        <div class="modal-content">
+            <h2 class="section-title">➕ Add New Loan</h2>
+            <div class="grid grid-2">
+                <div class="input-group">
+                    <label>Loan Type</label>
+                    <select id="loanType">
+                        <option>Credit Card Loan</option>
+                        <option>Personal Loan</option>
+                        <option>App Loan</option>
+                        <option>Motor Loan</option>
+                        <option>Housing Loan</option>
+                        <option>Insurance Loan</option>
+                        <option>Private Loan</option>
+                        <option>Gold Loan</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>Lender Name</label>
+                    <input type="text" id="loanLender" placeholder="Bank/Institution name">
+                </div>
+                <div class="input-group">
+                    <label>Principal Amount (₹)</label>
+                    <input type="number" id="loanPrincipal" placeholder="Enter principal">
+                </div>
+                <div class="input-group">
+                    <label>Interest Rate (% p.a.)</label>
+                    <input type="number" step="0.01" id="loanRate" placeholder="Enter rate">
+                </div>
+                <div class="input-group">
+                    <label>Tenure (months)</label>
+                    <input type="number" id="loanTenure" placeholder="Enter tenure">
+                </div>
+                <div class="input-group">
+                    <label>EMIs Already Paid</label>
+                    <input type="number" id="loanPaid" placeholder="Enter paid EMIs (0 if new)" value="0">
+                </div>
+            </div>
+            <div class="btn-group" style="margin-top: 20px;">
+                <button class="btn btn-success" onclick="addLoan()">Add Loan</button>
+                <button class="btn" style="background: #6b7280;" onclick="closeLoanModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Savings Modal -->
+    <div id="savingsModal" class="modal">
+        <div class="modal-content">
+            <h2 class="section-title">🐷 Add Savings</h2>
+            <div class="grid grid-2">
+                <div class="input-group">
+                    <label>Savings Type</label>
+                    <select id="savingsType">
+                        <option>Fixed Deposit</option>
+                        <option>Recurring Deposit</option>
+                        <option>SSY</option>
+                        <option>Chit (Private Finance)</option>
+                        <option>Gold Chit</option>
+                        <option>Mutual Funds</option>
+                        <option>Other Savings Instruments</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>Institution Name</label>
+                    <input type="text" id="savingsInstitution" placeholder="Bank/Company name">
+                </div>
+                <div class="input-group">
+                    <label>Current Amount (₹)</label>
+                    <input type="number" id="savingsAmount" placeholder="Enter amount">
+                </div>
+                <div class="input-group">
+                    <label>Monthly Contribution (₹)</label>
+                    <input type="number" id="savingsContribution" placeholder="Enter monthly amount">
+                </div>
+                <div class="input-group" style="grid-column: 1 / -1;">
+                    <label>Maturity/Goal</label>
+                    <input type="text" id="savingsGoal" placeholder="e.g., Dec 2025, ₹5L goal, Education fund">
+                </div>
+            </div>
+            <div class="btn-group" style="margin-top: 20px;">
+                <button class="btn btn-emerald" onclick="addSaving()">Add Savings</button>
+                <button class="btn" style="background: #6b7280;" onclick="closeSavingsModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- EMI Calendar Modal -->
+    <div id="calendarModal" class="modal">
+        <div class="modal-content">
+            <h2 class="section-title">📅 EMI Payment Calendar</h2>
+            <div id="calendarContent"></div>
+            <div class="btn-group" style="margin-top: 20px;">
+                <button class="btn" style="background: #6b7280;" onclick="closeCalendarModal()">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Data Storage
+        let loans = [];
+        let savings = [];
+        let loanChart = null;
+        let projectionChart = null;
+        let cashFlowChart = null;
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('footerDate').textContent = `Generated on ${new Date().toLocaleString()}`;
+            calculateTotals();
+            
+            // Watch strategy inputs
+            document.getElementById('strategyType').addEventListener('change', generateStrategies);
+            document.getElementById('strategyAmount').addEventListener('input', generateStrategies);
+        });
+
+        // Calculate EMI using standard formula
+        function calculateEMI(principal, rate, tenure) {
+            const p = parseFloat(principal);
+            const r = parseFloat(rate) / 12 / 100;
+            const n = parseInt(tenure);
+            if (p && r && n) {
+                return (p * r * Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1);
+            }
+            return 0;
+        }
+
+        // Calculate outstanding using reducing balance method
+        function calculateOutstanding(principal, rate, tenure, paidEmis) {
+            const p = parseFloat(principal);
+            const r = parseFloat(rate) / 12 / 100;
+            const n = parseInt(tenure);
+            const paid = parseInt(paidEmis) || 0;
+            
+            if (!p || !r || !n) return 0;
+            
+            const emi = calculateEMI(principal, rate, tenure);
+            let outstanding = p;
+            
+            for (let i = 0; i < paid; i++) {
+                const interest = outstanding * r;
+                const principalPaid = emi - interest;
+                outstanding -= principalPaid;
+            }
+            
+            return Math.max(0, outstanding);
+        }
+
+        // Get numeric value from input
+        function getValue(id) {
+            return parseFloat(document.getElementById(id).value) || 0;
+        }
+
+        // Calculate all totals
+        function calculateTotals() {
+            // Income
+            const totalIncome = getValue('salary') + getValue('rental') + getValue('bankSavings') + 
+                               getValue('spouse') + getValue('parental') + getValue('miscIncome');
+            
+            // Expenses
+            const totalExpenses = getValue('groceries') + getValue('communication') + getValue('eb') + 
+                                 getValue('rent') + getValue('maintenance') + getValue('fuel') + 
+                                 getValue('medical') + getValue('miscExpense');
+            
+            // Loans
+            const totalEMI = loans.reduce((sum, loan) => sum + parseFloat(loan.emi), 0);
+            const totalOutstanding = loans.reduce((sum, loan) => sum + parseFloat(loan.outstanding), 0);
+            
+            // Savings
+            const totalSavings = savings.reduce((sum, s) => sum + parseFloat(s.amount || 0), 0);
+            const monthlySavingsContribution = savings.reduce((sum, s) => sum + parseFloat(s.monthlyContribution || 0), 0);
+            
+            // Disposable Income
+            const disposableIncome = totalIncome - totalExpenses - totalEMI - monthlySavingsContribution;
+            
+            // DTI
+            const dti = totalIncome > 0 ? ((totalEMI / totalIncome) * 100).toFixed(1) : 0;
+            
+            // Update UI
+            document.getElementById('totalIncome').textContent = `₹${totalIncome.toLocaleString()}`;
+            document.getElementById('totalExpenses').textContent = `₹${totalExpenses.toLocaleString()}`;
+            document.getElementById('statEMI').textContent = `₹${totalEMI.toFixed(0).toLocaleString()}`;
+            document.getElementById('statOutstanding').textContent = `₹${totalOutstanding.toFixed(0).toLocaleString()}`;
+            document.getElementById('statDisposable').textContent = `₹${disposableIncome.toFixed(0).toLocaleString()}`;
+            document.getElementById('statSavings').textContent = `₹${totalSavings.toFixed(0).toLocaleString()}`;
+            document.getElementById('statDTI').textContent = `DTI: ${dti}%`;
+            
+            // Financial Health
+            let health = 'N/A';
+            if (dti < 20) health = 'Excellent';
+            else if (dti < 35) health = 'Good';
+            else if (dti < 50) health = 'Fair';
+            else if (dti >= 50) health = 'Poor';
+            
+            document.getElementById('statHealth').textContent = health;
+            
+            // Show alerts
+            showAlerts(dti, disposableIncome, totalExpenses);
+            
+            // Update charts
+            updateCharts();
+            updateCashFlowChart();
+            generateStrategies();
+            calculateComparison();
+        }
+
+        // Show financial alerts
+        function showAlerts(dti, disposable, expenses) {
+            const alertBox = document.getElementById('alertBox');
+            const alertMessage = document.getElementById('alertMessage');
+            const alerts = [];
+
+            if (parseFloat(dti) >= 50) {
+                alerts.push('⚠️ CRITICAL: Your Debt-to-Income ratio is ' + dti + '% (very high risk). Immediate action needed to reduce debt burden.');
+            }
+            
+            if (disposable < 0) {
+                alerts.push('⚠️ ALERT: Negative disposable income (₹' + disposable.toFixed(0).toLocaleString() + '). Your expenses and EMIs exceed your income!');
+            }
+            
+            if (savings.length === 0 && loans.length > 0) {
+                alerts.push('⚠️ WARNING: No emergency fund detected. Build 3-6 months of expenses (₹' + (expenses * 3).toFixed(0).toLocaleString() + ') as safety net.');
+            }
+
+            if (alerts.length > 0) {
+                alertMessage.innerHTML = alerts.join('<br><br>');
+                alertBox.classList.add('show');
+            } else {
+                alertBox.classList.remove('show');
+            }
+        }
+
+        // Update Cash Flow Chart
+        function updateCashFlowChart() {
+            const totalIncome = getValue('salary') + getValue('rental') + getValue('bankSavings') + 
+                               getValue('spouse') + getValue('parental') + getValue('miscIncome');
+            const totalExpenses = getValue('groceries') + getValue('communication') + getValue('eb') + 
+                                 getValue('rent') + getValue('maintenance') + getValue('fuel') + 
+                                 getValue('medical') + getValue('miscExpense');
+            const totalEMI = loans.reduce((sum, loan) => sum + parseFloat(loan.emi), 0);
+            const monthlySavingsContribution = savings.reduce((sum, s) => sum + parseFloat(s.monthlyContribution || 0), 0);
+
+            const cashFlowData = {
+                labels: ['Income', 'Expenses', 'EMI Payments', 'Savings', 'Remaining'],
+                datasets: [{
+                    label: 'Monthly Cash Flow (₹)',
+                    data: [
+                        totalIncome,
+                        -totalExpenses,
+                        -totalEMI,
+                        -monthlySavingsContribution,
+                        totalIncome - totalExpenses - totalEMI - monthlySavingsContribution
+                    ],
+                    backgroundColor: [
+                        'rgba(16, 185, 129, 0.8)',
+                        'rgba(239, 68, 68, 0.8)',
+                        'rgba(59, 130, 246, 0.8)',
+                        'rgba(139, 92, 246, 0.8)',
+                        'rgba(245, 158, 11, 0.8)'
+                    ],
+                    borderColor: [
+                        'rgba(16, 185, 129, 1)',
+                        'rgba(239, 68, 68, 1)',
+                        'rgba(59, 130, 246, 1)',
+                        'rgba(139, 92, 246, 1)',
+                        'rgba(245, 158, 11, 1)'
+                    ],
+                    borderWidth: 2
+                }]
+            };
+
+            if (cashFlowChart) cashFlowChart.destroy();
+            const cashCtx = document.getElementById('cashFlowChart').getContext('2d');
+            cashFlowChart = new Chart(cashCtx, {
+                type: 'bar',
+                data: cashFlowData,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return '₹' + Math.abs(context.parsed.y).toLocaleString();
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            ticks: { 
+                                color: '#fff',
+                                callback: function(value) {
+                                    return '₹' + value.toLocaleString();
+                                }
+                            },
+                            grid: { color: 'rgba(255, 255, 255, 0.1)' }
+                        },
+                        x: {
+                            ticks: { color: '#fff' },
+                            grid: { color: 'rgba(255, 255, 255, 0.1)' }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Calculate Comparison
+        function calculateComparison() {
+            const extraPayment = getValue('extraPayment');
+            const target = document.getElementById('extraPaymentTarget').value;
+            
+            if (extraPayment <= 0 || loans.length === 0) {
+                document.getElementById('comparisonResult').style.display = 'none';
+                return;
+            }
+
+            const totalEMI = loans.reduce((sum, loan) => sum + parseFloat(loan.emi), 0);
+            const totalOutstanding = loans.reduce((sum, loan) => sum + parseFloat(loan.outstanding), 0);
+            
+            // Calculate current debt-free date
+            const sortedLoans = [...loans].sort((a, b) => a.remainingEmis - b.remainingEmis);
+            const maxMonths = Math.max(...sortedLoans.map(l => l.remainingEmis));
+            
+            // Estimate accelerated payoff (simplified)
+            const acceleratedMonths = Math.ceil((totalOutstanding / (totalEMI + extraPayment)));
+            const monthsSaved = maxMonths - acceleratedMonths;
+            const interestSaved = monthsSaved * totalEMI * 0.3; // Rough estimate
+
+            document.getElementById('comparisonResult').style.display = 'block';
+            document.getElementById('comparisonDetails').innerHTML = `
+                <div class="comparison-item">
+                    <div class="detail-label">Current Debt-Free Date</div>
+                    <div class="detail-value">${maxMonths} months</div>
+                </div>
+                <div class="comparison-item">
+                    <div class="detail-label">With Extra ₹${extraPayment.toLocaleString()}/month</div>
+                    <div class="detail-value" style="color: #34d399;">${acceleratedMonths} months</div>
+                </div>
+                <div class="comparison-item">
+                    <div class="detail-label">Time Saved</div>
+                    <div class="detail-value" style="color: #fbbf24;">${monthsSaved} months</div>
+                </div>
+                <div class="comparison-item">
+                    <div class="detail-label">Interest Saved (approx)</div>
+                    <div class="detail-value" style="color: #10b981;">₹${interestSaved.toFixed(0).toLocaleString()}</div>
+                </div>
+            `;
+        }
+
+        // Modal functions
+        function openLoanModal() {
+            document.getElementById('loanModal').classList.add('active');
+        }
+
+        function closeLoanModal() {
+            document.getElementById('loanModal').classList.remove('active');
+        }
+
+        function openSavingsModal() {
+            document.getElementById('savingsModal').classList.add('active');
+        }
+
+        function closeSavingsModal() {
+            document.getElementById('savingsModal').classList.remove('active');
+        }
+
+        function closeCalendarModal() {
+            document.getElementById('calendarModal').classList.remove('active');
+        }
+
+        // Show EMI Calendar
+        function showEMICalendar(loanId) {
+            const loan = loans.find(l => l.id === loanId);
+            if (!loan) return;
+
+            const emi = parseFloat(loan.emi);
+            const rate = parseFloat(loan.rate) / 12 / 100;
+            let outstanding = parseFloat(loan.outstanding);
+            const startMonth = parseInt(loan.paidEmis) + 1;
+            const endMonth = parseInt(loan.tenure);
+
+            let calendarHTML = `
+                <h3 style="margin-bottom: 15px;">${loan.type} - ${loan.lender}</h3>
+                <p style="opacity: 0.8; margin-bottom: 20px;">EMI: ₹${emi.toLocaleString()} | Remaining: ${loan.remainingEmis} months</p>
+                <div style="overflow-x: auto;">
+                    <table class="calendar-table">
+                        <thead>
+                            <tr>
+                                <th>Month</th>
+                                <th>EMI Payment</th>
+                                <th>Principal</th>
+                                <th>Interest</th>
+                                <th>Outstanding</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+            `;
+
+            for (let month = startMonth; month <= endMonth && outstanding > 0; month++) {
+                const interest = outstanding * rate;
+                const principal = emi - interest;
+                outstanding -= principal;
+                outstanding = Math.max(0, outstanding);
+
+                calendarHTML += `
+                    <tr>
+                        <td>Month ${month}</td>
+                        <td>₹${emi.toLocaleString()}</td>
+                        <td style="color: #34d399;">₹${principal.toFixed(0).toLocaleString()}</td>
+                        <td style="color: #fca5a5;">₹${interest.toFixed(0).toLocaleString()}</td>
+                        <td>₹${outstanding.toFixed(0).toLocaleString()}</td>
+                    </tr>
+                `;
+            }
+
+            calendarHTML += `
+                        </tbody>
+                    </table>
+                </div>
+            `;
+
+            document.getElementById('calendarContent').innerHTML = calendarHTML;
+            document.getElementById('calendarModal').classList.add('active');
+        }
+
+        // Add Loan
+        function addLoan() {
+            const type = document.getElementById('loanType').value;
+            const lender = document.getElementById('loanLender').value;
+            const principal = document.getElementById('loanPrincipal').value;
+            const rate = document.getElementById('loanRate').value;
+            const tenure = document.getElementById('loanTenure').value;
+            const paidEmis = document.getElementById('loanPaid').value || '0';
+
+            if (!lender || !principal || !rate || !tenure) {
+                alert('Please fill all required fields');
+                return;
+            }
+
+            const emi = calculateEMI(principal, rate, tenure);
+            const outstanding = calculateOutstanding(principal, rate, tenure, paidEmis);
+            const remainingEmis = parseInt(tenure) - parseInt(paidEmis);
+
+            loans.push({
+                id: Date.now(),
+                type,
+                lender,
+                principal,
+                rate,
+                tenure,
+                paidEmis,
+                emi: emi.toFixed(2),
+                outstanding: outstanding.toFixed(2),
+                remainingEmis
+            });
+
+            // Clear form
+            document.getElementById('loanLender').value = '';
+            document.getElementById('loanPrincipal').value = '';
+            document.getElementById('loanRate').value = '';
+            document.getElementById('loanTenure').value = '';
+            document.getElementById('loanPaid').value = '0';
+
+            closeLoanModal();
+            renderLoans();
+            calculateTotals();
+        }
+
+        // Add Saving
+        function addSaving() {
+            const type = document.getElementById('savingsType').value;
+            const institution = document.getElementById('savingsInstitution').value;
+            const amount = document.getElementById('savingsAmount').value;
+            const contribution = document.getElementById('savingsContribution').value;
+            const goal = document.getElementById('savingsGoal').value;
+
+            if (!institution || !amount) {
+                alert('Please fill required fields (Institution and Amount)');
+                return;
+            }
+
+            savings.push({
+                id: Date.now(),
+                type,
+                institution,
+                amount,
+                monthlyContribution: contribution || '0',
+                goal: goal || 'Not specified'
+            });
+
+            // Clear form
+            document.getElementById('savingsInstitution').value = '';
+            document.getElementById('savingsAmount').value = '';
+            document.getElementById('savingsContribution').value = '';
+            document.getElementById('savingsGoal').value = '';
+
+            closeSavingsModal();
+            renderSavings();
+            calculateTotals();
+        }
+
+        // Delete Loan
+        function deleteLoan(id) {
+            if (confirm('Are you sure you want to delete this loan?')) {
+                loans = loans.filter(loan => loan.id !== id);
+                renderLoans();
+                calculateTotals();
+            }
+        }
+
+        // Delete Saving
+        function deleteSaving(id) {
+            if (confirm('Are you sure you want to delete this saving?')) {
+                savings = savings.filter(saving => saving.id !== id);
+                renderSavings();
+                calculateTotals();
+            }
+        }
+
+        // Render Loans
+        function renderLoans() {
+            const container = document.getElementById('loansList');
+            
+            if (loans.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">💼</div>
+                        <p>No loans added yet. Click "Add New Loan" to get started.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            // Sort by remaining EMIs (early closure priority)
+            const sortedLoans = [...loans].sort((a, b) => a.remainingEmis - b.remainingEmis);
+
+            container.innerHTML = sortedLoans.map((loan, idx) => {
+                const progress = ((parseInt(loan.paidEmis) / parseInt(loan.tenure)) * 100).toFixed(0);
+                return `
+                    <div class="loan-item">
+                        <div class="loan-header">
+                            <div class="loan-title">
+                                <span class="priority-badge">#${idx + 1}</span>
+                                <div>
+                                    <div class="loan-type">${loan.type}</div>
+                                    <div class="loan-lender">${loan.lender}</div>
+                                </div>
+                            </div>
+                            <div>
+                                <button class="view-btn" onclick="showEMICalendar(${loan.id})">📅 Calendar</button>
+                                <button class="delete-btn" onclick="deleteLoan(${loan.id})">🗑️ Delete</button>
+                            </div>
+                        </div>
+                        <div class="loan-details">
+                            <div class="detail-item">
+                                <div class="detail-label">Principal</div>
+                                <div class="detail-value">₹${parseFloat(loan.principal).toLocaleString()}</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Interest Rate</div>
+                                <div class="detail-value">${loan.rate}% p.a.</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">EMI</div>
+                                <div class="detail-value">₹${parseFloat(loan.emi).toLocaleString()}</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Remaining EMIs</div>
+                                <div class="detail-value" style="color: #34d399;">${loan.remainingEmis} / ${loan.tenure}</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Outstanding</div>
+                                <div class="detail-value" style="color: #f87171;">₹${parseFloat(loan.outstanding).toLocaleString()}</div>
+                            </div>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: ${progress}%"></div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Render Savings
+        function renderSavings() {
+            const container = document.getElementById('savingsList');
+            
+            if (savings.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">🎯</div>
+                        <p>No savings added yet. Click "Add Savings" to track your investments.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = savings.map((saving, idx) => `
+                <div class="saving-item">
+                    <div class="saving-header">
+                        <div class="loan-title">
+                            <span class="priority-badge" style="background: #10b981;">#${idx + 1}</span>
+                            <div>
+                                <div class="loan-type">${saving.type}</div>
+                                <div class="loan-lender">${saving.institution}</div>
+                            </div>
+                        </div>
+                        <button class="delete-btn" onclick="deleteSaving(${saving.id})">🗑️ Delete</button>
+                    </div>
+                    <div class="loan-details">
+                        <div class="detail-item">
+                            <div class="detail-label">Current Amount</div>
+                            <div class="detail-value">₹${parseFloat(saving.amount).toLocaleString()}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Monthly Contribution</div>
+                            <div class="detail-value">₹${parseFloat(saving.monthlyContribution).toLocaleString()}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Maturity/Goal</div>
+                            <div class="detail-value" style="color: #34d399;">${saving.goal}</div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Update Charts
+        function updateCharts() {
+            if (loans.length === 0) {
+                document.getElementById('chartsSection').style.display = 'none';
+                return;
+            }
+
+            document.getElementById('chartsSection').style.display = 'grid';
+
+            // Loan Distribution Chart
+            const loanTypes = {};
+            loans.forEach(loan => {
+                loanTypes[loan.type] = (loanTypes[loan.type] || 0) + parseFloat(loan.outstanding);
+            });
+
+            const loanData = {
+                labels: Object.keys(loanTypes),
+                datasets: [{
+                    data: Object.values(loanTypes),
+                    backgroundColor: ['#ef4444', '#f97316', '#f59e0b', '#84cc16', '#22c55e', '#06b6d4', '#3b82f6', '#8b5cf6']
+                }]
+            };
+
+            if (loanChart) loanChart.destroy();
+            const loanCtx = document.getElementById('loanChart').getContext('2d');
+            loanChart = new Chart(loanCtx, {
+                type: 'pie',
+                data: loanData,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            labels: { color: '#fff' }
+                        }
+                    }
+                }
+            });
+
+            // Projection Chart
+            const sortedLoans = [...loans].sort((a, b) => a.remainingEmis - b.remainingEmis);
+            const currentTotal = loans.reduce((sum, l) => sum + parseFloat(l.outstanding), 0);
+            
+            const getProjectionTotal = (months) => {
+                return sortedLoans.reduce((sum, loan) => {
+                    const outstanding = calculateOutstanding(loan.principal, loan.rate, loan.tenure, parseInt(loan.paidEmis) + months);
+                    return sum + outstanding;
+                }, 0);
+            };
+
+            const projectionData = {
+                labels: ['Current', '3 Months', '6 Months', '12 Months'],
+                datasets: [{
+                    label: 'Outstanding Amount',
+                    data: [currentTotal, getProjectionTotal(3), getProjectionTotal(6), getProjectionTotal(12)],
+                    borderColor: '#8b5cf6',
+                    backgroundColor: 'rgba(139, 92, 246, 0.2)',
+                    tension: 0.4,
+                    fill: true
+                }]
+            };
+
+            if (projectionChart) projectionChart.destroy();
+            const projCtx = document.getElementById('projectionChart').getContext('2d');
+            projectionChart = new Chart(projCtx, {
+                type: 'line',
+                data: projectionData,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            labels: { color: '#fff' }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            ticks: { color: '#fff' },
+                            grid: { color: 'rgba(255, 255, 255, 0.1)' }
+                        },
+                        x: {
+                            ticks: { color: '#fff' },
+                            grid: { color: 'rgba(255, 255, 255, 0.1)' }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Generate Strategies
+        function generateStrategies() {
+            if (loans.length === 0) {
+                document.getElementById('strategiesSection').style.display = 'none';
+                return;
+            }
+
+            const strategies = [];
+            const totalIncome = getValue('salary') + getValue('rental') + getValue('bankSavings') + 
+                               getValue('spouse') + getValue('parental') + getValue('miscIncome');
+            const totalExpenses = getValue('groceries') + getValue('communication') + getValue('eb') + 
+                                 getValue('rent') + getValue('maintenance') + getValue('fuel') + 
+                                 getValue('medical') + getValue('miscExpense');
+            const totalEMI = loans.reduce((sum, loan) => sum + parseFloat(loan.emi), 0);
+            const totalOutstanding = loans.reduce((sum, loan) => sum + parseFloat(loan.outstanding), 0);
+            const monthlySavingsContribution = savings.reduce((sum, s) => sum + parseFloat(s.monthlyContribution || 0), 0);
+            const disposableIncome = totalIncome - totalExpenses - totalEMI - monthlySavingsContribution;
+            const dti = totalIncome > 0 ? ((totalEMI / totalIncome) * 100).toFixed(1) : 0;
+            const savingsRate = totalIncome > 0 ? ((monthlySavingsContribution / totalIncome) * 100).toFixed(1) : 0;
+
+            // Sort loans by priority
+            const sortedLoans = [...loans].sort((a, b) => a.remainingEmis - b.remainingEmis);
+            const sortedByInterest = [...loans].sort((a, b) => parseFloat(b.rate) - parseFloat(a.rate));
+
+            // 1. Priority Closure Strategy (Snowball Method)
+            if (sortedLoans.length > 0) {
+                const firstLoan = sortedLoans[0];
+                strategies.push({
+                    title: '⛄ Snowball Method - Priority Closure',
+                    description: `Focus on closing your ${firstLoan.type} first (${firstLoan.remainingEmis} EMIs remaining, ₹${parseFloat(firstLoan.outstanding).toLocaleString()} outstanding). This has the shortest tenure and closing it will free up ₹${parseFloat(firstLoan.emi).toLocaleString()}/month. The psychological win will motivate you to tackle the next loan with increased momentum.`
+                });
+            }
+
+            // 2. Avalanche Method (Highest Interest First)
+            if (sortedByInterest.length > 0) {
+                const highestInterestLoan = sortedByInterest[0];
+                const totalInterest = sortedByInterest.reduce((sum, l) => {
+                    return sum + (parseFloat(l.emi) * l.remainingEmis - parseFloat(l.outstanding));
+                }, 0);
+                strategies.push({
+                    title: '🏔️ Avalanche Method - Highest Interest First',
+                    description: `Target your ${highestInterestLoan.type} with ${highestInterestLoan.rate}% interest rate first. By paying extra on this loan, you'll save approximately ₹${(totalInterest * 0.2).toFixed(0).toLocaleString()} in interest charges. This method saves the most money in the long run, though progress may feel slower initially.`
+                });
+            }
+
+            // 3. Surplus Utilization
+            if (disposableIncome > 0) {
+                const monthlyExtra = disposableIncome * 0.5;
+                const yearlyImpact = monthlyExtra * 12;
+                strategies.push({
+                    title: '💰 Surplus Utilization Strategy',
+                    description: `You have ₹${disposableIncome.toFixed(0).toLocaleString()} disposable income. Apply the 50-30-20 rule: 50% (₹${(disposableIncome * 0.5).toFixed(0).toLocaleString()}) for extra EMI payments, 30% (₹${(disposableIncome * 0.3).toFixed(0).toLocaleString()}) for emergency fund, 20% (₹${(disposableIncome * 0.2).toFixed(0).toLocaleString()}) for investments. This accelerates debt reduction while building financial security.`
+                });
+            }
+
+            // 4. Emergency Fund Check
+            const emergencyFundNeeded = totalExpenses * 6;
+            const currentEmergencyFund = savings.reduce((sum, s) => sum + parseFloat(s.amount || 0), 0);
+            if (currentEmergencyFund < emergencyFundNeeded) {
+                strategies.push({
+                    title: '🛡️ Emergency Fund Priority',
+                    description: `Build an emergency fund of ₹${emergencyFundNeeded.toFixed(0).toLocaleString()} (6 months expenses). You currently have ₹${currentEmergencyFund.toFixed(0).toLocaleString()}. Start with ₹${Math.min(5000, disposableIncome * 0.3).toFixed(0).toLocaleString()}/month in a liquid fund or savings account. This prevents taking new loans during emergencies.`
+                });
+            }
+
+            // 5. DTI Improvement
+            if (parseFloat(dti) > 40) {
+                strategies.push({
+                    title: '⚠️ Debt-to-Income Optimization',
+                    description: `Your DTI ratio is ${dti}% (target: <36%). Actions: (1) Freeze new borrowing, (2) Increase income through side hustle/freelancing (target: +₹${(totalIncome * 0.2).toFixed(0).toLocaleString()}), (3) Reduce discretionary expenses by 20% (₹${(totalExpenses * 0.2).toFixed(0).toLocaleString()}), (4) Consider debt consolidation if multiple high-interest loans exist.`
+                });
+            }
+
+            // 6. Debt Consolidation Analysis
+            if (loans.length >= 3) {
+                const avgRate = loans.reduce((sum, l) => sum + parseFloat(l.rate), 0) / loans.length;
+                const potentialSavings = totalOutstanding * (avgRate - 12) / 100 / 12 * 12; // Assuming 12% consolidation rate
+                strategies.push({
+                    title: '🔄 Debt Consolidation Opportunity',
+                    description: `You have ${loans.length} active loans with average ${avgRate.toFixed(1)}% interest. Consider consolidating into a single personal loan at 12-14% if possible. Potential benefits: Simplified payments, potentially lower interest (save ₹${Math.max(0, potentialSavings).toFixed(0).toLocaleString()}/year), improved credit score. Consult with your bank for balance transfer options.`
+                });
+            }
+
+            // 7. Income Increase Strategy
+            strategies.push({
+                title: '📈 Income Growth Strategy',
+                description: `Current income: ₹${totalIncome.toLocaleString()}. Target 20% increase in 12 months: (1) Negotiate salary raise (research market rates), (2) Start freelancing/consulting in your expertise (₹10k-30k/month), (3) Monetize skills online (teaching, writing), (4) Invest in upskilling for better opportunities. Even ₹10,000 extra monthly = ₹120,000 yearly for debt reduction.`
+                });
+
+            // 8. Prepayment Strategy
+            if (disposableIncome > 5000) {
+                const lumpsum = disposableIncome * 6; // 6 months saving
+                const targetLoan = sortedByInterest[0];
+                strategies.push({
+                    title: '⚡ Prepayment Acceleration',
+                    description: `Save ₹${disposableIncome.toFixed(0).toLocaleString()}/month for 6 months = ₹${lumpsum.toFixed(0).toLocaleString()} lumpsum. Prepay your ${targetLoan?.type || 'highest interest loan'} (${targetLoan?.rate || 'N/A'}% interest). Most banks allow prepayment without penalty after 6 months. This reduces principal, thereby reducing future interest substantially.`
+                });
+            }
+
+            // 9. Credit Score Optimization
+            strategies.push({
+                title: '💳 Credit Score Enhancement',
+                description: `Strategies to improve credit score: (1) Never miss EMI payments (set auto-debit), (2) Keep credit utilization below 30%, (3) Don't close old credit cards (credit history matters), (4) Diversify credit mix (secured + unsecured), (5) Check credit report quarterly for errors. Better score = lower interest rates on future loans = long-term savings.`
+            });
+
+            // 10. Savings Rate Improvement
+            if (parseFloat(savingsRate) < 20) {
+                strategies.push({
+                    title: '🎯 Savings Rate Target',
+                    description: `Current savings rate: ${savingsRate}% (target: 20-30%). Start with "pay yourself first" principle: Set up automatic transfer of ₹${Math.min(3000, totalIncome * 0.1).toFixed(0)} to separate savings account on salary day. Increase by ₹500 every quarter. Use ELSS for tax benefits, PPF for long-term, and liquid funds for emergency. Small consistent savings compound over time.`
+                });
+            }
+
+            // Strategy based on user input
+            const strategyType = document.getElementById('strategyType').value;
+            const strategyAmount = parseFloat(document.getElementById('strategyAmount').value) || 0;
+
+            if (strategyType === 'borrowing' && strategyAmount > 0) {
+                const estimatedEMI = strategyAmount * 0.02;
+                const newDTI = (((totalEMI + estimatedEMI) / totalIncome) * 100).toFixed(1);
+                const newDisposable = disposableIncome - estimatedEMI;
+                strategies.push({
+                    title: '🔴 Additional Borrowing Impact Analysis',
+                    description: `Borrowing ₹${strategyAmount.toLocaleString()} will increase DTI from ${dti}% to ${newDTI}%. New disposable income: ₹${newDisposable.toFixed(0).toLocaleString()}. Recommendations: (1) Postpone if DTI will exceed 50%, (2) Opt for maximum tenure to minimize EMI impact, (3) Ensure emergency fund covers 6 months before borrowing, (4) Prepay existing high-interest loans first with this amount if possible instead of new borrowing.`
+                });
+            }
+
+            if (strategyType === 'settlement' && strategyAmount > 0) {
+                const highestInterestLoan = sortedByInterest[0];
+                strategies.push({
+                    title: '🎉 Windfall Allocation Strategy',
+                    description: `With ₹${strategyAmount.toLocaleString()} windfall, use the 40-30-20-10 rule:
+• 40% (₹${(strategyAmount * 0.4).toLocaleString()}) → Prepay ${highestInterestLoan?.type || 'highest interest loan'} (${highestInterestLoan?.rate || 'N/A'}% p.a.) to save maximum interest
+• 30% (₹${(strategyAmount * 0.3).toLocaleString()}) → Emergency fund (maintain 6 months expenses)
+• 20% (₹${(strategyAmount * 0.2).toLocaleString()}) → Long-term investments (ELSS/Index Funds for wealth creation)
+• 10% (₹${(strategyAmount * 0.1).toLocaleString()}) → Reward yourself (maintain motivation and financial discipline)
+
+This balanced approach reduces debt, builds security, and creates wealth simultaneously.`
+                });
+            }
+
+            // Render strategies
+            if (strategies.length > 0) {
+                document.getElementById('strategiesSection').style.display = 'block';
+                document.getElementById('strategiesList').innerHTML = strategies.map(s => `
+                    <div class="strategy-card">
+                        <div class="strategy-title">${s.title}</div>
+                        <div class="strategy-description">${s.description}</div>
+                    </div>
+                `).join('');
+            }
+        }
+
+        // Export CSV
+        function exportCSV() {
+            const totalIncome = getValue('salary') + getValue('rental') + getValue('bankSavings') + 
+                               getValue('spouse') + getValue('parental') + getValue('miscIncome');
+            const totalExpenses = getValue('groceries') + getValue('communication') + getValue('eb') + 
+                                 getValue('rent') + getValue('maintenance') + getValue('fuel') + 
+                                 getValue('medical') + getValue('miscExpense');
+            const totalEMI = loans.reduce((sum, loan) => sum + parseFloat(loan.emi), 0);
+            const totalOutstanding = loans.reduce((sum, loan) => sum + parseFloat(loan.outstanding), 0);
+            const totalSavings = savings.reduce((sum, s) => sum + parseFloat(s.amount || 0), 0);
+
+            let csv = 'Smart Debt Analyzer - Financial Report\n';
+            csv += `Generated on,${new Date().toLocaleString()}\n\n`;
+
+            // Income Section
+            csv += 'INCOME BREAKDOWN\n';
+            csv += 'Category,Amount (INR)\n';
+            csv += `Salary Income,${getValue('salary')}\n`;
+            csv += `Rental Income,${getValue('rental')}\n`;
+            csv += `Bank Savings Income,${getValue('bankSavings')}\n`;
+            csv += `Spouse Income,${getValue('spouse')}\n`;
+            csv += `Parental Income,${getValue('parental')}\n`;
+            csv += `Miscellaneous Income,${getValue('miscIncome')}\n`;
+            csv += `Total Monthly Income,${totalIncome}\n\n`;
+
+            // Expenses Section
+            csv += 'EXPENSE BREAKDOWN\n';
+            csv += 'Category,Amount (INR)\n';
+            csv += `Groceries,${getValue('groceries')}\n`;
+            csv += `Communication,${getValue('communication')}\n`;
+            csv += `Electricity Bill,${getValue('eb')}\n`;
+            csv += `Rent,${getValue('rent')}\n`;
+            csv += `Maintenance,${getValue('maintenance')}\n`;
+            csv += `Fuel,${getValue('fuel')}\n`;
+            csv += `Medical Expense,${getValue('medical')}\n`;
+            csv += `Miscellaneous Expense,${getValue('miscExpense')}\n`;
+            csv += `Total Monthly Expenses,${totalExpenses}\n\n`;
+
+            // Summary
+            csv += 'FINANCIAL SUMMARY\n';
+            csv += 'Metric,Value\n';
+            csv += `Total Monthly Income,${totalIncome}\n`;
+            csv += `Total Monthly Expenses,${totalExpenses}\n`;
+            csv += `Total EMI Payment,${totalEMI.toFixed(0)}\n`;
+            csv += `Total Outstanding Debt,${totalOutstanding.toFixed(0)}\n`;
+            csv += `Total Savings,${totalSavings.toFixed(0)}\n`;
+            csv += `Debt-to-Income Ratio,${totalIncome > 0 ? ((totalEMI / totalIncome) * 100).toFixed(1) : 0}%\n\n`;
+
+            // Loans Section
+            csv += 'LOAN DETAILS\n';
+            csv += 'Type,Lender,Principal,Interest Rate,Tenure,Paid EMIs,Remaining EMIs,Monthly EMI,Outstanding\n';
+            loans.forEach(loan => {
+                csv += `${loan.type},${loan.lender},${loan.principal},${loan.rate}%,${loan.tenure},${loan.paidEmis},${loan.remainingEmis},${loan.emi},${loan.outstanding}\n`;
+            });
+            csv += '\n';
+
+            // Savings Section
+            csv += 'SAVINGS PORTFOLIO\n';
+            csv += 'Type,Institution,Amount,Monthly Contribution,Maturity/Goal\n';
+            savings.forEach(saving => {
+                csv += `${saving.type},${saving.institution},${saving.amount},${saving.monthlyContribution},${saving.goal}\n`;
+            });
+
+            // Download CSV
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `financial-report-${new Date().toISOString().split('T')[0]}.csv`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        // Export PDF
+        function exportPDF() {
+            const totalIncome = getValue('salary') + getValue('rental') + getValue('bankSavings') + 
+                               getValue('spouse') + getValue('parental') + getValue('miscIncome');
+            const totalExpenses = getValue('groceries') + getValue('communication') + getValue('eb') + 
+                                 getValue('rent') + getValue('maintenance') + getValue('fuel') + 
+                                 getValue('medical') + getValue('miscExpense');
+            const totalEMI = loans.reduce((sum, loan) => sum + parseFloat(loan.emi), 0);
+            const totalOutstanding = loans.reduce((sum, loan) => sum + parseFloat(loan.outstanding), 0);
+            const totalSavings = savings.reduce((sum, s) => sum + parseFloat(s.amount || 0), 0);
+            const monthlySavingsContribution = savings.reduce((sum, s) => sum + parseFloat(s.monthlyContribution || 0), 0);
+            const disposableIncome = totalIncome - totalExpenses - totalEMI - monthlySavingsContribution;
+            const dti = totalIncome > 0 ? ((totalEMI / totalIncome) * 100).toFixed(1) : 0;
+
+            const sortedLoans = [...loans].sort((a, b) => a.remainingEmis - b.remainingEmis);
+
+            let content = `
+╔═══════════════════════════════════════════════════════════════╗
+║           SMART DEBT ANALYZER - FINANCIAL REPORT              ║
+║                Generated on: ${new Date().toLocaleString()}                ║
+╚═══════════════════════════════════════════════════════════════╝
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📊 INCOME BREAKDOWN
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Salary Income:           ₹${getValue('salary').toLocaleString()}
+Rental Income:           ₹${getValue('rental').toLocaleString()}
+Bank Savings Income:     ₹${getValue('bankSavings').toLocaleString()}
+Spouse Income:           ₹${getValue('spouse').toLocaleString()}
+Parental Income:         ₹${getValue('parental').toLocaleString()}
+Miscellaneous Income:    ₹${getValue('miscIncome').toLocaleString()}
+─────────────────────────────────────────────────────────────────
+TOTAL MONTHLY INCOME:    ₹${totalIncome.toLocaleString()}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+💳 EXPENSE BREAKDOWN
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Groceries:               ₹${getValue('groceries').toLocaleString()}
+Communication:           ₹${getValue('communication').toLocaleString()}
+Electricity Bill (EB):   ₹${getValue('eb').toLocaleString()}
+Rent:                    ₹${getValue('rent').toLocaleString()}
+Maintenance:             ₹${getValue('maintenance').toLocaleString()}
+Fuel:                    ₹${getValue('fuel').toLocaleString()}
+Medical Expense:         ₹${getValue('medical').toLocaleString()}
+Miscellaneous Expense:   ₹${getValue('miscExpense').toLocaleString()}
+─────────────────────────────────────────────────────────────────
+TOTAL MONTHLY EXPENSES:  ₹${totalExpenses.toLocaleString()}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📈 FINANCIAL SUMMARY
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Monthly Income:              ₹${totalIncome.toLocaleString()}
+Monthly Expenses:            ₹${totalExpenses.toLocaleString()}
+Total EMI Payment:           ₹${totalEMI.toFixed(0).toLocaleString()}
+Monthly Savings Contribution: ₹${monthlySavingsContribution.toFixed(0).toLocaleString()}
+Disposable Income:           ₹${disposableIncome.toFixed(0).toLocaleString()}
+Total Outstanding Debt:      ₹${totalOutstanding.toFixed(0).toLocaleString()}
+Total Savings:               ₹${totalSavings.toFixed(0).toLocaleString()}
+
+Debt-to-Income Ratio:    ${dti}%
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🏦 LOAN DETAILS (Sorted by Early Closure Priority)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+${sortedLoans.length === 0 ? 'No loans added.' : sortedLoans.map((loan, idx) => `
+${idx + 1}. ${loan.type}
+   Lender:              ${loan.lender}
+   Principal:           ₹${parseFloat(loan.principal).toLocaleString()}
+   Interest Rate:       ${loan.rate}% p.a.
+   Tenure:              ${loan.tenure} months
+   EMI:                 ₹${parseFloat(loan.emi).toLocaleString()}
+   Paid EMIs:           ${loan.paidEmis}
+   Remaining EMIs:      ${loan.remainingEmis}
+   Outstanding:         ₹${parseFloat(loan.outstanding).toLocaleString()}
+   ─────────────────────────────────────────────────────────────
+`).join('')}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+💰 SAVINGS PORTFOLIO
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+${savings.length === 0 ? 'No savings added.' : savings.map((saving, idx) => `
+${idx + 1}. ${saving.type}
+   Institution:         ${saving.institution}
+   Amount:              ₹${parseFloat(saving.amount || 0).toLocaleString()}
+   Monthly Contribution: ₹${parseFloat(saving.monthlyContribution || 0).toLocaleString()}
+   Maturity/Goal:       ${saving.goal}
+   ─────────────────────────────────────────────────────────────
+`).join('')}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+End of Report
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+`;
+
+            const blob = new Blob([content], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `financial-report-${new Date().toISOString().split('T')[0]}.txt`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+    </script>
+</body>
+</html>

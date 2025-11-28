@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>SIP Calculator — Systematic Investment Plan</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../style.css" />
+</head>
+<body>
+  <main class="site">
+    <header class="header">
+      <div class="brand">
+        <svg class="mark" viewBox="0 0 24 24" aria-hidden="true">
+          <defs>
+            <linearGradient id="grad" x1="0" x2="1">
+              <stop offset="0" stop-color="#0ea5a4" />
+              <stop offset="1" stop-color="#3b82f6" />
+            </linearGradient>
+          </defs>
+          <rect x="2" y="4" width="20" height="16" rx="4" fill="url(#grad)"></rect>
+          <path d="M7 14l3-5 4 6 3-4" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+        </svg>
+        <div>
+          <h1>SIP Calculator</h1>
+          <p class="tag">Calculate your SIP returns & wealth growth</p>
+        </div>
+      </div>
+      <a href="../../index.html" class="back-btn">Back to Home</a>
+    </header>
+
+    <section class="content">
+      <form id="calcForm" class="panel" onsubmit="return false;">
+        <h2>Investment Details</h2>
+
+        <label class="field">
+          <span class="label">Monthly Investment (₹)</span>
+          <input id="monthlyInv" type="number" step="500" value="5000" required />
+        </label>
+
+        <label class="field">
+          <span class="label">Expected Return Rate (% per annum)</span>
+          <input id="returnRate" type="number" step="0.1" value="12" required />
+        </label>
+
+        <label class="field">
+          <span class="label">Time Period (years)</span>
+          <input id="timePeriod" type="number" step="1" min="1" value="10" required />
+        </label>
+
+        <div class="actions">
+          <button id="calculateBtn" class="btn primary" type="button">Calculate</button>
+          <button id="resetBtn" class="btn ghost" type="button">Reset</button>
+        </div>
+      </form>
+
+      <aside class="result" id="results">
+        <h2 class="panel-title">Results</h2>
+
+        <div class="cards">
+          <div class="card">
+            <div class="card-title">Total Investment</div>
+            <div class="card-value" id="totalInvested">—</div>
+            <div class="card-note">Amount you will invest</div>
+          </div>
+
+          <div class="card">
+            <div class="card-title">Estimated Returns</div>
+            <div class="card-value" id="estReturns">—</div>
+            <div class="card-note">Wealth gained from returns</div>
+          </div>
+
+          <div class="card">
+            <div class="card-title">Maturity Value</div>
+            <div class="card-value" id="maturityValue">—</div>
+            <div class="card-note">Total corpus at maturity</div>
+          </div>
+        </div>
+
+        <div class="chart-container">
+          <canvas id="sipChart"></canvas>
+        </div>
+      </aside>
+    </section>
+
+    <footer class="footer">
+      <small>Built by destiny-tracer — runs entirely in your browser, no data leaves your device.</small>
+    </footer>
+  </main>
+ <!--  <script src="../../common.js"></script> -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+  <script>
+(function(){
+  const $ = id => document.getElementById(id);
+  let chartInstance = null;
+
+  function fmtNumber(n){
+    if (typeof n !== 'number' || !isFinite(n)) return '—';
+    return '₹' + n.toLocaleString('en-IN', {minimumFractionDigits:0, maximumFractionDigits:0});
+  }
+
+  function calculate(){
+    const monthly = parseFloat($('monthlyInv').value) || 0;
+    const rate = parseFloat($('returnRate').value) || 0;
+    const years = parseFloat($('timePeriod').value) || 0;
+
+    if (monthly <= 0 || rate <= 0 || years <= 0){
+      alert('Please enter valid values for all fields.');
+      return;
+    }
+
+    const months = years * 12;
+    const monthlyRate = rate / 12 / 100;
+
+    // SIP Future Value Formula: P × ((1 + r)^n - 1) / r × (1 + r)
+    const maturity = monthly * (((Math.pow(1 + monthlyRate, months) - 1) / monthlyRate) * (1 + monthlyRate));
+    const invested = monthly * months;
+    const returns = maturity - invested;
+
+    $('totalInvested').textContent = fmtNumber(invested);
+    $('estReturns').textContent = fmtNumber(returns);
+    $('maturityValue').textContent = fmtNumber(maturity);
+
+    drawChart(invested, returns);
+  }
+
+  function drawChart(invested, returns){
+    const ctx = $('sipChart').getContext('2d');
+    
+    if (chartInstance) chartInstance.destroy();
+
+    chartInstance = new Chart(ctx, {
+      type: 'doughnut',
+      data: {
+        labels: ['Invested Amount', 'Estimated Returns'],
+        datasets: [{
+          data: [invested, returns],
+          backgroundColor: ['#0ea5a4', '#3b82f6'],
+          borderWidth: 0
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            position: 'bottom',
+            labels: {
+              padding: 16,
+              font: {size: 13, family: 'Inter'}
+            }
+          },
+          tooltip: {
+            callbacks: {
+              label: function(context) {
+                return context.label + ': ₹' + context.parsed.toLocaleString('en-IN');
+              }
+            }
+          }
+        }
+      }
+    });
+  }
+
+  function reset(){
+    $('calcForm').reset();
+    $('totalInvested').textContent = '—';
+    $('estReturns').textContent = '—';
+    $('maturityValue').textContent = '—';
+    if (chartInstance) {
+      chartInstance.destroy();
+      chartInstance = null;
+    }
+  }
+
+  $('calculateBtn').addEventListener('click', calculate);
+  $('resetBtn').addEventListener('click', reset);
+})();
+  </script>
+  <!-- 1. Load common.js -->
+<script src="../../common.js"></script>
+
+<!-- 2. Add container for saved list -->
+<section class="saved-section" id="savedCalculations"></section>
+
+<!-- 3. Add save button -->
+<button class="btn save" onclick="saveMyCalculation()">💾 Save</button>
+
+<!-- 4. JavaScript -->
+<script>
+function saveMyCalculation() {
+  DestinyTracer.SaveManager.save({
+    type: 'sip',
+    name: 'My SIP Plan',
+    details: '₹5000/month, 12%, 10 years',
+    data: {
+      monthly: 5000,
+      rate: 12,
+      years: 10
+    }
+  });
+  alert('Saved!');
+}
+
+// Load on page load
+window.addEventListener('DOMContentLoaded', function() {
+  DestinyTracer.showSavedCalculations('savedCalculations', 'sip', function(calc) {
+    // Populate form with calc.data
+    document.getElementById('monthlyInv').value = calc.data.monthly;
+    // ... trigger calculation
+  });
+});
+</script>
+</body>
+</html>

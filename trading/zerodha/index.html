@@ -1,0 +1,256 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Zerodha Brokerage Calculator — Charges & Tax</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../style.css" />
+</head>
+<body>
+  <main class="site">
+    <header class="header">
+      <div class="brand">
+        <svg class="mark" viewBox="0 0 24 24" aria-hidden="true">
+          <defs>
+            <linearGradient id="grad" x1="0" x2="1">
+              <stop offset="0" stop-color="#0ea5a4" />
+              <stop offset="1" stop-color="#3b82f6" />
+            </linearGradient>
+          </defs>
+          <rect x="2" y="4" width="20" height="16" rx="4" fill="url(#grad)"></rect>
+          <path d="M7 14l3-5 4 6 3-4" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+        </svg>
+        <div>
+          <h1>Zerodha Brokerage Calculator</h1>
+          <p class="tag">Calculate total charges & net P/L</p>
+        </div>
+      </div>
+      <a href="../../index.html" class="back-btn">Back to Home</a>
+    </header>
+
+    <section class="content">
+      <form id="calcForm" class="panel" onsubmit="return false;">
+        <h2>Trade Details</h2>
+
+        <label class="field">
+          <span class="label">Trade Type</span>
+          <select id="tradeType">
+            <option value="intraday">Intraday (Equity)</option>
+            <option value="delivery">Delivery (Equity)</option>
+            <option value="futures">Futures (F&O)</option>
+            <option value="options">Options (F&O)</option>
+          </select>
+        </label>
+
+        <div class="grid">
+          <label class="field">
+            <span class="label">Buy Price (₹)</span>
+            <input id="buyPrice" type="number" step="0.05" value="1500" required />
+          </label>
+
+          <label class="field">
+            <span class="label">Quantity</span>
+            <input id="quantity" type="number" step="1" min="1" value="10" required />
+          </label>
+        </div>
+
+        <div class="grid">
+          <label class="field">
+            <span class="label">Sell Price (₹)</span>
+            <input id="sellPrice" type="number" step="0.05" value="1520" required />
+          </label>
+
+          <label class="field">
+            <span class="label">Sell Quantity</span>
+            <input id="sellQty" type="number" step="1" min="1" value="10" required />
+          </label>
+        </div>
+
+        <div class="info-box">
+          <p><strong>Zerodha Charges:</strong> ₹0 brokerage on delivery. ₹20 or 0.03% (whichever is lower) per executed order for intraday & F&O. Plus STT, exchange charges, GST, and SEBI fees.</p>
+        </div>
+
+        <div class="actions">
+          <button id="calculateBtn" class="btn primary" type="button">Calculate</button>
+          <button id="resetBtn" class="btn ghost" type="button">Reset</button>
+        </div>
+      </form>
+
+      <aside class="result" id="results">
+        <h2 class="panel-title">Brokerage Summary</h2>
+
+        <div class="cards">
+          <div class="card">
+            <div class="card-title">Gross P/L</div>
+            <div class="card-value" id="grossPL">—</div>
+            <div class="card-note">Before charges</div>
+          </div>
+
+          <div class="card">
+            <div class="card-title">Total Charges</div>
+            <div class="card-value" id="totalCharges">—</div>
+            <div class="card-note">All fees & taxes</div>
+          </div>
+
+          <div class="card">
+            <div class="card-title">Net P/L</div>
+            <div class="card-value" id="netPL">—</div>
+            <div class="card-note">After all charges</div>
+          </div>
+        </div>
+
+        <div class="breakdown">
+          <h3>Charge Breakdown</h3>
+          <div class="breakdown-row">
+            <span class="breakdown-label">Brokerage</span>
+            <span class="breakdown-value" id="brokerage">—</span>
+          </div>
+          <div class="breakdown-row">
+            <span class="breakdown-label">STT/CTT</span>
+            <span class="breakdown-value" id="stt">—</span>
+          </div>
+          <div class="breakdown-row">
+            <span class="breakdown-label">Exchange Charges</span>
+            <span class="breakdown-value" id="exchange">—</span>
+          </div>
+          <div class="breakdown-row">
+            <span class="breakdown-label">GST (18%)</span>
+            <span class="breakdown-value" id="gst">—</span>
+          </div>
+          <div class="breakdown-row">
+            <span class="breakdown-label">SEBI Charges</span>
+            <span class="breakdown-value" id="sebi">—</span>
+          </div>
+          <div class="breakdown-row">
+            <span class="breakdown-label">Stamp Duty</span>
+            <span class="breakdown-value" id="stamp">—</span>
+          </div>
+        </div>
+      </aside>
+    </section>
+
+    <footer class="footer">
+      <small>Built by destiny-tracer — Unofficial calculator. Charges are approximate. Verify with Zerodha for exact charges.</small>
+    </footer>
+  </main>
+
+  <script src="../../common.js"></script>
+  <script>
+(function(){
+  const $ = id => document.getElementById(id);
+
+  function fmtNumber(n){
+    if (typeof n !== 'number' || !isFinite(n)) return '—';
+    const sign = n < 0 ? '-' : '';
+    n = Math.abs(n);
+    return sign + '₹' + n.toLocaleString('en-IN', {minimumFractionDigits:2, maximumFractionDigits:2});
+  }
+
+  function calculate(){
+    const tradeType = $('tradeType').value;
+    const buyPrice = parseFloat($('buyPrice').value) || 0;
+    const qty = parseFloat($('quantity').value) || 0;
+    const sellPrice = parseFloat($('sellPrice').value) || 0;
+    const sellQty = parseFloat($('sellQty').value) || 0;
+
+    if (buyPrice <= 0 || qty <= 0 || sellPrice <= 0 || sellQty <= 0){
+      alert('Please enter valid values for all fields.');
+      return;
+    }
+
+    const buyValue = buyPrice * qty;
+    const sellValue = sellPrice * sellQty;
+    const grossPL = sellValue - buyValue;
+
+    // Zerodha Charges
+    let brokerage = 0;
+    let sttRate = 0;
+    let exchangeRate = 0;
+
+    if (tradeType === 'intraday') {
+      // Intraday: ₹20 or 0.03% per order (whichever is lower)
+      const buyBrok = Math.min(20, buyValue * 0.0003);
+      const sellBrok = Math.min(20, sellValue * 0.0003);
+      brokerage = buyBrok + sellBrok;
+      sttRate = 0.00025; // 0.025% on sell side
+      exchangeRate = 0.0000325; // NSE: 0.00325%
+    } else if (tradeType === 'delivery') {
+      // Delivery: Zero brokerage
+      brokerage = 0;
+      sttRate = 0.001; // 0.1% on both sides
+      exchangeRate = 0.0000325;
+    } else if (tradeType === 'futures') {
+      // Futures: ₹20 or 0.03% per order
+      const buyBrok = Math.min(20, buyValue * 0.0003);
+      const sellBrok = Math.min(20, sellValue * 0.0003);
+      brokerage = buyBrok + sellBrok;
+      sttRate = 0.0001; // 0.01% on sell side
+      exchangeRate = 0.00002; // 0.002%
+    } else if (tradeType === 'options') {
+      // Options: Flat ₹20 per order
+      brokerage = 40; // Buy + Sell
+      sttRate = 0.0005; // 0.05% on sell side (on premium)
+      exchangeRate = 0.00053; // 0.053%
+    }
+
+    // STT/CTT
+    const stt = tradeType === 'delivery' 
+      ? (buyValue + sellValue) * sttRate 
+      : sellValue * sttRate;
+
+    // Exchange charges
+    const exchangeCharges = (buyValue + sellValue) * exchangeRate;
+
+    // SEBI charges (₹10 per crore)
+    const sebiCharges = (buyValue + sellValue) * 0.0000001;
+
+    // Stamp duty (0.003% on buy side for delivery, 0.002% for others)
+    const stampRate = tradeType === 'delivery' ? 0.00003 : 0.00002;
+    const stampDuty = buyValue * stampRate;
+
+    // GST on brokerage and exchange charges (18%)
+    const gst = (brokerage + exchangeCharges + sebiCharges) * 0.18;
+
+    // Total charges
+    const totalCharges = brokerage + stt + exchangeCharges + gst + sebiCharges + stampDuty;
+
+    // Net P/L
+    const netPL = grossPL - totalCharges;
+
+    // Display results
+    $('grossPL').textContent = fmtNumber(grossPL);
+    $('grossPL').style.color = grossPL >= 0 ? '#10b981' : '#ef4444';
+    
+    $('totalCharges').textContent = fmtNumber(totalCharges);
+    
+    $('netPL').textContent = fmtNumber(netPL);
+    $('netPL').style.color = netPL >= 0 ? '#10b981' : '#ef4444';
+
+    $('brokerage').textContent = fmtNumber(brokerage);
+    $('stt').textContent = fmtNumber(stt);
+    $('exchange').textContent = fmtNumber(exchangeCharges);
+    $('gst').textContent = fmtNumber(gst);
+    $('sebi').textContent = fmtNumber(sebiCharges);
+    $('stamp').textContent = fmtNumber(stampDuty);
+  }
+
+  function reset(){
+    $('calcForm').reset();
+    $('grossPL').textContent = '—';
+    $('totalCharges').textContent = '—';
+    $('netPL').textContent = '—';
+    $('brokerage').textContent = '—';
+    $('stt').textContent = '—';
+    $('exchange').textContent = '—';
+    $('gst').textContent = '—';
+    $('sebi').textContent = '—';
+    $('stamp').textContent = '—';
+  }
+
+  $('calculateBtn').addEventListener('click', calculate);
+  $('resetBtn').addEventListener('click', reset);
+})();
+  </script>
+</body>
+</html>

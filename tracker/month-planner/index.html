@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monthly Income-Expense Snapshot | destiny-tracer</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../style.css" />
+</head>
+<body>
+    <div class="container">
+        <a href="../../index.html" class="back-link">← Back to Home</a>
+        
+        <header>
+            <h1>📅 Monthly Income-Expense Snapshot</h1>
+            <p>Track income & expenses across multiple accounts</p>
+        </header>
+
+        <div class="month-selector">
+            <div class="month-nav">
+                <button onclick="changeMonth(-1)">← Previous</button>
+                <div class="month-display" id="monthDisplay">November 2025</div>
+                <button onclick="changeMonth(1)">Next →</button>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>Transactions</h2>
+            
+            <div style="display: grid; grid-template-columns: 120px 1fr 1fr 100px 120px 40px; gap: 10px; margin-bottom: 15px; font-weight: 600; color: #666; font-size: 0.9em;">
+                <div>Date</div>
+                <div>Description</div>
+                <div>Account</div>
+                <div>Type</div>
+                <div>Amount (₹)</div>
+                <div></div>
+            </div>
+
+            <div id="transactionsList"></div>
+
+            <button class="add-btn" onclick="addTransaction()">+ Add Transaction</button>
+
+            <div class="action-buttons">
+                <button class="btn btn-primary" onclick="saveAndCalculate()">💾 Save & Calculate</button>
+                <button class="btn btn-secondary" onclick="clearMonth()">🗑️ Clear Month</button>
+            </div>
+        </div>
+
+        <div class="results" id="results">
+            <div class="card">
+                <h2>Monthly Summary</h2>
+                <div class="summary-grid">
+                    <div class="summary-box">
+                        <div class="summary-label">Total Income</div>
+                        <div class="summary-value positive" id="totalIncome">₹0</div>
+                    </div>
+                    <div class="summary-box">
+                        <div class="summary-label">Total Expense</div>
+                        <div class="summary-value negative" id="totalExpense">₹0</div>
+                    </div>
+                    <div class="summary-box">
+                        <div class="summary-label">Net Balance</div>
+                        <div class="summary-value" id="netBalance">₹0</div>
+                    </div>
+                </div>
+
+                <h3 style="color: #667eea; margin-top: 30px; margin-bottom: 15px;">Account-wise Summary</h3>
+                <div id="accountSummary"></div>
+            </div>
+
+            <div class="card">
+                <h2>📆 Calendar View</h2>
+                <div class="calendar" id="calendar"></div>
+            </div>
+
+            <div class="card">
+                <h2>📋 Daily Snapshot</h2>
+                <div class="snapshot" id="snapshot"></div>
+                
+                <div class="action-buttons" style="margin-top: 20px;">
+                    <button class="btn btn-primary" onclick="exportPDF()">📄 Export PDF</button>
+                    <button class="btn btn-primary" onclick="exportCSV()">📊 Export CSV</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentMonth = new Date().getMonth();
+        let currentYear = new Date().getFullYear();
+        let transactionCounter = 0;
+
+        function initApp() {
+            updateMonthDisplay();
+            loadTransactions();
+            addTransaction();
+        }
+
+        function updateMonthDisplay() {
+            const months = ['January', 'February', 'March', 'April', 'May', 'June', 
+                          'July', 'August', 'September', 'October', 'November', 'December'];
+            document.getElementById('monthDisplay').textContent = `${months[currentMonth]} ${currentYear}`;
+        }
+
+        function changeMonth(delta) {
+            currentMonth += delta;
+            if (currentMonth > 11) {
+                currentMonth = 0;
+                currentYear++;
+            } else if (currentMonth < 0) {
+                currentMonth = 11;
+                currentYear--;
+            }
+            updateMonthDisplay();
+            loadTransactions();
+        }
+
+        function getDaysInMonth() {
+            return new Date(currentYear, currentMonth + 1, 0).getDate();
+        }
+
+        function getMonthKey() {
+            return `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}`;
+        }
+
+        function addTransaction() {
+            transactionCounter++;
+            const daysInMonth = getDaysInMonth();
+            const transactionsList = document.getElementById('transactionsList');
+            
+            const row = document.createElement('div');
+            row.className = 'transaction-row';
+            row.setAttribute('data-transaction-id', transactionCounter);
+            
+            let dateOptions = '';
+            for (let i = 1; i <= daysInMonth; i++) {
+                dateOptions += `<option value="${i}">${i}</option>`;
+            }
+            
+            row.innerHTML = `
+                <select class="transaction-date">
+                    ${dateOptions}
+                </select>
+                <input type="text" class="transaction-description" placeholder="Description">
+                <input type="text" class="transaction-account" placeholder="Account name">
+                <select class="transaction-type">
+                    <option value="income">Income</option>
+                    <option value="expense">Expense</option>
+                </select>
+                <input type="number" class="transaction-amount" placeholder="0" value="0">
+                <button class="remove-btn" onclick="removeTransaction(${transactionCounter})">×</button>
+            `;
+            
+            transactionsList.appendChild(row);
+        }
+
+        function removeTransaction(id) {
+            const row = document.querySelector(`[data-transaction-id="${id}"]`);
+            if (row) {
+                row.remove();
+            }
+        }
+
+        function saveAndCalculate() {
+            const transactions = [];
+            document.querySelectorAll('.transaction-row').forEach(row => {
+                const date = row.querySelector('.transaction-date').value;
+                const description = row.querySelector('.transaction-description').value.trim();
+                const account = row.querySelector('.transaction-account').value.trim();
+                const type = row.querySelector('.transaction-type').value;
+                const amount = parseFloat(row.querySelector('.transaction-amount').value) || 0;
+                
+                if (description && account && amount > 0) {
+                    transactions.push({ date, description, account, type, amount });
+                }
+            });
+
+            // Save to localStorage
+            const monthKey = getMonthKey();
+            localStorage.setItem(monthKey, JSON.stringify(transactions));
+
+            // Calculate and display
+            calculateSummary(transactions);
+            generateCalendar(transactions);
+            generateSnapshot(transactions);
+            
+            document.getElementById('results').classList.add('active');
+            document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        function loadTransactions() {
+            const monthKey = getMonthKey();
+            const saved = localStorage.getItem(monthKey);
+            
+            document.getElementById('transactionsList').innerHTML = '';
+            document.getElementById('results').classList.remove('active');
+            
+            if (saved) {
+                const transactions = JSON.parse(saved);
+                transactions.forEach(t => {
+                    addTransaction();
+                    const rows = document.querySelectorAll('.transaction-row');
+                    const lastRow = rows[rows.length - 1];
+                    lastRow.querySelector('.transaction-date').value = t.date;
+                    lastRow.querySelector('.transaction-description').value = t.description;
+                    lastRow.querySelector('.transaction-account').value = t.account;
+                    lastRow.querySelector('.transaction-type').value = t.type;
+                    lastRow.querySelector('.transaction-amount').value = t.amount;
+                });
+            }
+            
+            if (document.querySelectorAll('.transaction-row').length === 0) {
+                addTransaction();
+            }
+        }
+
+        function calculateSummary(transactions) {
+            let totalIncome = 0;
+            let totalExpense = 0;
+            const accountData = {};
+
+            transactions.forEach(t => {
+                const amount = t.type === 'income' ? t.amount : -t.amount;
+                
+                if (t.type === 'income') {
+                    totalIncome += t.amount;
+                } else {
+                    totalExpense += t.amount;
+                }
+
+                if (!accountData[t.account]) {
+                    accountData[t.account] = {
+                        total: 0,
+                        transactions: []
+                    };
+                }
+                accountData[t.account].total += amount;
+                accountData[t.account].transactions.push(t);
+            });
+
+            const netBalance = totalIncome - totalExpense;
+
+            document.getElementById('totalIncome').textContent = `₹${formatNumber(totalIncome)}`;
+            document.getElementById('totalExpense').textContent = `₹${formatNumber(totalExpense)}`;
+            
+            const netElement = document.getElementById('netBalance');
+            netElement.textContent = `₹${formatNumber(netBalance)}`;
+            netElement.className = 'summary-value ' + (netBalance >= 0 ? 'positive' : 'negative');
+
+            // Display account summary
+            const accountSummary = document.getElementById('accountSummary');
+            accountSummary.innerHTML = '';
+
+            Object.keys(accountData).sort().forEach(account => {
+                const data = accountData[account];
+                const accountDiv = document.createElement('div');
+                accountDiv.className = 'account-item';
+                
+                let transactionListHTML = '<div class="transaction-list">';
+                data.transactions.forEach(t => {
+                    const sign = t.type === 'income' ? '+' : '-';
+                    transactionListHTML += `
+                        <div class="transaction-item">
+                            ${t.date}th: ${t.description} - ${sign}₹${formatNumber(t.amount)}
+                        </div>
+                    `;
+                });
+                transactionListHTML += '</div>';
+
+                accountDiv.innerHTML = `
+                    <div class="account-header">
+                        <div class="account-name">${account}</div>
+                        <div class="account-total" style="color: ${data.total >= 0 ? '#10b981' : '#e74c3c'}">
+                            ₹${formatNumber(data.total)}
+                        </div>
+                    </div>
+                    ${transactionListHTML}
+                `;
+                
+                accountSummary.appendChild(accountDiv);
+            });
+        }
+
+        function generateCalendar(transactions) {
+            const calendar = document.getElementById('calendar');
+            calendar.innerHTML = '';
+
+            // Add day headers
+            const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+            days.forEach(day => {
+                const header = document.createElement('div');
+                header.className = 'calendar-header';
+                header.textContent = day;
+                calendar.appendChild(header);
+            });
+
+            // Group transactions by date
+            const dateData = {};
+            transactions.forEach(t => {
+                if (!dateData[t.date]) {
+                    dateData[t.date] = [];
+                }
+                dateData[t.date].push(t);
+            });
+
+            // Get first day of month
+            const firstDay = new Date(currentYear, currentMonth, 1).getDay();
+            const daysInMonth = getDaysInMonth();
+
+            // Add empty cells for days before month starts
+            for (let i = 0; i < firstDay; i++) {
+                const emptyDay = document.createElement('div');
+                calendar.appendChild(emptyDay);
+            }
+
+            // Add days
+            for (let day = 1; day <= daysInMonth; day++) {
+                const dayDiv = document.createElement('div');
+                dayDiv.className = 'calendar-day';
+                
+                const dayNumber = document.createElement('div');
+                dayNumber.className = 'calendar-day-number';
+                dayNumber.textContent = day;
+                dayDiv.appendChild(dayNumber);
+
+                if (dateData[day]) {
+                    dayDiv.classList.add('has-transaction');
+                    const total = dateData[day].reduce((sum, t) => {
+                        return sum + (t.type === 'income' ? t.amount : -t.amount);
+                    }, 0);
+                    
+                    const amountDiv = document.createElement('div');
+                    amountDiv.className = 'calendar-day-amount';
+                    amountDiv.textContent = `₹${formatNumber(Math.abs(total))}`;
+                    dayDiv.appendChild(amountDiv);
+                    
+                    dayDiv.title = dateData[day].map(t => 
+                        `${t.account}: ${t.type === 'income' ? '+' : '-'}₹${formatNumber(t.amount)}`
+                    ).join('\n');
+                }
+
+                calendar.appendChild(dayDiv);
+            }
+        }
+
+        function generateSnapshot(transactions) {
+            const months = ['January', 'February', 'March', 'April', 'May', 'June', 
+                          'July', 'August', 'September', 'October', 'November', 'December'];
+            
+            let snapshot = `${months[currentMonth]} ${currentYear} - Account Schedule\n`;
+            snapshot += '='.repeat(80) + '\n\n';
+
+            // Group by date
+            const dateData = {};
+            transactions.forEach(t => {
+                if (!dateData[t.date]) {
+                    dateData[t.date] = [];
+                }
+                dateData[t.date].push(t);
+            });
+
+            // Sort dates
+            Object.keys(dateData).sort((a, b) => parseInt(a) - parseInt(b)).forEach(date => {
+                snapshot += `Date: ${date}${getDateSuffix(parseInt(date))} ${months[currentMonth]}\n`;
+                
+                let dayTotal = 0;
+                dateData[date].forEach(t => {
+                    const sign = t.type === 'income' ? '+' : '-';
+                    const amount = t.type === 'income' ? t.amount : -t.amount;
+                    dayTotal += amount;
+                    snapshot += `  - ${t.account}: ${sign}₹${formatNumber(t.amount)} (${t.description} - ${t.type})\n`;
+                });
+                
+                snapshot += `  Total for day: ${dayTotal >= 0 ? '+' : ''}₹${formatNumber(dayTotal)}\n\n`;
+            });
+
+            snapshot += '='.repeat(80) + '\n';
+            snapshot += 'Account Summary:\n';
+            snapshot += '='.repeat(80) + '\n';
+
+            const accountData = {};
+            transactions.forEach(t => {
+                if (!accountData[t.account]) {
+                    accountData[t.account] = 0;
+                }
+                accountData[t.account] += t.type === 'income' ? t.amount : -t.amount;
+            });
+
+            Object.keys(accountData).sort().forEach(account => {
+                snapshot += `  ${account}: Net ₹${formatNumber(accountData[account])}\n`;
+            });
+
+            document.getElementById('snapshot').textContent = snapshot;
+        }
+
+        function getDateSuffix(day) {
+            if (day >= 11 && day <= 13) return 'th';
+            switch (day % 10) {
+                case 1: return 'st';
+                case 2: return 'nd';
+                case 3: return 'rd';
+                default: return 'th';
+            }
+        }
+
+        function clearMonth() {
+            if (confirm('Are you sure you want to clear all transactions for this month?')) {
+                const monthKey = getMonthKey();
+                localStorage.removeItem(monthKey);
+                loadTransactions();
+                document.getElementById('results').classList.remove('active');
+            }
+        }
+
+        function exportPDF() {
+            const snapshot = document.getElementById('snapshot').textContent;
+            const monthKey = getMonthKey();
+            
+            const blob = new Blob([snapshot], { type: 'text/plain;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `account-planner-${monthKey}.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            alert('PDF exported successfully!');
+        }
+
+        function exportCSV() {
+            const monthKey = getMonthKey();
+            const saved = localStorage.getItem(monthKey);
+            
+            if (!saved) {
+                alert('No data to export');
+                return;
+            }
+
+            const transactions = JSON.parse(saved);
+            
+            let csv = 'Date,Description,Account,Type,Amount\n';
+            transactions.forEach(t => {
+                csv += `${t.date},"${t.description}","${t.account}",${t.type},${t.amount}\n`;
+            });
+
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `account-planner-${monthKey}.csv`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            alert('CSV exported successfully!');
+        }
+
+        function formatNumber(num) {
+            return Math.abs(Math.round(num)).toLocaleString('en-IN');
+        }
+
+        // Initialize app
+        initApp();
+    </script>
+</body>
+</html>

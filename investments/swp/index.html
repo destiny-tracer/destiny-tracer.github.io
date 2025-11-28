@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>SWP Calculator — Systematic Withdrawal Plan</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../style.css" />
+</head>
+<body>
+  <main class="site">
+    <header class="header">
+      <div class="brand">
+        <svg class="mark" viewBox="0 0 24 24" aria-hidden="true">
+          <defs>
+            <linearGradient id="grad" x1="0" x2="1">
+              <stop offset="0" stop-color="#0ea5a4" />
+              <stop offset="1" stop-color="#3b82f6" />
+            </linearGradient>
+          </defs>
+          <rect x="2" y="4" width="20" height="16" rx="4" fill="url(#grad)"></rect>
+          <path d="M7 14l3-5 4 6 3-4" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+        </svg>
+        <div>
+          <h1>SWP Calculator</h1>
+          <p class="tag">Plan your systematic withdrawals</p>
+        </div>
+      </div>
+      <a href="../../index.html" class="back-btn">Back to Home</a>
+    </header>
+
+    <section class="content">
+      <form id="calcForm" class="panel" onsubmit="return false;">
+        <h2>Withdrawal Details</h2>
+
+        <label class="field">
+          <span class="label">Total Investment (₹)</span>
+          <input id="totalInv" type="number" step="10000" value="1000000" required />
+        </label>
+
+        <label class="field">
+          <span class="label">Monthly Withdrawal (₹)</span>
+          <input id="monthlyWith" type="number" step="1000" value="10000" required />
+        </label>
+
+        <label class="field">
+          <span class="label">Expected Return Rate (% per annum)</span>
+          <input id="returnRate" type="number" step="0.1" value="10" required />
+        </label>
+
+        <label class="field">
+          <span class="label">Time Period (years)</span>
+          <input id="timePeriod" type="number" step="1" min="1" max="50" value="10" required />
+        </label>
+
+        <div class="actions">
+          <button id="calculateBtn" class="btn primary" type="button">Calculate</button>
+          <button id="resetBtn" class="btn ghost" type="button">Reset</button>
+        </div>
+      </form>
+
+      <aside class="result" id="results">
+        <h2 class="panel-title">Results</h2>
+
+        <div class="cards">
+          <div class="card">
+            <div class="card-title">Total Withdrawn</div>
+            <div class="card-value" id="totalWithdrawn">—</div>
+            <div class="card-note">Total amount you will receive</div>
+          </div>
+
+          <div class="card">
+            <div class="card-title">Final Balance</div>
+            <div class="card-value" id="finalBalance">—</div>
+            <div class="card-note">Remaining corpus after withdrawals</div>
+          </div>
+
+          <div class="card">
+            <div class="card-title">Sustainability</div>
+            <div class="card-value" id="sustainability">—</div>
+            <div class="card-note">How long your corpus will last</div>
+          </div>
+        </div>
+
+        <div class="chart-container">
+          <canvas id="swpChart"></canvas>
+        </div>
+      </aside>
+    </section>
+
+    <footer class="footer">
+      <small>Built by destiny-tracer — runs entirely in your browser, no data leaves your device.</small>
+    </footer>
+  </main>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+  <script>
+(function(){
+  const $ = id => document.getElementById(id);
+  let chartInstance = null;
+
+  function fmtNumber(n){
+    if (typeof n !== 'number' || !isFinite(n)) return '—';
+    return '₹' + n.toLocaleString('en-IN', {minimumFractionDigits:0, maximumFractionDigits:0});
+  }
+
+  function calculate(){
+    const total = parseFloat($('totalInv').value) || 0;
+    const monthly = parseFloat($('monthlyWith').value) || 0;
+    const rate = parseFloat($('returnRate').value) || 0;
+    const years = parseFloat($('timePeriod').value) || 0;
+
+    if (total <= 0 || monthly <= 0 || rate < 0 || years <= 0){
+      alert('Please enter valid values for all fields.');
+      return;
+    }
+
+    const months = years * 12;
+    const monthlyRate = rate / 12 / 100;
+
+    let balance = total;
+    let totalWithdrawn = 0;
+    let balanceData = [];
+    let monthsUntilZero = 0;
+
+    for (let i = 1; i <= months; i++){
+      balance = balance * (1 + monthlyRate) - monthly;
+      totalWithdrawn += monthly;
+      
+      if (i % 12 === 0 || i === months) {
+        balanceData.push({year: i/12, balance: Math.max(0, balance)});
+      }
+      
+      if (balance <= 0 && monthsUntilZero === 0){
+        monthsUntilZero = i;
+        break;
+      }
+    }
+
+    const finalBal = Math.max(0, balance);
+    totalWithdrawn = monthsUntilZero > 0 ? monthsUntilZero * monthly : totalWithdrawn;
+
+    $('totalWithdrawn').textContent = fmtNumber(totalWithdrawn);
+    $('finalBalance').textContent = fmtNumber(finalBal);
+    
+    if (monthsUntilZero > 0 && monthsUntilZero < months){
+      $('sustainability').textContent = `${Math.floor(monthsUntilZero/12)}y ${monthsUntilZero%12}m`;
+      $('sustainability').nextElementSibling.textContent = 'Corpus will be exhausted';
+    } else if (finalBal > 0) {
+      $('sustainability').textContent = `${years}+ years`;
+      $('sustainability').nextElementSibling.textContent = 'Corpus is sustainable';
+    } else {
+      $('sustainability').textContent = 'Not sustainable';
+      $('sustainability').nextElementSibling.textContent = 'Withdrawals exceed growth';
+    }
+
+    drawChart(balanceData);
+  }
+
+  function drawChart(data){
+    const ctx = $('swpChart').getContext('2d');
+    
+    if (chartInstance) chartInstance.destroy();
+
+    chartInstance = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: data.map(d => `Year ${d.year.toFixed(0)}`),
+        datasets: [{
+          label: 'Remaining Balance',
+          data: data.map(d => d.balance),
+          borderColor: '#3b82f6',
+          backgroundColor: 'rgba(59, 130, 246, 0.1)',
+          tension: 0.3,
+          fill: true,
+          pointRadius: 4,
+          pointHoverRadius: 6
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {display: false},
+          tooltip: {
+            callbacks: {
+              label: function(context) {
+                return 'Balance: ₹' + context.parsed.y.toLocaleString('en-IN');
+              }
+            }
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            ticks: {
+              callback: function(value) {
+                return '₹' + (value/100000).toFixed(0) + 'L';
+              }
+            }
+          }
+        }
+      }
+    });
+  }
+
+  function reset(){
+    $('calcForm').reset();
+    $('totalWithdrawn').textContent = '—';
+    $('finalBalance').textContent = '—';
+    $('sustainability').textContent = '—';
+    if (chartInstance) {
+      chartInstance.destroy();
+      chartInstance = null;
+    }
+  }
+
+  $('calculateBtn').addEventListener('click', calculate);
+  $('resetBtn').addEventListener('click', reset);
+})();
+  </script>
+</body>
+</html>
