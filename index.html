@@ -1,5 +1,6 @@
 <!doctype html>
 <html lang="en">
+
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
@@ -179,19 +180,23 @@
     }
 
     @keyframes spin {
-      to { transform: rotate(360deg); }
+      to {
+        transform: rotate(360deg);
+      }
     }
 
     @media (max-width: 520px) {
       .metal-grid {
         grid-template-columns: 1fr;
       }
+
       .metal-price {
         font-size: 1.5rem;
       }
     }
   </style>
 </head>
+
 <body>
   <main class="site">
     <header class="header">
@@ -199,12 +204,13 @@
         <svg class="logo" viewBox="0 0 24 24" aria-hidden="true">
           <defs>
             <linearGradient id="lg" x1="0" x2="1">
-              <stop offset="0" stop-color="#0ea5a4"/>
-              <stop offset="1" stop-color="#3b82f6"/>
+              <stop offset="0" stop-color="#0ea5a4" />
+              <stop offset="1" stop-color="#3b82f6" />
             </linearGradient>
           </defs>
           <rect x="2" y="4" width="20" height="16" rx="4" fill="url(#lg)"></rect>
-          <path d="M7 14l3-5 4 6 3-4" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+          <path d="M7 14l3-5 4 6 3-4" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"
+            fill="none" />
         </svg>
         <div>
           <h1>destiny‑tracer</h1>
@@ -219,7 +225,8 @@
     </div>
 
     <section class="intro">
-      <p>Your complete suite of financial calculators — from investments to loans, all running privately in your browser. No data collection, no tracking, just helpful tools.</p>
+      <p>Your complete suite of financial calculators — from investments to loans, all running privately in your
+        browser. No data collection, no tracking, just helpful tools.</p>
     </section>
 
     <div class="stats-bar">
@@ -391,76 +398,88 @@
         </a>
       </div>
     </section>
-      <!-- TRACKER Category -->
-      <section class="category-section" data-category="Tracker">
-        <div class="category-header">
-          <div class="category-icon">📋</div>
-          <div class="category-title">
-            <h2>Tracker</h2>
-            <p>Tracker Calculators</p>
+    <!-- TRACKER Category -->
+    <section class="category-section" data-category="Tracker">
+      <div class="category-header">
+        <div class="category-icon">📋</div>
+        <div class="category-title">
+          <h2>Tracker</h2>
+          <p>Tracker Calculators</p>
+        </div>
+      </div>
+      <div class="apps-grid">
+        <a href="tracker/splitexpense/" class="app-card">
+          <div class="app-header">
+            <div class="app-icon">‍👩🏻‍👦🏻‍👦🏻</div>
+            <h3 class="app-title">Split Expense Calculators</h3>
           </div>
-        </div>
-        <div class="apps-grid">
-          <a href="tracker/splitexpense/" class="app-card">
-            <div class="app-header">
-              <div class="app-icon">‍👩🏻‍👦🏻‍👦🏻</div>
-              <h3 class="app-title">Split Expense Calculators</h3>
-            </div>
-            <p class="app-desc">To split the expenses at one short and export</p>
-            <div class="app-meta">
-              <span class="badge">SplitExpense</span>
-              <span class="link-arrow">Open</span>
-            </div>
-          </a>
-		 <a href="tracker/month-planner/" class="app-card">
-            <div class="app-header">
-              <div class="app-icon">‍📖</div>
-              <h3 class="app-title">Month Due Snapshot</h3>
-            </div>
-            <p class="app-desc">To record the monthly transaction and export for month book keeping</p>
-            <div class="app-meta">
-              <span class="badge">Month-Planner</span>
-              <span class="link-arrow">Open</span>
-            </div>
-          </a>
-          <a href="tracker/dailycashregister/" class="app-card">
-            <div class="app-header">
-              <div class="app-icon">‍📖</div>
-              <h3 class="app-title">Daily Cash Transactions</h3>
-            </div>
-            <p class="app-desc">To record the daily transaction and export for day book keeping</p>
-            <div class="app-meta">
-              <span class="badge">DailyCashRegister</span>
-              <span class="link-arrow">Open</span>
-            </div>
-          </a>
-        </div>
-      </section>
-    <!-- REALTY Category -->
-      <section class="category-section" data-category="realty">
-        <div class="category-header">
-          <div class="category-icon">🏦</div>
-          <div class="category-title">
-            <h2>Realty Calculators</h2>
-            <p>Realty Calculators</p>
+          <p class="app-desc">To split the expenses at one short and export</p>
+          <div class="app-meta">
+            <span class="badge">SplitExpense</span>
+            <span class="link-arrow">Open</span>
           </div>
-        </div>
-        <div class="apps-grid">
-          <a href="realty/propertytax/" class="app-card">
-            <div class="app-header">
-              <div class="app-icon">🏠</div>
-              <h3 class="app-title">Property Tax Calculators</h3>
-            </div>
-            <p class="app-desc">Calculate registration charges</p>
-            <div class="app-meta">
-              <span class="badge">Propertytax</span>
-              <span class="link-arrow">Open</span>
-            </div>
-          </a>
-        </div>
-      </section>
+        </a>
+        <a href="tracker/month-planner/" class="app-card">
+          <div class="app-header">
+            <div class="app-icon">‍📖</div>
+            <h3 class="app-title">Month Due Snapshot</h3>
+          </div>
+          <p class="app-desc">To record the monthly transaction and export for month book keeping</p>
+          <div class="app-meta">
+            <span class="badge">Month-Planner</span>
+            <span class="link-arrow">Open</span>
+          </div>
+        </a>
+        <a href="tracker/dailycashregister/" class="app-card">
+          <div class="app-header">
+            <div class="app-icon">‍📖</div>
+            <h3 class="app-title">Daily Cash Transactions</h3>
+          </div>
+          <p class="app-desc">To record the daily transaction and export for day book keeping</p>
+          <div class="app-meta">
+            <span class="badge">DailyCashRegister</span>
+            <span class="link-arrow">Open</span>
+          </div>
+        </a>
+        <a href="tracker/denominator/" class="app-card">
+          <div class="app-header">
+            <div class="app-icon">‍👩🏻‍👦🏻‍👦🏻</div>
+            <h3 class="app-title">Denominator</h3>
+          </div>
+          <p class="app-desc">To calculate the currency denomination by giving whole amount or specify the currency</p>
+          <div class="app-meta">
+            <span class="badge">Denominator</span>
+            <span class="link-arrow">Open</span>
+          </div>
+        </a>
 
-	  
+      </div>
+    </section>
+    <!-- REALTY Category -->
+    <section class="category-section" data-category="realty">
+      <div class="category-header">
+        <div class="category-icon">🏦</div>
+        <div class="category-title">
+          <h2>Realty Calculators</h2>
+          <p>Realty Calculators</p>
+        </div>
+      </div>
+      <div class="apps-grid">
+        <a href="realty/propertytax/" class="app-card">
+          <div class="app-header">
+            <div class="app-icon">🏠</div>
+            <h3 class="app-title">Property Tax Calculators</h3>
+          </div>
+          <p class="app-desc">Calculate registration charges</p>
+          <div class="app-meta">
+            <span class="badge">Propertytax</span>
+            <span class="link-arrow">Open</span>
+          </div>
+        </a>
+      </div>
+    </section>
+
+
     <!-- Trading Category -->
     <section class="category-section" data-category="trading">
       <div class="category-header">
@@ -529,352 +548,353 @@
           <a href="#about">About</a>
           <a href="#feedback">Feedback</a>
         </div>
-        <small>Built by destiny-tracer — All calculators run entirely in your browser. No data leaves your device.</small>
+        <small>Built by destiny-tracer — All calculators run entirely in your browser. No data leaves your
+          device.</small>
       </div>
     </footer>
   </main>
 
   <script src="common.js"></script>
   <script>
-(function(){
-  const searchInput = document.getElementById('searchInput');
-  const appCards = document.querySelectorAll('.app-card');
-  const categories = document.querySelectorAll('.category-section');
+    (function () {
+      const searchInput = document.getElementById('searchInput');
+      const appCards = document.querySelectorAll('.app-card');
+      const categories = document.querySelectorAll('.category-section');
 
-  searchInput.addEventListener('input', function(e){
-    const query = e.target.value.toLowerCase().trim();
-    
-    if (query === '') {
-      appCards.forEach(card => card.style.display = 'flex');
-      categories.forEach(cat => cat.style.display = 'block');
-      return;
-    }
+      searchInput.addEventListener('input', function (e) {
+        const query = e.target.value.toLowerCase().trim();
 
-    let visibleCount = {};
-    
-    appCards.forEach(card => {
-      const title = card.querySelector('.app-title').textContent.toLowerCase();
-      const desc = card.querySelector('.app-desc').textContent.toLowerCase();
-      const category = card.closest('.category-section').dataset.category;
-      
-      if (title.includes(query) || desc.includes(query)) {
-        card.style.display = 'flex';
-        visibleCount[category] = (visibleCount[category] || 0) + 1;
-      } else {
-        card.style.display = 'none';
-      }
-    });
-
-    categories.forEach(cat => {
-      const category = cat.dataset.category;
-      cat.style.display = visibleCount[category] ? 'block' : 'none';
-    });
-  });
-
-  // Count total calculators
-  document.getElementById('totalCalcs').textContent = appCards.length;
-
-    
-// ============================================
-// METALPRICEAPI WIDGET - FIXED FOR INR BASE
-// Metal Prices Widget - Daily Update at 6:00 AM IST
-// Fetches once per day, caches for 24 hours
-// ============================================
-
-(function() {
-  // ============================================
-  // CONFIGURATION
-  // ============================================
-  
-  const API_KEY = 'ba250c368e405f5da4dce9ce8ed7441d';
-  const CACHE_KEY = 'metal-prices-cache';
-  const UPDATE_HOUR = 6; // 6 AM IST
-  const CACHE_DURATION = 86400000; // 24 hours
-  
-  // ============================================
-  // MAIN FUNCTION
-  // ============================================
-  
-  async function initMetalPrices() {
-    console.log('🚀 Initializing metal prices widget (Daily 6 AM update)');
-    
-    const content = document.getElementById('metalPricesContent');
-    const refreshBtn = document.getElementById('refreshPrices');
-    const refreshIcon = document.getElementById('refreshIcon');
-
-    if (!content || !refreshBtn || !refreshIcon) {
-      console.error('❌ Required elements not found');
-      return;
-    }
-
-    // Check if we have valid cached data
-    const cached = getCache();
-    
-    if (cached && !shouldFetchNew(cached.timestamp)) {
-      console.log('✅ Using cached prices from today');
-      displayPrices(cached);
-      updateTimestamp(cached.timestamp);
-      scheduleNextUpdate(cached.timestamp);
-      return;
-    }
-
-    // Need to fetch new data
-    console.log('⏰ Time to fetch fresh prices...');
-    
-    try {
-      refreshBtn.classList.add('loading');
-      refreshIcon.innerHTML = '<span class="spinner"></span>';
-
-      const data = await fetchFromMetalpriceAPI();
-      
-      if (!data) {
-        console.log('⚠️ API failed, using fallback data');
-        const fallbackData = getFallbackData();
-        setCache(fallbackData);
-        displayPrices(fallbackData);
-        updateTimestamp(fallbackData.timestamp);
-      } else {
-        console.log('✅ Fresh prices fetched successfully');
-        setCache(data);
-        displayPrices(data);
-        updateTimestamp(data.timestamp);
-      }
-      
-      scheduleNextUpdate(Date.now());
-
-    } catch (error) {
-      console.error('❌ Error fetching prices:', error);
-      
-      const oldCache = getCache(true);
-      if (oldCache) {
-        console.log('Using old cached data as fallback');
-        displayPrices(oldCache);
-        updateTimestamp(oldCache.timestamp);
-      } else {
-        displayError('Unable to fetch prices. Please try refreshing.');
-      }
-    } finally {
-      refreshBtn.classList.remove('loading');
-      refreshIcon.textContent = '🔄';
-    }
-  }
-
-  // ============================================
-  // CHECK IF NEW FETCH IS NEEDED
-  // ============================================
-  
-  function shouldFetchNew(lastFetchTime) {
-    const now = new Date();
-    const lastFetch = new Date(lastFetchTime);
-    
-    const todayUpdate = new Date();
-    todayUpdate.setHours(UPDATE_HOUR, 0, 0, 0);
-    
-    if (now >= todayUpdate && lastFetch < todayUpdate) {
-      console.log('📅 Past update time, need fresh data');
-      return true;
-    }
-    
-    const daysSinceLastFetch = Math.floor((now - lastFetch) / 86400000);
-    if (daysSinceLastFetch >= 1) {
-      console.log('📅 Last fetch was ' + daysSinceLastFetch + ' day(s) ago');
-      return true;
-    }
-    
-    console.log('✅ Cache is fresh (updated today)');
-    return false;
-  }
-
-  // ============================================
-  // SCHEDULE NEXT AUTO-UPDATE
-  // ============================================
-  
-  function scheduleNextUpdate(lastFetchTime) {
-    const now = new Date();
-    const nextUpdate = new Date();
-    
-    nextUpdate.setDate(now.getDate() + 1);
-    nextUpdate.setHours(UPDATE_HOUR, 0, 0, 0);
-    
-    const todayUpdate = new Date();
-    todayUpdate.setHours(UPDATE_HOUR, 0, 0, 0);
-    
-    if (now < todayUpdate) {
-      nextUpdate.setDate(now.getDate());
-    }
-    
-    const msUntilUpdate = nextUpdate - now;
-    const hoursUntil = Math.floor(msUntilUpdate / 3600000);
-    const minutesUntil = Math.floor((msUntilUpdate % 3600000) / 60000);
-    
-    console.log(`⏰ Next update in ${hoursUntil}h ${minutesUntil}m`);
-    console.log(`📅 Next update: ${nextUpdate.toLocaleString('en-IN')}`);
-    
-    setTimeout(() => {
-      console.log('🔔 Scheduled update triggered');
-      localStorage.removeItem(CACHE_KEY);
-      initMetalPrices();
-    }, msUntilUpdate);
-  }
-
-  // ============================================
-  // FETCH FROM METALPRICEAPI - FIXED FOR INR
-  // ============================================
-  
-  async function fetchFromMetalpriceAPI() {
-    try {
-      // FIXED: Proper API call with INR base
-      // The trick is to NOT specify base parameter - it defaults to USD
-      // Then we convert the response properly
-      
-      console.log('🌐 Fetching from MetalpriceAPI...');
-      
-      // Option 1: Try without base parameter (works better with free tier)
-      let url = `https://api.metalpriceapi.com/v1/latest?api_key=${API_KEY}&currencies=XAU,XAG`;
-      
-      let response = await fetch(url);
-      console.log('📊 Response status:', response.status);
-      
-      if (!response.ok) {
-        console.error('❌ API error:', response.status, response.statusText);
-        
-        // Option 2: Try with symbols parameter (alternative format)
-        console.log('🔄 Trying alternative format...');
-        url = `https://api.metalpriceapi.com/v1/latest?api_key=${API_KEY}&symbols=XAU,XAG`;
-        response = await fetch(url);
-        
-        if (!response.ok) {
-          console.error('❌ Alternative format also failed');
-          return null;
+        if (query === '') {
+          appCards.forEach(card => card.style.display = 'flex');
+          categories.forEach(cat => cat.style.display = 'block');
+          return;
         }
-      }
-      
-      const apiData = await response.json();
-      console.log('📦 API Response:', apiData);
-      
-      if (!apiData.success) {
-        console.error('❌ API returned error:', apiData.message);
-        return null;
-      }
-      
-      if (!apiData.rates || (!apiData.rates.XAU && !apiData.rates.XAUINR)) {
-        console.error('❌ Invalid API response structure');
-        return null;
-      }
-      
-      // Convert to per 10 grams in INR
-      const ozToGram = 31.1035;
-      let goldPerOz, silverPerOz;
-      
-      // Check if we got direct INR rates (XAUINR) or USD rates (XAU)
-      if (apiData.rates.XAUINR && apiData.rates.XAGINR) {
-        // Direct INR rates
-        console.log('✅ Got direct INR rates');
-        goldPerOz = 1 / apiData.rates.XAUINR;
-        silverPerOz = 1 / apiData.rates.XAGINR;
-      } else if (apiData.rates.XAU && apiData.rates.XAG) {
-        // USD rates - need to convert to INR
-        console.log('✅ Got USD rates, converting to INR');
-        const usdToInr = 83; // Current exchange rate
-        const goldPerOzUSD = 1 / apiData.rates.XAU;
-        const silverPerOzUSD = 1 / apiData.rates.XAG;
-        goldPerOz = goldPerOzUSD * usdToInr;
-        silverPerOz = silverPerOzUSD * usdToInr;
-      } else {
-        console.error('❌ Unexpected rate format');
-        return null;
-      }
-      
-      const goldPer10g = (goldPerOz / ozToGram * 10);
-      const silverPer10g = (silverPerOz / ozToGram * 10);
-      
-      console.log('💰 Gold: ₹' + goldPer10g.toFixed(2) + ' per 10g');
-      console.log('💰 Silver: ₹' + silverPer10g.toFixed(2) + ' per 10g');
-      
-      // Get previous day's data for change calculation
-      const prevData = getCache(true);
-      let goldChange = 0;
-      let goldChangePct = 0;
-      let silverChange = 0;
-      let silverChangePct = 0;
-      
-      if (prevData && prevData.gold && prevData.silver) {
-        const prevGold = parseFloat(prevData.gold.price);
-        const prevSilver = parseFloat(prevData.silver.price);
-        
-        goldChange = goldPer10g - prevGold;
-        goldChangePct = (goldChange / prevGold) * 100;
-        
-        silverChange = silverPer10g - prevSilver;
-        silverChangePct = (silverChange / prevSilver) * 100;
-        
-        console.log(`📈 Gold: ${goldChangePct > 0 ? '+' : ''}${goldChangePct.toFixed(2)}%`);
-        console.log(`📈 Silver: ${silverChangePct > 0 ? '+' : ''}${silverChangePct.toFixed(2)}%`);
-      } else {
-        console.log('ℹ️ No previous data for comparison');
-      }
-      
-      return {
-        gold: {
-          price: goldPer10g.toFixed(2),
-          change: goldChange.toFixed(2),
-          changePercent: goldChangePct.toFixed(2)
-        },
-        silver: {
-          price: silverPer10g.toFixed(2),
-          change: silverChange.toFixed(2),
-          changePercent: silverChangePct.toFixed(2)
-        },
-        timestamp: Date.now(),
-        source: 'metalpriceapi',
-        fetchTime: new Date().toLocaleString('en-IN')
-      };
-      
-    } catch (error) {
-      console.error('❌ API fetch failed:', error);
-      return null;
-    }
-  }
 
-  // ============================================
-  // FALLBACK DATA
-  // ============================================
-  
-  function getFallbackData() {
-    console.log('⚠️ Using fallback data');
-    
-    return {
-      gold: {
-        price: "12500.00",
-        change: "0.00",
-        changePercent: "0.00"
-      },
-      silver: {
-        price: "160.00",
-        change: "0.00",
-        changePercent: "0.00"
-      },
-      timestamp: Date.now(),
-      source: 'fallback',
-      fetchTime: new Date().toLocaleString('en-IN')
-    };
-  }
+        let visibleCount = {};
 
-  // ============================================
-  // DISPLAY FUNCTIONS
-  // ============================================
-  
-  function displayPrices(data) {
-    const content = document.getElementById('metalPricesContent');
-    if (!content) return;
-    
-    const goldChange = parseFloat(data.gold.changePercent);
-    const silverChange = parseFloat(data.silver.changePercent);
-    
-    const goldChangeAbs = Math.abs(parseFloat(data.gold.change));
-    const silverChangeAbs = Math.abs(parseFloat(data.silver.change));
+        appCards.forEach(card => {
+          const title = card.querySelector('.app-title').textContent.toLowerCase();
+          const desc = card.querySelector('.app-desc').textContent.toLowerCase();
+          const category = card.closest('.category-section').dataset.category;
 
-    content.innerHTML = `
+          if (title.includes(query) || desc.includes(query)) {
+            card.style.display = 'flex';
+            visibleCount[category] = (visibleCount[category] || 0) + 1;
+          } else {
+            card.style.display = 'none';
+          }
+        });
+
+        categories.forEach(cat => {
+          const category = cat.dataset.category;
+          cat.style.display = visibleCount[category] ? 'block' : 'none';
+        });
+      });
+
+      // Count total calculators
+      document.getElementById('totalCalcs').textContent = appCards.length;
+
+
+      // ============================================
+      // METALPRICEAPI WIDGET - FIXED FOR INR BASE
+      // Metal Prices Widget - Daily Update at 6:00 AM IST
+      // Fetches once per day, caches for 24 hours
+      // ============================================
+
+      (function () {
+        // ============================================
+        // CONFIGURATION
+        // ============================================
+
+        const API_KEY = 'ba250c368e405f5da4dce9ce8ed7441d';
+        const CACHE_KEY = 'metal-prices-cache';
+        const UPDATE_HOUR = 6; // 6 AM IST
+        const CACHE_DURATION = 86400000; // 24 hours
+
+        // ============================================
+        // MAIN FUNCTION
+        // ============================================
+
+        async function initMetalPrices() {
+          console.log('🚀 Initializing metal prices widget (Daily 6 AM update)');
+
+          const content = document.getElementById('metalPricesContent');
+          const refreshBtn = document.getElementById('refreshPrices');
+          const refreshIcon = document.getElementById('refreshIcon');
+
+          if (!content || !refreshBtn || !refreshIcon) {
+            console.error('❌ Required elements not found');
+            return;
+          }
+
+          // Check if we have valid cached data
+          const cached = getCache();
+
+          if (cached && !shouldFetchNew(cached.timestamp)) {
+            console.log('✅ Using cached prices from today');
+            displayPrices(cached);
+            updateTimestamp(cached.timestamp);
+            scheduleNextUpdate(cached.timestamp);
+            return;
+          }
+
+          // Need to fetch new data
+          console.log('⏰ Time to fetch fresh prices...');
+
+          try {
+            refreshBtn.classList.add('loading');
+            refreshIcon.innerHTML = '<span class="spinner"></span>';
+
+            const data = await fetchFromMetalpriceAPI();
+
+            if (!data) {
+              console.log('⚠️ API failed, using fallback data');
+              const fallbackData = getFallbackData();
+              setCache(fallbackData);
+              displayPrices(fallbackData);
+              updateTimestamp(fallbackData.timestamp);
+            } else {
+              console.log('✅ Fresh prices fetched successfully');
+              setCache(data);
+              displayPrices(data);
+              updateTimestamp(data.timestamp);
+            }
+
+            scheduleNextUpdate(Date.now());
+
+          } catch (error) {
+            console.error('❌ Error fetching prices:', error);
+
+            const oldCache = getCache(true);
+            if (oldCache) {
+              console.log('Using old cached data as fallback');
+              displayPrices(oldCache);
+              updateTimestamp(oldCache.timestamp);
+            } else {
+              displayError('Unable to fetch prices. Please try refreshing.');
+            }
+          } finally {
+            refreshBtn.classList.remove('loading');
+            refreshIcon.textContent = '🔄';
+          }
+        }
+
+        // ============================================
+        // CHECK IF NEW FETCH IS NEEDED
+        // ============================================
+
+        function shouldFetchNew(lastFetchTime) {
+          const now = new Date();
+          const lastFetch = new Date(lastFetchTime);
+
+          const todayUpdate = new Date();
+          todayUpdate.setHours(UPDATE_HOUR, 0, 0, 0);
+
+          if (now >= todayUpdate && lastFetch < todayUpdate) {
+            console.log('📅 Past update time, need fresh data');
+            return true;
+          }
+
+          const daysSinceLastFetch = Math.floor((now - lastFetch) / 86400000);
+          if (daysSinceLastFetch >= 1) {
+            console.log('📅 Last fetch was ' + daysSinceLastFetch + ' day(s) ago');
+            return true;
+          }
+
+          console.log('✅ Cache is fresh (updated today)');
+          return false;
+        }
+
+        // ============================================
+        // SCHEDULE NEXT AUTO-UPDATE
+        // ============================================
+
+        function scheduleNextUpdate(lastFetchTime) {
+          const now = new Date();
+          const nextUpdate = new Date();
+
+          nextUpdate.setDate(now.getDate() + 1);
+          nextUpdate.setHours(UPDATE_HOUR, 0, 0, 0);
+
+          const todayUpdate = new Date();
+          todayUpdate.setHours(UPDATE_HOUR, 0, 0, 0);
+
+          if (now < todayUpdate) {
+            nextUpdate.setDate(now.getDate());
+          }
+
+          const msUntilUpdate = nextUpdate - now;
+          const hoursUntil = Math.floor(msUntilUpdate / 3600000);
+          const minutesUntil = Math.floor((msUntilUpdate % 3600000) / 60000);
+
+          console.log(`⏰ Next update in ${hoursUntil}h ${minutesUntil}m`);
+          console.log(`📅 Next update: ${nextUpdate.toLocaleString('en-IN')}`);
+
+          setTimeout(() => {
+            console.log('🔔 Scheduled update triggered');
+            localStorage.removeItem(CACHE_KEY);
+            initMetalPrices();
+          }, msUntilUpdate);
+        }
+
+        // ============================================
+        // FETCH FROM METALPRICEAPI - FIXED FOR INR
+        // ============================================
+
+        async function fetchFromMetalpriceAPI() {
+          try {
+            // FIXED: Proper API call with INR base
+            // The trick is to NOT specify base parameter - it defaults to USD
+            // Then we convert the response properly
+
+            console.log('🌐 Fetching from MetalpriceAPI...');
+
+            // Option 1: Try without base parameter (works better with free tier)
+            let url = `https://api.metalpriceapi.com/v1/latest?api_key=${API_KEY}&currencies=XAU,XAG`;
+
+            let response = await fetch(url);
+            console.log('📊 Response status:', response.status);
+
+            if (!response.ok) {
+              console.error('❌ API error:', response.status, response.statusText);
+
+              // Option 2: Try with symbols parameter (alternative format)
+              console.log('🔄 Trying alternative format...');
+              url = `https://api.metalpriceapi.com/v1/latest?api_key=${API_KEY}&symbols=XAU,XAG`;
+              response = await fetch(url);
+
+              if (!response.ok) {
+                console.error('❌ Alternative format also failed');
+                return null;
+              }
+            }
+
+            const apiData = await response.json();
+            console.log('📦 API Response:', apiData);
+
+            if (!apiData.success) {
+              console.error('❌ API returned error:', apiData.message);
+              return null;
+            }
+
+            if (!apiData.rates || (!apiData.rates.XAU && !apiData.rates.XAUINR)) {
+              console.error('❌ Invalid API response structure');
+              return null;
+            }
+
+            // Convert to per 10 grams in INR
+            const ozToGram = 31.1035;
+            let goldPerOz, silverPerOz;
+
+            // Check if we got direct INR rates (XAUINR) or USD rates (XAU)
+            if (apiData.rates.XAUINR && apiData.rates.XAGINR) {
+              // Direct INR rates
+              console.log('✅ Got direct INR rates');
+              goldPerOz = 1 / apiData.rates.XAUINR;
+              silverPerOz = 1 / apiData.rates.XAGINR;
+            } else if (apiData.rates.XAU && apiData.rates.XAG) {
+              // USD rates - need to convert to INR
+              console.log('✅ Got USD rates, converting to INR');
+              const usdToInr = 83; // Current exchange rate
+              const goldPerOzUSD = 1 / apiData.rates.XAU;
+              const silverPerOzUSD = 1 / apiData.rates.XAG;
+              goldPerOz = goldPerOzUSD * usdToInr;
+              silverPerOz = silverPerOzUSD * usdToInr;
+            } else {
+              console.error('❌ Unexpected rate format');
+              return null;
+            }
+
+            const goldPer10g = (goldPerOz / ozToGram * 10);
+            const silverPer10g = (silverPerOz / ozToGram * 10);
+
+            console.log('💰 Gold: ₹' + goldPer10g.toFixed(2) + ' per 10g');
+            console.log('💰 Silver: ₹' + silverPer10g.toFixed(2) + ' per 10g');
+
+            // Get previous day's data for change calculation
+            const prevData = getCache(true);
+            let goldChange = 0;
+            let goldChangePct = 0;
+            let silverChange = 0;
+            let silverChangePct = 0;
+
+            if (prevData && prevData.gold && prevData.silver) {
+              const prevGold = parseFloat(prevData.gold.price);
+              const prevSilver = parseFloat(prevData.silver.price);
+
+              goldChange = goldPer10g - prevGold;
+              goldChangePct = (goldChange / prevGold) * 100;
+
+              silverChange = silverPer10g - prevSilver;
+              silverChangePct = (silverChange / prevSilver) * 100;
+
+              console.log(`📈 Gold: ${goldChangePct > 0 ? '+' : ''}${goldChangePct.toFixed(2)}%`);
+              console.log(`📈 Silver: ${silverChangePct > 0 ? '+' : ''}${silverChangePct.toFixed(2)}%`);
+            } else {
+              console.log('ℹ️ No previous data for comparison');
+            }
+
+            return {
+              gold: {
+                price: goldPer10g.toFixed(2),
+                change: goldChange.toFixed(2),
+                changePercent: goldChangePct.toFixed(2)
+              },
+              silver: {
+                price: silverPer10g.toFixed(2),
+                change: silverChange.toFixed(2),
+                changePercent: silverChangePct.toFixed(2)
+              },
+              timestamp: Date.now(),
+              source: 'metalpriceapi',
+              fetchTime: new Date().toLocaleString('en-IN')
+            };
+
+          } catch (error) {
+            console.error('❌ API fetch failed:', error);
+            return null;
+          }
+        }
+
+        // ============================================
+        // FALLBACK DATA
+        // ============================================
+
+        function getFallbackData() {
+          console.log('⚠️ Using fallback data');
+
+          return {
+            gold: {
+              price: "12500.00",
+              change: "0.00",
+              changePercent: "0.00"
+            },
+            silver: {
+              price: "160.00",
+              change: "0.00",
+              changePercent: "0.00"
+            },
+            timestamp: Date.now(),
+            source: 'fallback',
+            fetchTime: new Date().toLocaleString('en-IN')
+          };
+        }
+
+        // ============================================
+        // DISPLAY FUNCTIONS
+        // ============================================
+
+        function displayPrices(data) {
+          const content = document.getElementById('metalPricesContent');
+          if (!content) return;
+
+          const goldChange = parseFloat(data.gold.changePercent);
+          const silverChange = parseFloat(data.silver.changePercent);
+
+          const goldChangeAbs = Math.abs(parseFloat(data.gold.change));
+          const silverChangeAbs = Math.abs(parseFloat(data.silver.change));
+
+          content.innerHTML = `
       <div class="metal-grid">
         <div class="metal-card gold">
           <div class="metal-name">
@@ -905,13 +925,13 @@
         </div>
       </div>
     `;
-  }
+        }
 
-  function displayError(message) {
-    const content = document.getElementById('metalPricesContent');
-    if (!content) return;
-    
-    content.innerHTML = `
+        function displayError(message) {
+          const content = document.getElementById('metalPricesContent');
+          if (!content) return;
+
+          content.innerHTML = `
       <div class="metal-error">
         ⚠️ ${message}
         <button onclick="location.reload()" style="margin-top:8px;padding:6px 12px;border-radius:6px;border:1px solid currentColor;background:transparent;color:inherit;cursor:pointer;">
@@ -919,121 +939,122 @@
         </button>
       </div>
     `;
-  }
+        }
 
-  function formatNumber(num) {
-    const number = parseFloat(num);
-    if (isNaN(number)) return '—';
-    
-    return number.toLocaleString('en-IN', {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2
-    });
-  }
+        function formatNumber(num) {
+          const number = parseFloat(num);
+          if (isNaN(number)) return '—';
 
-  function updateTimestamp(timestamp) {
-    const updated = document.getElementById('lastUpdated');
-    if (!updated) return;
-    
-    const date = new Date(timestamp);
-    const time = date.toLocaleTimeString('en-IN', { 
-      hour: '2-digit', 
-      minute: '2-digit' 
-    });
-    const dateStr = date.toLocaleDateString('en-IN', {
-      day: 'numeric',
-      month: 'short',
-      year: 'numeric'
-    });
-    
-    const now = new Date();
-    const tomorrow = new Date();
-    tomorrow.setDate(now.getDate() + 1);
-    tomorrow.setHours(UPDATE_HOUR, 0, 0, 0);
-    
-    const todayUpdate = new Date();
-    todayUpdate.setHours(UPDATE_HOUR, 0, 0, 0);
-    
-    const nextUpdate = now >= todayUpdate ? tomorrow : todayUpdate;
-    const nextUpdateTime = nextUpdate.toLocaleTimeString('en-IN', { 
-      hour: '2-digit', 
-      minute: '2-digit' 
-    });
-    
-    updated.innerHTML = `
+          return number.toLocaleString('en-IN', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+          });
+        }
+
+        function updateTimestamp(timestamp) {
+          const updated = document.getElementById('lastUpdated');
+          if (!updated) return;
+
+          const date = new Date(timestamp);
+          const time = date.toLocaleTimeString('en-IN', {
+            hour: '2-digit',
+            minute: '2-digit'
+          });
+          const dateStr = date.toLocaleDateString('en-IN', {
+            day: 'numeric',
+            month: 'short',
+            year: 'numeric'
+          });
+
+          const now = new Date();
+          const tomorrow = new Date();
+          tomorrow.setDate(now.getDate() + 1);
+          tomorrow.setHours(UPDATE_HOUR, 0, 0, 0);
+
+          const todayUpdate = new Date();
+          todayUpdate.setHours(UPDATE_HOUR, 0, 0, 0);
+
+          const nextUpdate = now >= todayUpdate ? tomorrow : todayUpdate;
+          const nextUpdateTime = nextUpdate.toLocaleTimeString('en-IN', {
+            hour: '2-digit',
+            minute: '2-digit'
+          });
+
+          updated.innerHTML = `
       Prices as of: ${time}, ${dateStr}<br>
       <span style="font-size:0.85em;color:var(--muted)">Next update: ${nextUpdateTime}</span>
     `;
-  }
+        }
 
-  // ============================================
-  // CACHE MANAGEMENT
-  // ============================================
-  
-  function getCache(ignoreExpiry = false) {
-    try {
-      const cached = localStorage.getItem(CACHE_KEY);
-      if (!cached) {
-        console.log('ℹ️ No cache found');
-        return null;
-      }
+        // ============================================
+        // CACHE MANAGEMENT
+        // ============================================
 
-      const data = JSON.parse(cached);
-      const now = Date.now();
-      const age = now - data.timestamp;
+        function getCache(ignoreExpiry = false) {
+          try {
+            const cached = localStorage.getItem(CACHE_KEY);
+            if (!cached) {
+              console.log('ℹ️ No cache found');
+              return null;
+            }
 
-      if (!ignoreExpiry && age > CACHE_DURATION) {
-        console.log('⚠️ Cache expired (age: ' + Math.floor(age / 3600000) + ' hours)');
-        return null;
-      }
+            const data = JSON.parse(cached);
+            const now = Date.now();
+            const age = now - data.timestamp;
 
-      const ageHours = Math.floor(age / 3600000);
-      console.log(`✅ Cache found (age: ${ageHours}h)`);
-      return data;
-    } catch (e) {
-      console.error('❌ Cache read error:', e);
-      return null;
-    }
-  }
+            if (!ignoreExpiry && age > CACHE_DURATION) {
+              console.log('⚠️ Cache expired (age: ' + Math.floor(age / 3600000) + ' hours)');
+              return null;
+            }
 
-  function setCache(data) {
-    try {
-      localStorage.setItem(CACHE_KEY, JSON.stringify(data));
-      console.log('💾 Prices cached (valid for 24 hours)');
-    } catch (e) {
-      console.error('❌ Failed to cache prices:', e);
-    }
-  }
+            const ageHours = Math.floor(age / 3600000);
+            console.log(`✅ Cache found (age: ${ageHours}h)`);
+            return data;
+          } catch (e) {
+            console.error('❌ Cache read error:', e);
+            return null;
+          }
+        }
 
-  // ============================================
-  // EVENT LISTENERS
-  // ============================================
-  
-  const refreshButton = document.getElementById('refreshPrices');
-  if (refreshButton) {
-    refreshButton.addEventListener('click', () => {
-      console.log('🔄 Manual refresh triggered');
-      const confirmed = confirm('This will fetch fresh prices and count as 1 API request. Continue?');
-      if (confirmed) {
-        localStorage.removeItem(CACHE_KEY);
+        function setCache(data) {
+          try {
+            localStorage.setItem(CACHE_KEY, JSON.stringify(data));
+            console.log('💾 Prices cached (valid for 24 hours)');
+          } catch (e) {
+            console.error('❌ Failed to cache prices:', e);
+          }
+        }
+
+        // ============================================
+        // EVENT LISTENERS
+        // ============================================
+
+        const refreshButton = document.getElementById('refreshPrices');
+        if (refreshButton) {
+          refreshButton.addEventListener('click', () => {
+            console.log('🔄 Manual refresh triggered');
+            const confirmed = confirm('This will fetch fresh prices and count as 1 API request. Continue?');
+            if (confirmed) {
+              localStorage.removeItem(CACHE_KEY);
+              initMetalPrices();
+            }
+          });
+        }
+
+        // ============================================
+        // INITIALIZE
+        // ============================================
+
+        console.log('═══════════════════════════════════════');
+        console.log('📊 Metal Prices Widget - INR Fixed');
+        console.log('⏰ Update schedule: Daily at ' + UPDATE_HOUR + ':00 AM IST');
+        console.log('📅 API usage: ~30 requests/month');
+        console.log('═══════════════════════════════════════');
+
         initMetalPrices();
-      }
-    });
-  }
 
-  // ============================================
-  // INITIALIZE
-  // ============================================
-  
-  console.log('═══════════════════════════════════════');
-  console.log('📊 Metal Prices Widget - INR Fixed');
-  console.log('⏰ Update schedule: Daily at ' + UPDATE_HOUR + ':00 AM IST');
-  console.log('📅 API usage: ~30 requests/month');
-  console.log('═══════════════════════════════════════');
-  
-  initMetalPrices();
-
-})();
+      })();
   </script>
 </body>
+
 </html>
