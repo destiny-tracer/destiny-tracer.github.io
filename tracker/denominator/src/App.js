@@ -258,8 +258,8 @@ export default function EnhancedConverters() {
           <button
             onClick={() => setActiveTab('denomination')}
             className={`px-4 md:px-6 py-2 md:py-3 rounded-lg font-semibold transition text-sm md:text-base ${activeTab === 'denomination'
-                ? 'bg-indigo-600 text-white'
-                : 'bg-white text-gray-700 hover:bg-gray-50'
+              ? 'bg-indigo-600 text-white'
+              : 'bg-white text-gray-700 hover:bg-gray-50'
               }`}
           >
             💵 Amount to Denominations
@@ -267,8 +267,8 @@ export default function EnhancedConverters() {
           <button
             onClick={() => setActiveTab('total')}
             className={`px-4 md:px-6 py-2 md:py-3 rounded-lg font-semibold transition text-sm md:text-base ${activeTab === 'total'
-                ? 'bg-indigo-600 text-white'
-                : 'bg-white text-gray-700 hover:bg-gray-50'
+              ? 'bg-indigo-600 text-white'
+              : 'bg-white text-gray-700 hover:bg-gray-50'
               }`}
           >
             🧮 Denominations to Amount
@@ -276,8 +276,8 @@ export default function EnhancedConverters() {
           <button
             onClick={() => setActiveTab('batch')}
             className={`px-4 md:px-6 py-2 md:py-3 rounded-lg font-semibold transition text-sm md:text-base ${activeTab === 'batch'
-                ? 'bg-indigo-600 text-white'
-                : 'bg-white text-gray-700 hover:bg-gray-50'
+              ? 'bg-indigo-600 text-white'
+              : 'bg-white text-gray-700 hover:bg-gray-50'
               }`}
           >
             📦 Batch Totals
@@ -285,8 +285,8 @@ export default function EnhancedConverters() {
           <button
             onClick={() => setActiveTab('percent')}
             className={`px-4 md:px-6 py-2 md:py-3 rounded-lg font-semibold transition text-sm md:text-base ${activeTab === 'percent'
-                ? 'bg-indigo-600 text-white'
-                : 'bg-white text-gray-700 hover:bg-gray-50'
+              ? 'bg-indigo-600 text-white'
+              : 'bg-white text-gray-700 hover:bg-gray-50'
               }`}
           >
             📈 Percentage Calc
