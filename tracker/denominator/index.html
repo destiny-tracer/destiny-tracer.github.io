@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enhanced Denomination Converter</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>💵 Enhanced Denomination Converter</h1>
+            <p>100% Browser-based • No Data Storage • Real-time Calculations</p>
+        </div>
+
+        <!-- Tab Navigation -->
+        <div class="tabs">
+            <button class="tab-btn active" data-tab="denomination">
+                💵 Amount to Denominations
+            </button>
+            <button class="tab-btn" data-tab="total">
+                🧮 Denominations to Amount
+            </button>
+            <button class="tab-btn" data-tab="batch">
+                📦 Batch Totals
+            </button>
+            <button class="tab-btn" data-tab="percent">
+                📈 Percentage Calc
+            </button>
+            <button class="tab-btn history-btn" id="historyBtn">
+                📜 History
+            </button>
+        </div>
+
+        <!-- History Panel -->
+        <div id="historyPanel" class="history-panel hidden">
+            <h3>📜 Calculation History</h3>
+            <div id="historyList"></div>
+        </div>
+
+        <!-- TAB 1: Amount to Denominations -->
+        <div id="denomination" class="tab-content active">
+            <div class="grid-2">
+                <div class="card">
+                    <h2>💵 Amount to Denominations</h2>
+
+                    <div class="form-group">
+                        <label>Currency</label>
+                        <select id="currency1">
+                            <option value="INR">INR (Indian Rupee)</option>
+                            <option value="USD">USD (US Dollar)</option>
+                            <option value="EUR">EUR (Euro)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Select Denominations</label>
+                        <div class="checkbox-group" id="denomCheckboxes"></div>
+                        <p class="info-text">Selected: <span id="selectedCount">5</span> denominations</p>
+                    </div>
+
+                    <div class="form-group custom-denom">
+                        <label>Add Custom Denomination</label>
+                        <div class="input-group">
+                            <input type="number" id="customDenom" placeholder="e.g., 250">
+                            <button class="btn-small" onclick="app.addCustomDenom()">+</button>
+                        </div>
+                    </div>
+
+                    <div id="selectedTags" class="tags"></div>
+
+                    <div class="form-group">
+                        <label>Total Amount</label>
+                        <input type="number" id="totalAmount" placeholder="e.g., 487881">
+                    </div>
+
+                    <div class="button-group">
+                        <button class="btn-primary" onclick="app.calculateDenomination()">Calculate</button>
+                        <button class="btn-secondary" onclick="app.resetDenom()">Reset</button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h2>📊 Denomination Breakdown</h2>
+                    <div id="breakdownResult"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 2: Denominations to Amount -->
+        <div id="total" class="tab-content">
+            <div class="grid-2">
+                <div class="card">
+                    <h2>🧮 Denominations to Amount</h2>
+
+                    <div class="form-group">
+                        <label>Currency</label>
+                        <select id="currency2">
+                            <option value="INR">INR (Indian Rupee)</option>
+                            <option value="USD">USD (US Dollar)</option>
+                            <option value="EUR">EUR (Euro)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Select Denominations</label>
+                        <div class="checkbox-group" id="denomCheckboxes2"></div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h2>Enter Count for Each Denomination</h2>
+                    <div id="countInputs"></div>
+                    <div id="totalDisplay" class="total-display hidden">
+                        <div className="currency-label">Total Amount</div>
+                        <div className="total-value" id="totalValue">0</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 3: Batch Totals -->
+        <div id="batch" class="tab-content">
+            <div class="grid-2">
+                <div class="card">
+                    <h2>📦 Batch Totals</h2>
+                    <p>Add multiple amounts and get total</p>
+
+                    <div id="batchEntries"></div>
+
+                    <div class="button-group">
+                        <button class="btn-primary" onclick="app.addBatchEntry()">+ Add Entry</button>
+                        <button class="btn-secondary" onclick="app.calculateBatchTotal()">Calculate</button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h2>📊 Total Summary</h2>
+                    <div id="batchResult"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 4: Percentage Calculator -->
+        <div id="percent" class="tab-content">
+            <div class="grid-2">
+                <div class="card">
+                    <h2>📈 Percentage Calculator</h2>
+
+                    <div class="form-group">
+                        <label>Amount</label>
+                        <input type="number" id="percentAmount" placeholder="e.g., 1000">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Percentage (%)</label>
+                        <input type="number" id="percentValue" placeholder="e.g., 18">
+                    </div>
+
+                    <button class="btn-primary" onclick="app.calculatePercent()">Calculate</button>
+                </div>
+
+                <div class="card">
+                    <h2>💰 Result</h2>
+                    <div id="percentResult"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/utils.js"></script>
+    <script src="js/denominationCalculator.js"></script>
+    <script src="js/batchCalculator.js"></script>
+    <script src="js/app.js"></script>
+</body>
+
+</html>
