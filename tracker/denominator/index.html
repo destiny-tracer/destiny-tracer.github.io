@@ -27,8 +27,11 @@
             <button class="tab-btn" data-tab="batch">
                 📦 Batch Totals
             </button>
-            <button class="tab-btn" data-tab="percent">
-                📈 Percentage Calc
+            <button class="tab-btn" data-tab="amountToWords">
+                📈 Amount to Words
+            </button>
+            <button class="tab-btn" data-tab="wordsToAmount">
+                📈 Words to Amount
             </button>
             <button class="tab-btn history-btn" id="historyBtn">
                 📜 History
@@ -144,28 +147,138 @@
             </div>
         </div>
 
-        <!-- TAB 4: Percentage Calculator -->
-        <div id="percent" class="tab-content">
-            <div class="grid-2">
+
+        <!-- TAB 4: Amount to Words -->
+        <div id="amountToWords" class="tab-content active">
+            <div class="grid-4">
                 <div class="card">
-                    <h2>📈 Percentage Calculator</h2>
+                    <h2>🔤 Convert Amount to Words</h2>
 
                     <div class="form-group">
-                        <label>Amount</label>
-                        <input type="number" id="percentAmount" placeholder="e.g., 1000">
+                        <label>Enter Amount (₹)</label>
+                        <input type="number" id="amountInput" placeholder="e.g., 487881.50" step="0.01">
                     </div>
 
                     <div class="form-group">
-                        <label>Percentage (%)</label>
-                        <input type="number" id="percentValue" placeholder="e.g., 18">
+                        <label>Select Format</label>
+                        <div class="conversion-options">
+                            <button class="option-btn active" data-format="indian"
+                                onclick="selectFormat(event, 'indian')">
+                                🇮🇳 Indian
+                            </button>
+                            <button class="option-btn" data-format="international"
+                                onclick="selectFormat(event, 'international')">
+                                🌍 International
+                            </button>
+                            <button class="option-btn" data-format="short" onclick="selectFormat(event, 'short')">
+                                ✂️ Short Form
+                            </button>
+                        </div>
                     </div>
 
-                    <button class="btn-primary" onclick="app.calculatePercent()">Calculate</button>
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" id="includeRupees" checked>
+                            Include "Rupees" in output
+                        </label>
+                    </div>
+
+                    <div class="button-group">
+                        <button class="btn-primary" onclick="convertAmountToWords()">Convert</button>
+                        <button class="btn-secondary" onclick="resetAmountTab()">Reset</button>
+                    </div>
+
+                    <div class="info-box">
+                        <strong>ℹ️ Formats:</strong><br>
+                        <strong>Indian:</strong> Lakh, Crore (₹1,00,000 = One Lakh)<br>
+                        <strong>International:</strong> Million, Billion<br>
+                        <strong>Short:</strong> Abbreviated (5L, 2Cr)
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h2>📋 Result</h2>
+                    <div id="amountToWordsResult" class="result-box">
+                        <div class="result-label">In Words:</div>
+                        <div class="result-value" id="amountWordsValue"></div>
+                        <button class="copy-btn" onclick="copyAmountResult()">📋 Copy</button>
+                    </div>
+                    <div id="amountEmpty" style="text-align: center; padding: 40px; color: #999;">
+                        <p>Enter amount and click Convert</p>
+                    </div>
+
+                    <div class="example-section">
+                        <h4>📝 Examples</h4>
+                        <div class="example-item">
+                            <strong>100</strong> → One Hundred
+                        </div>
+                        <div class="example-item">
+                            <strong>1000</strong> → One Thousand
+                        </div>
+                        <div class="example-item">
+                            <strong>100000</strong> → One Lakh (Indian) / One Hundred Thousand (Intl)
+                        </div>
+                        <div class="example-item">
+                            <strong>10000000</strong> → One Crore (Indian) / Ten Million (Intl)
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 5: Words to Amount -->
+        <div id="wordsToAmount" class="tab-content">
+            <div class="grid-5">
+                <div class="card">
+                    <h2>🔢 Convert Words to Amount</h2>
+
+                    <div class="form-group">
+                        <label>Enter Amount in Words</label>
+                        <textarea id="wordsInput"
+                            placeholder="e.g., Four Lakh Eighty Seven Thousand Eight Hundred Eighty One&#10;or&#10;Five Lakh Rupees Only"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Supported Formats</label>
+                        <div class="info-box">
+                            <strong>Indian:</strong> Hundred, Thousand, Lakh, Crore<br>
+                            <strong>International:</strong> Hundred, Thousand, Million, Billion<br>
+                            <strong>Optional:</strong> "Rupees", "and", "only", decimals
+                        </div>
+                    </div>
+
+                    <div class="button-group">
+                        <button class="btn-primary" onclick="convertWordsToAmount()">Convert</button>
+                        <button class="btn-secondary" onclick="resetWordsTab()">Reset</button>
+                    </div>
                 </div>
 
                 <div class="card">
                     <h2>💰 Result</h2>
-                    <div id="percentResult"></div>
+                    <div id="wordsToAmountResult" class="result-box">
+                        <div class="result-label">Numeric Amount:</div>
+                        <div class="result-value" id="amountValue"></div>
+                        <button class="copy-btn" onclick="copyWordsResult()">📋 Copy</button>
+                    </div>
+                    <div id="wordsEmpty" style="text-align: center; padding: 40px; color: #999;">
+                        <p>Enter words and click Convert</p>
+                    </div>
+
+                    <div class="example-section">
+                        <h4>✅ Valid Inputs</h4>
+                        <div class="example-item">
+                            "Four Lakh Eighty Seven Thousand Eight Hundred Eighty One"
+                        </div>
+                        <div class="example-item">
+                            "Five Crore Rupees Only"
+                        </div>
+                        <div class="example-item">
+                            "Twelve Thousand Five Hundred and Fifty"
+                        </div>
+                        <div class="example-item">
+                            "One Million Two Hundred Thousand"
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -175,6 +288,7 @@
     <script src="./js/denominationCalculator.js"></script>
     <script src="./js/batchCalculator.js"></script>
     <script src="./js/app.js"></script>
+    <script src="./js/amounttoword.js"></script>
 </body>
 
 </html>
